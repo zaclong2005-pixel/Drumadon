@@ -54,14 +54,14 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #ffffff;
-            color: #111111;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             font-size: 1.1em;
             font-weight: 600;
         }
         header {
-            background-color: #333333;
-            color: #ffffff;
+            background-color: var(--header-bg);
+            color: var(--header-text);
             padding: 1rem;
             position: fixed;
             width: 100%;
@@ -89,14 +89,14 @@
             margin: 0 1.5rem;
         }
         nav a {
-            color: #ffffff;
+            color: var(--header-text);
             text-decoration: none;
         }
         nav a:hover {
-            color: #7b97ac;
+            color: var(--nav-hover);
         }
         .hero {
-            background-color: #7b97ac;
+            background-color: var(--hero-bg);
             padding: 5rem 2rem;
             text-align: center;
             margin-top: 4rem;
@@ -110,8 +110,8 @@
             margin-bottom: 2rem;
         }
         .btn {
-            background-color: #000000;
-            color: #ffffff;
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
             padding: 1rem 2rem;
             border: none;
             cursor: pointer;
@@ -120,12 +120,12 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
         .btn:hover {
-            background-color: #8fc4da;
+            background-color: var(--btn-hover);
             transform: scale(1.05);
         }
         .features {
             padding: 4rem 2rem;
-            background-color: #ffffffd0;
+            background-color: var(--contact-bg);
         }
         .features h2 {
             text-align: center;
@@ -137,7 +137,7 @@
             gap: 2rem;
         }
         .feature-card {
-            background-color: #7b97ac;
+            background-color: var(--feature-bg);
             padding: 2rem;
             text-align: center;
             border-radius: 8px;
@@ -152,17 +152,17 @@
         }
         .about {
             padding: 6rem 2rem;
-            background-color: #7b97ac;
+            background-color: var(--about-bg);
             text-align: center;
         }
         .contact {
             padding: 4rem 2rem;
-            background-color: #ffffffd0;
+            background-color: var(--contact-bg);
             text-align: center;
         }
         footer {
-            background-color: #333333;
-            color: #ffffff;
+            background-color: var(--footer-bg);
+            color: var(--footer-text);
             text-align: center;
             padding: 2rem;
         }
@@ -170,7 +170,7 @@
             display: none;
             background: none;
             border: none;
-            color: #ffffff;
+            color: var(--header-text);
             font-size: 1.5rem;
             cursor: pointer;
         }
@@ -197,7 +197,7 @@
                 transform: translateX(-50%);
                 width: auto;
                 min-width: 200px;
-                background-color: #333333;
+                background-color: var(--header-bg);
                 padding: 1rem;
                 border-radius: 4px;
                 box-shadow: 0 4px 8px rgba(0,0,0,0.3);
@@ -326,4 +326,3 @@
     </script>
 </body>
 </html>
-
