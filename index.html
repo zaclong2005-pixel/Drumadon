@@ -4,6 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Website Title</title>
+    <script>
+        const config = {
+            pageTitle: "Drumadon",
+            brand: "Drumadon",
+            nav1: "Home",
+            nav2: "Lessons",
+            nav3: "About",
+            nav4: "Contact",
+            heroHeading: "Welcome to Drumadon",
+            heroSubtext: "Quality Drum Lessons in the hills",
+            featuresHeading: "Our Features",
+            feature1Title: "Free resources",
+            feature1Desc: "access free drum resources",
+            feature1Btn: "Learn More",
+            feature2Title: "Free tiral",
+            feature2Desc: "Book a free 30 minute trial lesson",
+            feature2Btn: "Learn More",
+            feature3Title: "Pricing",
+            feature3Desc: "See our available lesson plans",
+            feature3Btn: "Learn More",
+            aboutHeading: "About Drumadon",
+            aboutDesc: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+            contactHeading: "Contact Us",
+            contactEmail: "info@drumadon.com.au",
+            contactPhone: "0487 854 934",
+            contactAddress: "5 Arthur rd Lesmurdie",
+            footerText: "© 2026 Your Company"
+        };
+    </script>
     <style>
         :root {
             --bg-color: #ffffff;
@@ -20,7 +49,6 @@
             --contact-bg: #ffffff;
             --footer-bg: #333333;
             --footer-text: #ffffff;
-            --modal-bg: #ffffff;
         }
         body {
             font-family: Arial, sans-serif;
@@ -139,127 +167,92 @@
             text-align: center;
             padding: 2rem;
         }
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            animation: fadeIn 0.5s;
-        }
-        .modal-content {
-            background-color: var(--modal-bg);
-            margin: 15% auto;
-            padding: 2rem;
-            border: 1px solid #cccccc;
-            width: 80%;
-            max-width: 500px;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        .close {
-            color: #aaaaaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .close:hover {
-            color: var(--text-color);
-        }
     </style>
 </head>
 <body>
     <header>
         <nav>
-            <div>Your Brand</div>
+            <div id="brand"></div>
             <ul>
-                <li><a href="#home">Home</a></li>
-                <li><a href="#features">Features</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li><a href="#home" id="nav1"></a></li>
+                <li><a href="#features" id="nav2"></a></li>
+                <li><a href="#about" id="nav3"></a></li>
+                <li><a href="#contact" id="nav4"></a></li>
             </ul>
         </nav>
     </header>
 
     <section id="home" class="hero">
-        <h1>Welcome to Our Site</h1>
-        <p>Discover amazing features and more.</p>
-        <button class="btn" onclick="showModal()">Get Started</button>
+        <h1 id="hero-heading"></h1>
+        <p id="hero-subtext"></p>
     </section>
 
     <section id="features" class="features">
-        <h2>Our Features</h2>
+        <h2 id="features-heading"></h2>
         <div class="feature-grid">
             <div class="feature-card">
-                <h3>Feature One</h3>
-                <p>Description of feature one.</p>
-                <button class="btn">Learn More</button>
+                <h3 id="feature1-title"></h3>
+                <p id="feature1-desc"></p>
+                <button class="btn" id="feature1-btn"></button>
             </div>
             <div class="feature-card">
-                <h3>Feature Two</h3>
-                <p>Description of feature two.</p>
-                <button class="btn">Learn More</button>
+                <h3 id="feature2-title"></h3>
+                <p id="feature2-desc"></p>
+                <button class="btn" id="feature2-btn"></button>
             </div>
             <div class="feature-card">
-                <h3>Feature Three</h3>
-                <p>Description of feature three.</p>
-                <button class="btn">Learn More</button>
+                <h3 id="feature3-title"></h3>
+                <p id="feature3-desc"></p>
+                <button class="btn" id="feature3-btn"></button>
             </div>
         </div>
     </section>
 
     <section id="about" class="about">
-        <h2>About Us</h2>
-        <p>We are a company dedicated to providing excellent services.</p>
-        <button class="btn" onclick="animateElement()">Explore More</button>
+        <h2 id="about-heading"></h2>
+        <p id="about-desc"></p>
     </section>
 
     <section id="contact" class="contact">
-        <h2>Contact Us</h2>
-        <p>Email: info@drumadon.com.au</p>
-        <p>Phone: 0487 854 934</p>
-        <p>Address: 5 Arthur rd Lesmurdie</p>
+        <h2 id="contact-heading"></h2>
+        <p id="contact-email"></p>
+        <p id="contact-phone"></p>
+        <p id="contact-address"></p>
     </section>
 
     <footer>
-        <p>© 2026 Your Company</p>
+        <p id="footer-text"></p>
     </footer>
 
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2>Modal Title</h2>
-            <p>Modal content here.</p>
-        </div>
-    </div>
-
     <script>
-        function showModal() {
-            document.getElementById('myModal').style.display = 'block';
-        }
+        // Set page title
+        document.title = config.pageTitle;
 
-        function closeModal() {
-            document.getElementById('myModal').style.display = 'none';
-        }
-
-        function animateElement() {
-            const about = document.querySelector('.about');
-            about.style.animation = 'none';
-            setTimeout(() => {
-                about.style.animation = 'fadeIn 1s';
-            }, 10);
-        }
-
-        window.onclick = function(event) {
-            const modal = document.getElementById('myModal');
-            if (event.target == modal) {
-                modal.style.display = 'none';
-            }
-        }
+        // Set text content from config
+        document.getElementById('brand').textContent = config.brand;
+        document.getElementById('nav1').textContent = config.nav1;
+        document.getElementById('nav2').textContent = config.nav2;
+        document.getElementById('nav3').textContent = config.nav3;
+        document.getElementById('nav4').textContent = config.nav4;
+        document.getElementById('hero-heading').textContent = config.heroHeading;
+        document.getElementById('hero-subtext').textContent = config.heroSubtext;
+        document.getElementById('features-heading').textContent = config.featuresHeading;
+        document.getElementById('feature1-title').textContent = config.feature1Title;
+        document.getElementById('feature1-desc').textContent = config.feature1Desc;
+        document.getElementById('feature1-btn').textContent = config.feature1Btn;
+        document.getElementById('feature2-title').textContent = config.feature2Title;
+        document.getElementById('feature2-desc').textContent = config.feature2Desc;
+        document.getElementById('feature2-btn').textContent = config.feature2Btn;
+        document.getElementById('feature3-title').textContent = config.feature3Title;
+        document.getElementById('feature3-desc').textContent = config.feature3Desc;
+        document.getElementById('feature3-btn').textContent = config.feature3Btn;
+        document.getElementById('about-heading').textContent = config.aboutHeading;
+        document.getElementById('about-desc').textContent = config.aboutDesc;
+        document.getElementById('contact-heading').textContent = config.contactHeading;
+        document.getElementById('contact-email').textContent = 'Email: ' + config.contactEmail;
+        document.getElementById('contact-phone').textContent = 'Phone: ' + config.contactPhone;
+        document.getElementById('contact-address').textContent = 'Address: ' + config.contactAddress;
+        document.getElementById('footer-text').textContent = config.footerText;
     </script>
 </body>
 </html>
