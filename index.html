@@ -5,16 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Drumadon - Drum Teaching</title>
     <style>
+        :root {
+            --black: #000000;
+            --dark-grey: #333333;
+            --medium-grey: #666666;
+            --light-grey: #cccccc;
+            --white: #ffffff;
+        }
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            color: #333333;
-            background-color: #ffffff;
+            color: var(--black);
+            background-color: var(--white);
         }
         header {
-            background-color: #000000;
-            color: #ffffff;
+            background-color: var(--black);
+            color: var(--white);
             padding: 1rem;
             text-align: center;
         }
@@ -22,23 +29,23 @@
             margin-top: 1rem;
         }
         nav a {
-            color: #ffffff;
+            color: var(--white);
             margin: 0 1rem;
             text-decoration: none;
         }
         .hero {
-            background-color: #cccccc;
+            background-color: var(--light-grey);
             padding: 4rem 2rem;
             text-align: center;
         }
         .hero h1 {
             font-size: 3rem;
             margin-bottom: 1rem;
-            color: #000000;
+            color: var(--black);
         }
         .hero p {
             font-size: 1.2rem;
-            color: #666666;
+            color: var(--black);
         }
         section {
             padding: 2rem;
@@ -49,28 +56,28 @@
             margin-bottom: 2rem;
         }
         .services {
-            background-color: #ffffff;
+            background-color: var(--white);
         }
         .contact {
-            background-color: #cccccc;
+            background-color: var(--light-grey);
         }
         footer {
-            background-color: #000000;
-            color: #ffffff;
+            background-color: var(--black);
+            color: var(--white);
             text-align: center;
             padding: 1rem;
         }
         .btn {
             display: inline-block;
-            background-color: #000000;
-            color: #ffffff;
+            background-color: var(--black);
+            color: var(--white);
             padding: 0.5rem 1rem;
             text-decoration: none;
             border-radius: 5px;
             margin-top: 1rem;
         }
         .btn:hover {
-            background-color: #333333;
+            background-color: var(--dark-grey);
         }
     </style>
 </head>
