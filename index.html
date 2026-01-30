@@ -40,7 +40,7 @@
             --header-bg: #333333;
             --header-text: #ffffff;
             --nav-hover: #cccccc;
-            --hero-bg: linear-gradient(135deg, #f0f0f0 0%, #e0e8f0 100%);
+            --hero-bg: #f0f0f0;
             --btn-bg: #000000;
             --btn-text: #ffffff;
             --btn-hover: #add8e6;
@@ -90,7 +90,7 @@
             color: var(--nav-hover);
         }
         .hero {
-            background-color: var(--hero-bg);
+            background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
             padding: 5rem 2rem;
             text-align: center;
             margin-top: 4rem;
@@ -103,17 +103,21 @@
         .hero h1 {
             font-size: 3rem;
             margin-bottom: 1rem;
-            animation: slideIn 1s;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: grandEntrance 2s ease-out;
         }
-        @keyframes slideIn {
-            from { transform: translateY(-50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-15px); }
-            60% { transform: translateY(-7px); }
+        @keyframes grandEntrance {
+            0% {
+                transform: translateY(-100px) scale(0.5);
+                opacity: 0;
+            }
+            50% {
+                transform: translateY(-20px) scale(1.1);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
         }
         .hero p {
             font-size: 1.5rem;
@@ -132,11 +136,10 @@
         .btn:hover {
             background-color: var(--btn-hover);
             transform: scale(1.05);
-            box-shadow: 0 0 10px var(--btn-hover);
         }
         .features {
             padding: 4rem 2rem;
-            background-color: var(--contact-bg);
+            background: linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%);
         }
         .features h2 {
             text-align: center;
@@ -156,25 +159,26 @@
             transition: transform 0.3s;
         }
         .feature-card:hover {
-            animation: bounce 0.6s;
+            transform: translateY(-10px);
         }
         .about {
             padding: 6rem 2rem;
-            background-color: var(--about-bg);
-            background-image: radial-gradient(circle, rgba(0,0,0,0.1) 1px, transparent 1px);
-            background-size: 20px 20px;
+            background: linear-gradient(135deg, #e0e0e0 0%, #d0d0d0 100%);
             text-align: center;
         }
         .contact {
             padding: 4rem 2rem;
-            background-color: var(--contact-bg);
+            background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
             text-align: center;
         }
-        footer {
-            background-color: var(--footer-bg);
-            color: var(--footer-text);
-            text-align: center;
-            padding: 2rem;
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .animate-on-scroll.animate {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>
@@ -196,7 +200,7 @@
         <p id="hero-subtext"></p>
     </section>
 
-    <section id="features" class="features">
+    <section id="features" class="features animate-on-scroll">
         <h2 id="features-heading"></h2>
         <div class="feature-grid">
             <div class="feature-card">
@@ -217,12 +221,12 @@
         </div>
     </section>
 
-    <section id="about" class="about">
+    <section id="about" class="about animate-on-scroll">
         <h2 id="about-heading"></h2>
         <p id="about-desc"></p>
     </section>
 
-    <section id="contact" class="contact">
+    <section id="contact" class="contact animate-on-scroll">
         <h2 id="contact-heading"></h2>
         <p id="contact-email"></p>
         <p id="contact-phone"></p>
@@ -263,20 +267,18 @@
         document.getElementById('contact-address').textContent = 'Address: ' + config.contactAddress;
         document.getElementById('footer-text').textContent = config.footerText;
 
-        // Typing effect for hero heading
-        function typeWriter(element, text, speed) {
-            let i = 0;
-            element.textContent = '';
-            function type() {
-                if (i < text.length) {
-                    element.textContent += text.charAt(i);
-                    i++;
-                    setTimeout(type, speed);
+        // Scroll animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate');
                 }
-            }
-            type();
-        }
-        typeWriter(document.getElementById('hero-heading'), config.heroHeading, 100);
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.animate-on-scroll').forEach(el => {
+            observer.observe(el);
+        });
     </script>
 </body>
 </html>
