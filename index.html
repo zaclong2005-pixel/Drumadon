@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xxxx - Website Title</title>
+    <title>XXXX - Website Title</title>
     <style>
         * {
             margin: 0;
@@ -12,130 +12,322 @@
         }
 
         body {
-            background-color: #808080; /* Grey background */
-            font-family: Arial, sans-serif;
-            color: #333;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffffff; /* EDIT: Change to #f5f5f5 for light grey bg */
+            color: #333333;
+            line-height: 1.6;
         }
 
+        /* ========== HEADER SECTION (EDIT HERE) ========== */
+        header {
+            background-color: #1a1a1a; /* EDIT: Black - change to #333333 for dark grey */
+            color: #ffffff;
+            padding: 20px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        /* ========== NAVIGATION SECTION (EDIT HERE) ========== */
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        nav a {
+            color: #cccccc; /* EDIT: Light grey - change to #ffffff for white text */
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #ffffff;
+        }
+
+        /* ========== HERO SECTION (EDIT HERE) ========== */
+        .hero {
+            background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+            color: #ffffff;
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            /* EDIT: Change text - Replace "XXXX Website Title" */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 30px;
+            color: #cccccc;
+            /* EDIT: Change text - Replace "Your subtitle/tagline here" */
+        }
+
+        /* ========== BUTTONS SECTION (EDIT HERE) ========== */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 500;
+        }
+
+        /* Primary Button - Black */
+        .btn-primary {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            border: 2px solid #1a1a1a;
+        }
+
+        .btn-primary:hover {
+            background-color: #ffffff;
+            color: #1a1a1a;
+        }
+
+        /* Secondary Button - Grey */
+        .btn-secondary {
+            background-color: #808080;
+            color: #ffffff;
+            border: 2px solid #808080;
+        }
+
+        .btn-secondary:hover {
+            background-color: #a9a9a9;
+            color: #ffffff;
+        }
+
+        /* Outline Button - White background, black text */
+        .btn-outline {
+            background-color: #ffffff;
+            color: #1a1a1a;
+            border: 2px solid #1a1a1a;
+        }
+
+        .btn-outline:hover {
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+
+        /* ========== MAIN CONTENT SECTION (EDIT HERE) ========== */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
 
-        header {
-            text-align: center;
-            padding: 40px 0;
-            background-color: rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            margin-bottom: 40px;
+        .content-section {
+            padding: 60px 20px;
+            border-bottom: 1px solid #e0e0e0;
         }
 
-        h1 {
-            color: white;
-            font-size: 48px;
-            margin-bottom: 10px;
-        }
-
-        .subtitle {
-            color: #ddd;
-            font-size: 18px;
-        }
-
-        .button-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 15px 30px;
-            background-color: #4CAF50;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: bold;
-            transition: background-color 0.3s;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn:hover {
-            background-color: #000000;
-        }
-
-        .btn-secondary {
-            background-color: #000000;
-        }
-
-        .btn-secondary:hover {
-            background-color: #000000;
-        }
-
-        .btn-tertiary {
-            background-color: #000000;
-        }
-
-        .btn-tertiary:hover {
-            background-color: #000000;
-        }
-
-        main {
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 40px;
-            border-radius: 8px;
-            margin-bottom: 40px;
-        }
-
-        main h2 {
-            color: #333;
+        .content-section h2 {
+            font-size: 36px;
             margin-bottom: 20px;
+            color: #1a1a1a;
+            /* EDIT: Change section titles */
         }
 
-        main p {
-            line-height: 1.6;
-            color: #555;
+        .content-section p {
+            font-size: 16px;
+            color: #555555;
+            max-width: 800px;
+            /* EDIT: Change section content */
         }
 
-        footer {
+        /* ========== FEATURES/CARDS SECTION (EDIT HERE) ========== */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            padding: 60px 20px;
+        }
+
+        .card {
+            background-color: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 30px;
             text-align: center;
-            padding: 20px;
-            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+        }
+
+        .card h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #1a1a1a;
+            /* EDIT: Change card titles */
+        }
+
+        .card p {
+            color: #666666;
             font-size: 14px;
+            /* EDIT: Change card descriptions */
+        }
+
+        /* ========== FOOTER SECTION (EDIT HERE) ========== */
+        footer {
+            background-color: #2d2d2d;
+            color: #999999;
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid #404040;
+        }
+
+        footer p {
+            margin-bottom: 10px;
+            /* EDIT: Change footer text */
+        }
+
+        footer a {
+            color: #cccccc;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: #ffffff;
+        }
+
+        /* ========== RESPONSIVE DESIGN (EDIT if needed) ========== */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            nav ul {
+                gap: 10px;
+            }
+
+            nav a {
+                font-size: 12px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>xxxx</h1>
-            <!-- EDIT: Replace "xxxx" with your website title -->
-            <p class="subtitle">xxxx</p>
-            <!-- EDIT: Replace with your tagline or description -->
-        </header>
-
-        <div class="button-container">
-            <!-- EDIT: Add/remove buttons as needed, change href paths and text -->
-            <a href="xxxx.html" class="btn">Page One</a>
-            <a href="xxxx.html" class="btn btn-secondary">Page Two</a>
-            <a href="xxxx.html" class="btn btn-tertiary">Page Three</a>
-            <a href="xxxx.html" class="btn">Page Four</a>
+    <!-- ========== HEADER (EDIT HERE) ========== -->
+    <header>
+        <div class="header-container">
+            <div class="logo">XXXX Logo</div>
+            <!-- EDIT: Replace "XXXX Logo" with your brand name -->
+            <nav>
+                <ul>
+                    <!-- EDIT: Add/modify navigation links below -->
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
         </div>
+    </header>
 
-        <main>
-            <h2>Welcome to xxxx</h2>
-            <!-- EDIT: Replace with your page heading -->
-            <p>xxxx</p>
-            <!-- EDIT: Replace with your main content -->
-        </main>
+    <!-- ========== HERO SECTION (EDIT HERE) ========== -->
+    <section class="hero">
+        <h1>XXXX Website Title</h1>
+        <!-- EDIT: Replace with your main heading -->
+        <p>Your subtitle or tagline goes here</p>
+        <!-- EDIT: Replace with your tagline -->
+        
+        <!-- EDIT: Customize these buttons or add/remove as needed -->
+        <div class="button-group">
+            <button class="btn btn-primary" onclick="location.href='#page1'">XXXX Page 1</button>
+            <button class="btn btn-secondary" onclick="location.href='#page2'">XXXX Page 2</button>
+            <button class="btn btn-outline" onclick="location.href='#page3'">XXXX Page 3</button>
+        </div>
+    </section>
 
-        <footer>
-            <p>&copy; 2026 xxxx. All rights reserved.</p>
-            <!-- EDIT: Replace "xxxx" with your website/company name -->
-        </footer>
+    <!-- ========== MAIN CONTENT (EDIT HERE) ========== -->
+    <div class="container">
+        <section class="content-section" id="about">
+            <h2>XXXX Section Title</h2>
+            <!-- EDIT: Replace section title -->
+            <p>This is where your main content goes. Replace this text with your own description, information, or story. You can add as many paragraphs as needed.</p>
+            <!-- EDIT: Replace section content -->
+        </section>
+
+        <!-- ========== CARDS/FEATURES SECTION (EDIT HERE) ========== -->
+        <section class="cards-grid">
+            <div class="card">
+                <h3>XXXX Feature 1</h3>
+                <!-- EDIT: Replace card title -->
+                <p>Description of feature or benefit goes here. Keep it concise and focused.</p>
+                <!-- EDIT: Replace card description -->
+            </div>
+            <div class="card">
+                <h3>XXXX Feature 2</h3>
+                <!-- EDIT: Replace card title -->
+                <p>Description of feature or benefit goes here. Keep it concise and focused.</p>
+                <!-- EDIT: Replace card description -->
+            </div>
+            <div class="card">
+                <h3>XXXX Feature 3</h3>
+                <!-- EDIT: Replace card title -->
+                <p>Description of feature or benefit goes here. Keep it concise and focused.</p>
+                <!-- EDIT: Replace card description -->
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2>XXXX Another Section</h2>
+            <!-- EDIT: Replace section title -->
+            <p>Add more content sections as needed. This template is highly customizable - just replace the XXXX placeholders and follow the "EDIT:" comments throughout the code.</p>
+            <!-- EDIT: Replace section content -->
+        </section>
     </div>
+
+    <!-- ========== FOOTER (EDIT HERE) ========== -->
+    <footer>
+        <p>&copy; 2026 XXXX Company Name. All rights reserved.</p>
+        <!-- EDIT: Replace company name and year -->
+        <p>
+            <a href="#privacy">Privacy Policy</a> | 
+            <a href="#terms">Terms of Service</a> | 
+            <a href="#contact">Contact Us</a>
+        </p>
+        <!-- EDIT: Add/modify footer links -->
+    </footer>
 </body>
 </html>
