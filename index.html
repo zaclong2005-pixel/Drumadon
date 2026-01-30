@@ -30,26 +30,24 @@
             contactEmail: "info@drumadon.com.au",
             contactPhone: "0487 854 934",
             contactAddress: "5 Arthur rd Lesmurdie",
-            footerText: "© 2026 Drumadon"
+            footerText: "© 2026 Drumadon",
+            bgColor: "#ff0000d0",
+            textColor: "#111111",
+            headerBg: "#333333",
+            headerText: "#ffffff",
+            navHover: "#7b97ac",
+            heroBg: "#7b97ac",
+            btnBg: "#000000",
+            btnText: "#ffffff",
+            btnHover: "#8fc4da",
+            featureBg: "#7b97ac",
+            aboutBg: "#7b97ac",
+            contactBg: "#ffffffd0",
+            footerBg: "#333333",
+            footerText: "#ffffff"
         };
     </script>
     <style>
-        :root {
-            --bg-color: #ff0000d0;
-            --text-color: #111111;
-            --header-bg: #333333;
-            --header-text: #ffffff;
-            --nav-hover: #7b97ac;
-            --hero-bg: #7b97ac;
-            --btn-bg: #000000;
-            --btn-text: #ffffff;
-            --btn-hover: #8fc4da;
-            --feature-bg: #7b97ac;
-            --about-bg: #7b97ac;
-            --contact-bg: #ffffffd0;
-            --footer-bg: #333333;
-            --footer-text: #ffffff;
-        }
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -276,6 +274,23 @@
         // Set page title
         document.title = config.pageTitle;
 
+        // Set CSS variables from config
+        const root = document.documentElement.style;
+        root.setProperty('--bg-color', config.bgColor);
+        root.setProperty('--text-color', config.textColor);
+        root.setProperty('--header-bg', config.headerBg);
+        root.setProperty('--header-text', config.headerText);
+        root.setProperty('--nav-hover', config.navHover);
+        root.setProperty('--hero-bg', config.heroBg);
+        root.setProperty('--btn-bg', config.btnBg);
+        root.setProperty('--btn-text', config.btnText);
+        root.setProperty('--btn-hover', config.btnHover);
+        root.setProperty('--feature-bg', config.featureBg);
+        root.setProperty('--about-bg', config.aboutBg);
+        root.setProperty('--contact-bg', config.contactBg);
+        root.setProperty('--footer-bg', config.footerBg);
+        root.setProperty('--footer-text', config.footerText);
+
         // Set text content from config
         document.getElementById('brand').textContent = config.brand;
         document.getElementById('nav1').textContent = config.nav1;
@@ -327,4 +342,3 @@
     </script>
 </body>
 </html>
-
