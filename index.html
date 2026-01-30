@@ -35,52 +35,27 @@
     </script>
     <style>
         :root {
-            --bg-color: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+            --bg-color: #ffffff;
             --text-color: #000000;
-            --header-bg: linear-gradient(90deg, #333333 0%, #555555 100%);
+            --header-bg: #333333;
             --header-text: #ffffff;
-            --nav-hover: #add8e6;
-            --hero-bg: linear-gradient(135deg, #f0f0f0 0%, #e0e8f0 100%);
+            --nav-hover: #cccccc;
+            --hero-bg: #f0f0f0;
             --btn-bg: #000000;
             --btn-text: #ffffff;
             --btn-hover: #add8e6;
-            --feature-bg: linear-gradient(135deg, #f0f0f0 0%, #e8f0f8 100%);
-            --about-bg: linear-gradient(135deg, #e0e0e0 0%, #d0d8e0 100%);
-            --contact-bg: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-            --footer-bg: linear-gradient(90deg, #333333 0%, #555555 100%);
+            --feature-bg: #f0f0f0;
+            --about-bg: #e0e0e0;
+            --contact-bg: #ffffff;
+            --footer-bg: #333333;
             --footer-text: #ffffff;
         }
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background: var(--bg-color);
+            background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
             color: var(--text-color);
-            position: relative;
-            overflow-x: hidden;
-        }
-        body::before {
-            content: '';
-            position: absolute;
-            top: 10%;
-            left: -10%;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(173, 216, 230, 0.3) 0%, transparent 70%);
-            border-radius: 50%;
-            z-index: -1;
-        }
-        body::after {
-            content: '';
-            position: absolute;
-            bottom: 20%;
-            right: -15%;
-            width: 0;
-            height: 0;
-            border-left: 200px solid transparent;
-            border-right: 200px solid transparent;
-            border-bottom: 350px solid rgba(173, 216, 230, 0.2);
-            z-index: -1;
         }
         header {
             background-color: var(--header-bg);
@@ -128,19 +103,12 @@
         .hero h1 {
             font-size: 3rem;
             margin-bottom: 1rem;
-            animation: slideIn 1s;
-            position: relative;
-        }
-        .cursor {
-            animation: blink 1s infinite;
-        }
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
+            animation: slideIn 0.5s ease-out;
         }
         @keyframes slideIn {
-            from { transform: translateY(-50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            0% { transform: translateY(-50px) scale(0.8); opacity: 0; }
+            50% { transform: translateY(-10px) scale(1.05); opacity: 0.8; }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
         }
         .hero p {
             font-size: 1.5rem;
@@ -194,14 +162,11 @@
             background-color: var(--contact-bg);
             text-align: center;
         }
-        .fade-in {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 1s ease-out, transform 1s ease-out;
-        }
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
+        footer {
+            background-color: var(--footer-bg);
+            color: var(--footer-text);
+            text-align: center;
+            padding: 2rem;
         }
     </style>
 </head>
@@ -219,11 +184,11 @@
     </header>
 
     <section id="home" class="hero">
-        <h1><span id="hero-heading"></span><span class="cursor">|</span></h1>
+        <h1 id="hero-heading"></h1>
         <p id="hero-subtext"></p>
     </section>
 
-    <section id="features" class="features fade-in">
+    <section id="features" class="features">
         <h2 id="features-heading"></h2>
         <div class="feature-grid">
             <div class="feature-card">
@@ -244,12 +209,12 @@
         </div>
     </section>
 
-    <section id="about" class="about fade-in">
+    <section id="about" class="about">
         <h2 id="about-heading"></h2>
         <p id="about-desc"></p>
     </section>
 
-    <section id="contact" class="contact fade-in">
+    <section id="contact" class="contact">
         <h2 id="contact-heading"></h2>
         <p id="contact-email"></p>
         <p id="contact-phone"></p>
@@ -264,27 +229,13 @@
         // Set page title
         document.title = config.pageTitle;
 
-        // Typing effect for hero heading
-        const heroHeading = document.getElementById('hero-heading');
-        const text = config.heroHeading;
-        let index = 0;
-        function typeWriter() {
-            if (index < text.length) {
-                heroHeading.textContent += text.charAt(index);
-                index++;
-                setTimeout(typeWriter, 100);
-            } else {
-                document.querySelector('.cursor').style.display = 'none';
-            }
-        }
-        typeWriter();
-
-        // Set other text content from config
+        // Set text content from config
         document.getElementById('brand').textContent = config.brand;
         document.getElementById('nav1').textContent = config.nav1;
         document.getElementById('nav2').textContent = config.nav2;
         document.getElementById('nav3').textContent = config.nav3;
         document.getElementById('nav4').textContent = config.nav4;
+        document.getElementById('hero-heading').textContent = config.heroHeading;
         document.getElementById('hero-subtext').textContent = config.heroSubtext;
         document.getElementById('features-heading').textContent = config.featuresHeading;
         document.getElementById('feature1-title').textContent = config.feature1Title;
@@ -303,18 +254,6 @@
         document.getElementById('contact-phone').textContent = 'Phone: ' + config.contactPhone;
         document.getElementById('contact-address').textContent = 'Address: ' + config.contactAddress;
         document.getElementById('footer-text').textContent = config.footerText;
-
-        // Intersection Observer for fade-in on scroll
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, { threshold: 0.1 });
-
-        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
     </script>
 </body>
 </html>
-
