@@ -39,13 +39,13 @@
             --text-color: #000000;
             --header-bg: #333333;
             --header-text: #ffffff;
-            --nav-hover: #bebebe;
-            --hero-bg: #bebebe;
+            --nav-hover: #cccccc;
+            --hero-bg: #cccccc;
             --btn-bg: #000000;
             --btn-text: #ffffff;
             --btn-hover: #a9d6e6;
-            --feature-bg: #bebebe;
-            --about-bg: #bebebe;
+            --feature-bg: #cccccc;
+            --about-bg: #cccccc;
             --contact-bg: #ffffff;
             --footer-bg: #333333;
             --footer-text: #ffffff;
@@ -157,6 +157,9 @@
         }
         .feature-card:hover {
             transform: translateY(-10px);
+        }
+        .feature-card h3 {
+            font-size: 2rem;
         }
         .about {
             padding: 6rem 2rem;
@@ -319,6 +322,17 @@
             link.addEventListener('click', () => {
                 document.querySelector('nav ul').classList.remove('open');
             });
+        });
+
+        // Add click handlers for Learn More buttons to open new blank pages
+        document.getElementById('feature1-btn').addEventListener('click', () => {
+            window.open('about:blank', '_blank');
+        });
+        document.getElementById('feature2-btn').addEventListener('click', () => {
+            window.open('about:blank', '_blank');
+        });
+        document.getElementById('feature3-btn').addEventListener('click', () => {
+            window.open('about:blank', '_blank');
         });
     </script>
 </body>
