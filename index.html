@@ -195,10 +195,14 @@
                 flex-direction: column;
                 position: absolute;
                 top: 100%;
-                left: 0;
-                width: 100%;
+                left: 50%;
+                transform: translateX(-50%);
+                width: auto;
+                min-width: 200px;
                 background-color: var(--header-bg);
-                padding: 1rem 0;
+                padding: 1rem;
+                border-radius: 4px;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.3);
             }
             nav ul.open {
                 display: flex;
