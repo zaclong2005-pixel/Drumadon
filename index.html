@@ -4,45 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Website Title</title>
-    <!-- Config Section for Easy Editing -->
-    <!--
-    TEXT PLACEHOLDERS (replace xxxxxx with your content):
-    - Page Title: xxxxxx
-    - Header Logo/Brand: xxxxxx
-    - Nav Link 1: xxxxxx
-    - Nav Link 2: xxxxxx
-    - Nav Link 3: xxxxxx
-    - Nav Link 4: xxxxxx
-    - Hero Heading: xxxxxx
-    - Hero Subtext: xxxxxx
-    - Hero Button: xxxxxx
-    - Features Heading: xxxxxx
-    - Feature 1 Title: xxxxxx
-    - Feature 1 Description: xxxxxx
-    - Feature 1 Button: xxxxxx
-    - Feature 2 Title: xxxxxx
-    - Feature 2 Description: xxxxxx
-    - Feature 2 Button: xxxxxx
-    - Feature 3 Title: xxxxxx
-    - Feature 3 Description: xxxxxx
-    - Feature 3 Button: xxxxxx
-    - Slide 1 Title: xxxxxx
-    - Slide 1 Description: xxxxxx
-    - Slide 2 Title: xxxxxx
-    - Slide 2 Description: xxxxxx
-    - Slide 3 Title: xxxxxx
-    - Slide 3 Description: xxxxxx
-    - About Heading: xxxxxx
-    - About Description: xxxxxx
-    - About Button: xxxxxx
-    - Contact Heading: Contact Us
-    - Contact Email: info@drumadon.com.au
-    - Contact Phone: 0487 854 934
-    - Contact Address: 5 Arthur rd Lesmurdie
-    - Footer Text: xxxxxx
-    - Modal Heading: xxxxxx
-    - Modal Description: xxxxxx
-    -->
     <style>
         :root {
             --bg-color: #ffffff;
@@ -53,16 +14,13 @@
             --hero-bg: #f0f0f0;
             --btn-bg: #000000;
             --btn-text: #ffffff;
-            --btn-hover: #add8e6; /* subtle blue */
+            --btn-hover: #add8e6;
             --feature-bg: #f0f0f0;
             --about-bg: #e0e0e0;
             --contact-bg: #ffffff;
             --footer-bg: #333333;
             --footer-text: #ffffff;
             --modal-bg: #ffffff;
-            --slide-bg: #d0d0d0;
-            --slider-btn-bg: #000000;
-            --slider-btn-text: #ffffff;
         }
         body {
             font-family: Arial, sans-serif;
@@ -175,17 +133,6 @@
             background-color: var(--contact-bg);
             text-align: center;
         }
-        .contact form {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        .contact input, .contact textarea {
-            width: 100%;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border: 1px solid #cccccc;
-            background-color: #f9f9f9;
-        }
         footer {
             background-color: var(--footer-bg);
             color: var(--footer-text);
@@ -222,38 +169,6 @@
         }
         .close:hover {
             color: var(--text-color);
-        }
-        .slider {
-            position: relative;
-            max-width: 100%;
-            margin: 2rem auto;
-            overflow: hidden;
-        }
-        .slides {
-            display: flex;
-            transition: transform 0.5s;
-        }
-        .slide {
-            min-width: 100%;
-            background-color: var(--slide-bg);
-            padding: 2rem;
-            text-align: center;
-        }
-        .slider-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: var(--slider-btn-bg);
-            color: var(--slider-btn-text);
-            border: none;
-            padding: 1rem;
-            cursor: pointer;
-        }
-        .prev {
-            left: 0;
-        }
-        .next {
-            right: 0;
         }
     </style>
 </head>
@@ -323,27 +238,6 @@
     </div>
 
     <script>
-        let slideIndex = 0;
-        showSlides();
-
-        function showSlides() {
-            const slides = document.getElementById('slides');
-            const totalSlides = slides.children.length;
-            slides.style.transform = `translateX(-${slideIndex * 100}%)`;
-        }
-
-        function nextSlide() {
-            const slides = document.getElementById('slides');
-            slideIndex = (slideIndex + 1) % slides.children.length;
-            showSlides();
-        }
-
-        function prevSlide() {
-            const slides = document.getElementById('slides');
-            slideIndex = (slideIndex - 1 + slides.children.length) % slides.children.length;
-            showSlides();
-        }
-
         function showModal() {
             document.getElementById('myModal').style.display = 'block';
         }
@@ -369,4 +263,3 @@
     </script>
 </body>
 </html>
-
