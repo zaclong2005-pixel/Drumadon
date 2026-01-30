@@ -1,333 +1,210 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XXXX - Website Title</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Drumadon — Drum Lessons</title>
+  <!--
+    Customization section: edit the variables below to change colors, sizes, and text.
+    - Edit CSS variables in the <style> block under "/* CUSTOMIZE */".
+    - Edit the `CONTENT` object in the <script> block to change visible text.
+  -->
+  <style>
+    /* ===== CUSTOMIZE ===== */
+    :root{
+      /* Palette */
+      --bg: #0b0b0b;        /* page background (black) */
+      --panel: #121212;     /* panel background (near-black) */
+      --muted: #9b9b9b;     /* grey text */
+      --text: #ffffff;      /* main text (white) */
+      --accent: #ff5a3c;    /* accent colour (changeable) */
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #ffffff; /* EDIT: Change to #f5f5f5 for light grey bg */
-            color: #333333;
-            line-height: 1.6;
-        }
+      /* Sizes */
+      --max-width: 1100px;  /* page content width */
+      --radius: 12px;       /* rounded corners */
+      --gap: 24px;          /* global gap */
+      --hero-size: 48px;    /* hero heading size (px) */
+      --lead-size: 18px;    /* intro/lead text size (px) */
+    }
+    /* ===== END CUSTOMIZE ===== */
 
-        /* ========== HEADER SECTION (EDIT HERE) ========== */
-        header {
-            background-color: #1a1a1a; /* EDIT: Black - change to #333333 for dark grey */
-            color: #ffffff;
-            padding: 20px 0;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
+    /* Reset & base */
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background:linear-gradient(180deg,var(--bg),#050505 60%);
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.35;
+    }
 
-        .header-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    /* Layout container */
+    .wrap{
+      max-width:var(--max-width);
+      margin:40px auto;
+      padding:32px;
+      display:flex;
+      gap:var(--gap);
+      align-items:flex-start;
+    }
 
-        .logo {
-            font-size: 28px;
-            font-weight: bold;
-            color: #ffffff;
-        }
+    header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      width:100%;
+      padding:18px 0;
+    }
 
-        /* ========== NAVIGATION SECTION (EDIT HERE) ========== */
-        nav ul {
-            list-style: none;
-            display: flex;
-            gap: 20px;
-        }
+    .brand{display:flex;align-items:center;gap:14px}
+    .logo{
+      width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#ff8a6a);
+      display:grid;place-items:center;font-weight:700;color:var(--panel);font-size:22px
+    }
+    .site-title{font-weight:700;font-size:18px}
+    .site-sub{color:var(--muted);font-size:13px}
 
-        nav a {
-            color: #cccccc; /* EDIT: Light grey - change to #ffffff for white text */
-            text-decoration: none;
-            font-size: 14px;
-            transition: color 0.3s ease;
-        }
+    main{display:flex;gap:var(--gap);width:100%}
 
-        nav a:hover {
-            color: #ffffff;
-        }
+    /* Left: hero */
+    .hero{
+      flex:1 1 600px;
+      background:rgba(255,255,255,0.02);
+      border-radius:var(--radius);
+      padding:36px;
+    }
+    .hero h1{margin:0 0 10px;font-size:var(--hero-size);letter-spacing:-0.02em}
+    .hero p.lead{margin:0 0 18px;color:var(--muted);font-size:var(--lead-size)}
+    .cta{display:inline-flex;gap:12px;align-items:center;padding:12px 18px;border-radius:10px;background:var(--accent);color:var(--panel);font-weight:600;text-decoration:none}
 
-        /* ========== HERO SECTION (EDIT HERE) ========== */
-        .hero {
-            background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
-            color: #ffffff;
-            padding: 80px 20px;
-            text-align: center;
-        }
+    /* Right: quick card */
+    .card{
+      width:320px;
+      background:var(--panel);
+      border-radius:var(--radius);
+      padding:20px;
+      color:var(--text);
+      box-shadow:0 6px 18px rgba(0,0,0,0.6);
+      flex-shrink:0;
+    }
+    .card h3{margin:0 0 6px}
+    .muted{color:var(--muted);font-size:14px}
 
-        .hero h1 {
-            font-size: 48px;
-            margin-bottom: 20px;
-            /* EDIT: Change text - Replace "XXXX Website Title" */
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
+    /* Services grid */
+    .services{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:18px}
+    .service{background:rgba(255,255,255,0.02);padding:12px;border-radius:10px}
 
-        .hero p {
-            font-size: 20px;
-            margin-bottom: 30px;
-            color: #cccccc;
-            /* EDIT: Change text - Replace "Your subtitle/tagline here" */
-        }
+    footer{margin-top:30px;color:var(--muted);font-size:13px}
 
-        /* ========== BUTTONS SECTION (EDIT HERE) ========== */
-        .button-group {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 12px 30px;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-            font-weight: 500;
-        }
-
-        /* Primary Button - Black */
-        .btn-primary {
-            background-color: #1a1a1a;
-            color: #ffffff;
-            border: 2px solid #1a1a1a;
-        }
-
-        .btn-primary:hover {
-            background-color: #ffffff;
-            color: #1a1a1a;
-        }
-
-        /* Secondary Button - Grey */
-        .btn-secondary {
-            background-color: #808080;
-            color: #ffffff;
-            border: 2px solid #808080;
-        }
-
-        .btn-secondary:hover {
-            background-color: #a9a9a9;
-            color: #ffffff;
-        }
-
-        /* Outline Button - White background, black text */
-        .btn-outline {
-            background-color: #ffffff;
-            color: #1a1a1a;
-            border: 2px solid #1a1a1a;
-        }
-
-        .btn-outline:hover {
-            background-color: #1a1a1a;
-            color: #ffffff;
-        }
-
-        /* ========== MAIN CONTENT SECTION (EDIT HERE) ========== */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .content-section {
-            padding: 60px 20px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .content-section h2 {
-            font-size: 36px;
-            margin-bottom: 20px;
-            color: #1a1a1a;
-            /* EDIT: Change section titles */
-        }
-
-        .content-section p {
-            font-size: 16px;
-            color: #555555;
-            max-width: 800px;
-            /* EDIT: Change section content */
-        }
-
-        /* ========== FEATURES/CARDS SECTION (EDIT HERE) ========== */
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            padding: 60px 20px;
-        }
-
-        .card {
-            background-color: #f9f9f9;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 30px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .card:hover {
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            background-color: #ffffff;
-        }
-
-        .card h3 {
-            font-size: 22px;
-            margin-bottom: 15px;
-            color: #1a1a1a;
-            /* EDIT: Change card titles */
-        }
-
-        .card p {
-            color: #666666;
-            font-size: 14px;
-            /* EDIT: Change card descriptions */
-        }
-
-        /* ========== FOOTER SECTION (EDIT HERE) ========== */
-        footer {
-            background-color: #2d2d2d;
-            color: #999999;
-            text-align: center;
-            padding: 40px 20px;
-            border-top: 1px solid #404040;
-        }
-
-        footer p {
-            margin-bottom: 10px;
-            /* EDIT: Change footer text */
-        }
-
-        footer a {
-            color: #cccccc;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        footer a:hover {
-            color: #ffffff;
-        }
-
-        /* ========== RESPONSIVE DESIGN (EDIT if needed) ========== */
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 32px;
-            }
-
-            nav ul {
-                gap: 10px;
-            }
-
-            nav a {
-                font-size: 12px;
-            }
-
-            .button-group {
-                flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
-            }
-        }
-    </style>
+    /* Small screens */
+    @media (max-width:900px){
+      .wrap{flex-direction:column;padding:20px}
+      .card{width:100%}
+      .services{grid-template-columns:1fr}
+    }
+  </style>
 </head>
 <body>
-    <!-- ========== HEADER (EDIT HERE) ========== -->
+  <div class="wrap" id="page">
     <header>
-        <div class="header-container">
-            <div class="logo">XXXX Logo</div>
-            <!-- EDIT: Replace "XXXX Logo" with your brand name -->
-            <nav>
-                <ul>
-                    <!-- EDIT: Add/modify navigation links below -->
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#services">Services</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </nav>
+      <div class="brand">
+        <div class="logo">D</div>
+        <div>
+          <div class="site-title" id="brandTitle">xxxx</div>
+          <div class="site-sub" id="brandTag">xxxx</div>
         </div>
+      </div>
+      <nav>
+        <a href="#contact" style="color:var(--muted);text-decoration:none;font-weight:600">Contact</a>
+      </nav>
     </header>
 
-    <!-- ========== HERO SECTION (EDIT HERE) ========== -->
-    <section class="hero">
-        <h1>XXXX Website Title</h1>
-        <!-- EDIT: Replace with your main heading -->
-        <p>Your subtitle or tagline goes here</p>
-        <!-- EDIT: Replace with your tagline -->
-        
-        <!-- EDIT: Customize these buttons or add/remove as needed -->
-        <div class="button-group">
-            <button class="btn btn-primary" onclick="location.href='#page1'">XXXX Page 1</button>
-            <button class="btn btn-secondary" onclick="location.href='#page2'">XXXX Page 2</button>
-            <button class="btn btn-outline" onclick="location.href='#page3'">XXXX Page 3</button>
+    <main>
+      <section class="hero">
+        <h1 id="heroTitle">xxxx</h1>
+        <p class="lead" id="heroLead">xxxx</p>
+        <a class="cta" href="#contact" id="ctaText">xxxx</a>
+
+        <div style="margin-top:22px;color:var(--muted)">
+          <strong style="color:var(--text)">xxxx</strong>
+          <div class="muted">xxxx</div>
         </div>
-    </section>
+      </section>
 
-    <!-- ========== MAIN CONTENT (EDIT HERE) ========== -->
-    <div class="container">
-        <section class="content-section" id="about">
-            <h2>XXXX Section Title</h2>
-            <!-- EDIT: Replace section title -->
-            <p>This is where your main content goes. Replace this text with your own description, information, or story. You can add as many paragraphs as needed.</p>
-            <!-- EDIT: Replace section content -->
-        </section>
+      <aside class="card">
+        <h3 id="cardTitle">xxxx</h3>
+        <div class="muted" id="cardSub">xxxx</div>
 
-        <!-- ========== CARDS/FEATURES SECTION (EDIT HERE) ========== -->
-        <section class="cards-grid">
-            <div class="card">
-                <h3>XXXX Feature 1</h3>
-                <!-- EDIT: Replace card title -->
-                <p>Description of feature or benefit goes here. Keep it concise and focused.</p>
-                <!-- EDIT: Replace card description -->
-            </div>
-            <div class="card">
-                <h3>XXXX Feature 2</h3>
-                <!-- EDIT: Replace card title -->
-                <p>Description of feature or benefit goes here. Keep it concise and focused.</p>
-                <!-- EDIT: Replace card description -->
-            </div>
-            <div class="card">
-                <h3>XXXX Feature 3</h3>
-                <!-- EDIT: Replace card title -->
-                <p>Description of feature or benefit goes here. Keep it concise and focused.</p>
-                <!-- EDIT: Replace card description -->
-            </div>
-        </section>
+        <div class="services" style="margin-top:12px">
+          <div class="service">
+            <strong>xxxx</strong>
+            <div class="muted">xxxx</div>
+          </div>
+          <div class="service">
+            <strong>xxxx</strong>
+            <div class="muted">xxxx</div>
+          </div>
+          <div class="service">
+            <strong>xxxx</strong>
+            <div class="muted">xxxx</div>
+          </div>
+          <div class="service">
+            <strong>xxxx</strong>
+            <div class="muted">xxxx</div>
+          </div>
+        </div>
 
-        <section class="content-section">
-            <h2>XXXX Another Section</h2>
-            <!-- EDIT: Replace section title -->
-            <p>Add more content sections as needed. This template is highly customizable - just replace the XXXX placeholders and follow the "EDIT:" comments throughout the code.</p>
-            <!-- EDIT: Replace section content -->
-        </section>
-    </div>
+        <footer style="margin-top:16px">
+          <div class="muted">xxxx</div>
+        </footer>
+      </aside>
+    </main>
+  </div>
 
-    <!-- ========== FOOTER (EDIT HERE) ========== -->
-    <footer>
-        <p>&copy; 2026 XXXX Company Name. All rights reserved.</p>
-        <!-- EDIT: Replace company name and year -->
-        <p>
-            <a href="#privacy">Privacy Policy</a> | 
-            <a href="#terms">Terms of Service</a> | 
-            <a href="#contact">Contact Us</a>
-        </p>
-        <!-- EDIT: Add/modify footer links -->
-    </footer>
+  <script>
+    // CONTENT: edit the values below to change text on the page.
+    const CONTENT = {
+      brandTitle: 'Drumadon',
+      brandTag: 'Private drum lessons — modern, fun, effective',
+      heroTitle: 'xxxx',
+      heroLead: 'xxxx',
+      ctaText: 'Book a lesson',
+      cardTitle: 'Quick info',
+      cardSub: 'xxxx',
+      service1: {title:'One-to-one', desc:'xxxx'},
+      service2: {title:'Online lessons', desc:'xxxx'},
+      service3: {title:'Beginner courses', desc:'xxxx'},
+      service4: {title:'Performance coaching', desc:'xxxx'},
+      footerNote: 'xxxx'
+    };
+
+    // Apply content to DOM
+    document.getElementById('brandTitle').textContent = CONTENT.brandTitle;
+    document.getElementById('brandTag').textContent = CONTENT.brandTag;
+    document.getElementById('heroTitle').textContent = CONTENT.heroTitle;
+    document.getElementById('heroLead').textContent = CONTENT.heroLead;
+    document.getElementById('ctaText').textContent = CONTENT.ctaText;
+    document.getElementById('cardTitle').textContent = CONTENT.cardTitle;
+    document.getElementById('cardSub').textContent = CONTENT.cardSub;
+
+    // services
+    const services = document.querySelectorAll('.service');
+    const svc = [CONTENT.service1, CONTENT.service2, CONTENT.service3, CONTENT.service4];
+    services.forEach((el,i)=>{
+      el.querySelector('strong').textContent = svc[i].title || 'xxxx';
+      el.querySelector('.muted').textContent = svc[i].desc || 'xxxx';
+    });
+    document.querySelector('.card footer .muted').textContent = CONTENT.footerNote;
+
+    // Optional: expose a small API to change CSS variables from console
+    window.Drumadon = {
+      setColor(name, value){ document.documentElement.style.setProperty(name, value); },
+      setSize(name, value){ document.documentElement.style.setProperty(name, value); },
+      setText(key, value){ if(CONTENT[key]!==undefined){ CONTENT[key]=value; location.reload(); } }
+    };
+  </script>
 </body>
 </html>
