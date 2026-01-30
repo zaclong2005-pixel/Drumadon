@@ -159,21 +159,6 @@
             background-color: var(--bg-color);
             text-align: center;
         }
-        .resources {
-            padding: 6rem 2rem;
-            background-color: var(--bg-color);
-            text-align: center;
-        }
-        .trial {
-            padding: 6rem 2rem;
-            background-color: var(--bg-color);
-            text-align: center;
-        }
-        .pricing {
-            padding: 6rem 2rem;
-            background-color: var(--bg-color);
-            text-align: center;
-        }
         footer {
             background-color: var(--footer-bg);
             color: var(--footer-text);
@@ -281,24 +266,6 @@
         <p id="contact-address"></p>
     </section>
 
-    <section id="resources" class="resources">
-        <h2>Resources</h2>
-        <p>Access free drum material here.</p>
-        <p>Download sheets, tutorials, and more.</p>
-    </section>
-
-    <section id="trial" class="trial">
-        <h2>Free Trial</h2>
-        <p>Book a free 30 minute trial lesson.</p>
-        <p>Contact us to schedule your session.</p>
-    </section>
-
-    <section id="pricing" class="pricing">
-        <h2>Pricing</h2>
-        <p>See the available lesson plans.</p>
-        <p>Choose the plan that fits your needs.</p>
-    </section>
-
     <footer>
         <p id="footer-text"></p>
     </footer>
@@ -345,15 +312,15 @@
             });
         });
 
-        // Add click handlers for Learn More buttons to scroll to sections
+        // Add click handlers for Learn More buttons to open separate pages
         document.getElementById('feature1-btn').addEventListener('click', () => {
-            document.getElementById('resources').scrollIntoView({ behavior: 'smooth' });
+            window.location.href = 'resources.html';
         });
         document.getElementById('feature2-btn').addEventListener('click', () => {
-            document.getElementById('trial').scrollIntoView({ behavior: 'smooth' });
+            window.location.href = 'trial.html';
         });
         document.getElementById('feature3-btn').addEventListener('click', () => {
-            document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' });
+            window.location.href = 'pricing.html';
         });
     </script>
 </body>
