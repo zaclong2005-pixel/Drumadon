@@ -35,7 +35,7 @@
     </script>
     <style>
         :root {
-            --bg-color: #ffffffd0;
+            --bg-color: #ff0000d0;
             --text-color: #111111;
             --header-bg: #333333;
             --header-text: #ffffff;
@@ -324,15 +324,15 @@
             });
         });
 
-        // Add click handlers for Learn More buttons to open new blank pages
+        // Add click handlers for Learn More buttons to open separate pages
         document.getElementById('feature1-btn').addEventListener('click', () => {
-            window.open('resources.html', '_blank');
+            window.location.href = 'resources.html';
         });
         document.getElementById('feature2-btn').addEventListener('click', () => {
-            window.open('trial.html', '_blank');
+            window.location.href = 'trial.html';
         });
         document.getElementById('feature3-btn').addEventListener('click', () => {
-            window.open('pricing.html', '_blank');
+            window.location.href = 'pricing.html';
         });
     </script>
 </body>
