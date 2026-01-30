@@ -9,45 +9,45 @@
             pageTitle: "Drumadon",
             brand: "Drumadon",
             nav1: "Home",
-            nav2: "Lessons",
+            nav2: "Services",
             nav3: "About",
             nav4: "Contact",
             heroHeading: "Welcome to Drumadon",
             heroSubtext: "Quality Drum Lessons in the hills",
-            featuresHeading: "Our Features",
-            feature1Title: "Free resources",
-            feature1Desc: "access free drum resources",
+            featuresHeading: "Services",
+            feature1Title: "Resources",
+            feature1Desc: "access free drum material",
             feature1Btn: "Learn More",
             feature2Title: "Free tiral",
             feature2Desc: "Book a free 30 minute trial lesson",
             feature2Btn: "Learn More",
             feature3Title: "Pricing",
-            feature3Desc: "See our available lesson plans",
+            feature3Desc: "See the available lesson plans",
             feature3Btn: "Learn More",
             aboutHeading: "About Drumadon",
-            aboutDesc: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+            aboutDesc: "drumadon is a great drum school bla bla bla i will fill this in when I can be fucked. Isaac is the best drum teacher in the world and you should totally take lessons from him because he is awesome and cool and fun and stuff. He teaches drums like no one else can. Seriously, you won't regret it.",
             contactHeading: "Contact Us",
             contactEmail: "info@drumadon.com.au",
             contactPhone: "0487 854 934",
             contactAddress: "5 Arthur rd Lesmurdie",
-            footerText: "© 2026 Your Company"
+            footerText: "© 2026 Drumadon"
         };
     </script>
     <style>
         :root {
             --bg-color: #ffffff;
             --text-color: #000000;
-            --header-bg: #333333;
+            --header-bg: linear-gradient(135deg, #333333, #555555);
             --header-text: #ffffff;
             --nav-hover: #cccccc;
-            --hero-bg: #f0f0f0;
+            --hero-bg: linear-gradient(135deg, #f0f0f0, #e0e0e0);
             --btn-bg: #000000;
             --btn-text: #ffffff;
             --btn-hover: #add8e6;
-            --feature-bg: #f0f0f0;
-            --about-bg: #e0e0e0;
+            --feature-bg: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+            --about-bg: linear-gradient(135deg, #e0e0e0, #d0d0d0);
             --contact-bg: #ffffff;
-            --footer-bg: #333333;
+            --footer-bg: linear-gradient(135deg, #333333, #555555);
             --footer-text: #ffffff;
         }
         body {
@@ -56,16 +56,18 @@
             padding: 0;
             background-color: var(--bg-color);
             color: var(--text-color);
+            perspective: 1000px;
         }
         header {
-            background-color: var(--header-bg);
+            background: var(--header-bg);
             color: var(--header-text);
             padding: 1rem;
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transform: translateZ(0);
         }
         nav {
             display: flex;
@@ -90,11 +92,12 @@
             color: var(--nav-hover);
         }
         .hero {
-            background-color: var(--hero-bg);
+            background: var(--hero-bg);
             padding: 5rem 2rem;
             text-align: center;
             margin-top: 4rem;
             animation: fadeIn 2s;
+            transform-style: preserve-3d;
         }
         @keyframes fadeIn {
             from { opacity: 0; }
@@ -104,6 +107,7 @@
             font-size: 3rem;
             margin-bottom: 1rem;
             animation: slideIn 1s;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
         @keyframes slideIn {
             from { transform: translateY(-50px); opacity: 0; }
@@ -120,20 +124,22 @@
             border: none;
             cursor: pointer;
             font-size: 1rem;
-            transition: background-color 0.3s, transform 0.3s;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+            border-radius: 8px;
+            transform-style: preserve-3d;
         }
         .btn:hover {
             background-color: var(--btn-hover);
-            transform: scale(1.05);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.3);
         }
         .features {
             padding: 4rem 2rem;
             background-color: var(--contact-bg);
         }
-        .features h2 {
-            text-align: center;
-            margin-bottom: 2rem;
+        h2 {
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
         }
         .feature-grid {
             display: grid;
@@ -141,20 +147,23 @@
             gap: 2rem;
         }
         .feature-card {
-            background-color: var(--feature-bg);
+            background: var(--feature-bg);
             padding: 2rem;
             text-align: center;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            transition: transform 0.3s;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+            transform-style: preserve-3d;
         }
         .feature-card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-15px) rotateX(5deg);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.4);
         }
         .about {
             padding: 6rem 2rem;
-            background-color: var(--about-bg);
+            background: var(--about-bg);
             text-align: center;
+            transform-style: preserve-3d;
         }
         .contact {
             padding: 4rem 2rem;
@@ -162,10 +171,11 @@
             text-align: center;
         }
         footer {
-            background-color: var(--footer-bg);
+            background: var(--footer-bg);
             color: var(--footer-text);
             text-align: center;
             padding: 2rem;
+            transform-style: preserve-3d;
         }
     </style>
 </head>
@@ -256,3 +266,4 @@
     </script>
 </body>
 </html>
+
