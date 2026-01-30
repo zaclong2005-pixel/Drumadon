@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Drumadon - Drum Lessons</title>
   <style>
-    /* Reset */
+    /* Reset some default styles */
     * {
       margin: 0;
       padding: 0;
@@ -14,106 +14,84 @@
     }
 
     body {
-      background-color: #111;
-      color: #fff;
-      line-height: 1.6;
+      background-color: #111; /* dark background */
+      color: #eee; /* light text */
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
 
     header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 2rem;
-      background-color: #000;
-      border-bottom: 2px solid #444;
+      padding: 2rem;
+      text-align: center;
+      background-color: #222;
     }
 
     header h1 {
-      font-family: 'Helvetica', sans-serif;
-      font-size: 2rem;
+      font-size: 3rem;
       letter-spacing: 2px;
+      color: #fff;
+    }
+
+    nav {
+      margin-top: 1rem;
     }
 
     nav a {
-      color: #fff;
+      color: #aaa;
       text-decoration: none;
-      margin-left: 2rem;
+      margin: 0 1rem;
       font-weight: bold;
+      transition: color 0.3s;
     }
 
     nav a:hover {
-      color: #aaa;
+      color: #fff;
     }
 
-    section {
-      padding: 4rem 2rem;
-      max-width: 1000px;
-      margin: auto;
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 3rem 1rem;
     }
 
-    h2 {
+    main h2 {
       font-size: 2rem;
       margin-bottom: 1rem;
-      position: relative;
     }
 
-    h2::after {
-      content: "";
-      display: block;
-      width: 50px;
-      height: 4px;
-      background: #fff;
-      margin-top: 0.5rem;
-      border-radius: 2px;
-    }
-
-    .section-content {
-      margin-top: 1rem;
-      font-size: 1.1rem;
-      color: #ddd;
+    main p {
+      font-size: 1.2rem;
+      color: #ccc;
+      max-width: 600px;
+      line-height: 1.6;
     }
 
     footer {
-      background-color: #000;
-      padding: 2rem;
       text-align: center;
-      border-top: 2px solid #444;
+      padding: 1rem;
+      background-color: #222;
       font-size: 0.9rem;
       color: #888;
     }
 
-    /* Drummy shapes */
-    .circle {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      border: 2px solid #555;
-      display: inline-block;
-      margin: 0 5px;
-    }
-
-    .drum-line {
-      height: 4px;
-      background: #555;
-      margin: 1rem 0;
-      border-radius: 2px;
-    }
-
-    /* Button style */
-    .btn {
-      display: inline-block;
-      padding: 0.8rem 1.5rem;
-      margin-top: 1rem;
-      color: #000;
+    button {
+      margin-top: 2rem;
+      padding: 0.8rem 2rem;
       background-color: #fff;
-      text-decoration: none;
-      font-weight: bold;
-      border-radius: 4px;
-      transition: 0.3s;
+      color: #111;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s;
     }
 
-    .btn:hover {
-      background-color: #ddd;
+    button:hover {
+      background-color: #ccc;
     }
   </style>
 </head>
@@ -122,51 +100,19 @@
     <h1>Drumadon</h1>
     <nav>
       <a href="#about">About</a>
-      <a href="#book">Book a Trial Lesson</a>
-      <a href="#pricing">Pricing</a>
-      <a href="#resources">Free Resources</a>
+      <a href="#lessons">Lessons</a>
+      <a href="#contact">Contact</a>
     </nav>
   </header>
 
-  <section id="about">
-    <h2>About Drumadon</h2>
-    <div class="section-content">
-      xxxxx<br><br>
-      <div class="circle"></div>
-      <div class="circle"></div>
-      <div class="circle"></div>
-    </div>
-  </section>
-
-  <section id="book">
-    <h2>Book a Trial Lesson</h2>
-    <div class="section-content">
-      Fill in your info to schedule: xxxxx<br><br>
-      <a href="xxxxx" class="btn">Book Now</a>
-    </div>
-  </section>
-
-  <section id="pricing">
-    <h2>Pricing</h2>
-    <div class="section-content">
-      xxxxx<br>
-      <div class="drum-line"></div>
-      xxxxx<br>
-      <div class="drum-line"></div>
-      xxxxx
-    </div>
-  </section>
-
-  <section id="resources">
-    <h2>Free Resources</h2>
-    <div class="section-content">
-      xxxxx<br><br>
-      <a href="xxxxx" class="btn">Access Resources</a>
-    </div>
-  </section>
+  <main>
+    <h2>Master the Drums with Drumadon</h2>
+    <p>Learn drums at your own pace with expert guidance. Whether you're a beginner or an advanced player, Drumadon helps you improve your skills and play with confidence.</p>
+    <button onclick="location.href='#contact'">Get Started</button>
+  </main>
 
   <footer>
-    &copy; 2026 Drumadon | Contact: xxxxx | Location: xxxxx
+    &copy; 2026 Drumadon. All rights reserved.
   </footer>
 </body>
 </html>
