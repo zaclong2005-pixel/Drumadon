@@ -3,204 +3,224 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Drumadon — xxxx</title>
+  <title>Drumadon - xxxx</title>
+  <style>
+    /* ================= CUSTOMIZE HERE =================
+       Edit the CSS variables below to change colors, sizes
+       and spacing across the page. You can also edit the
+       `window.DRUMADON_CONFIG` object in the script near the
+       bottom to change all visible text.
+       ================================================== */
+    :root{
+      /* Colors (black / grey / white palette) */
+      --bg-color: #0b0b0b;          /* page background */
+      --panel-color: #111111;       /* panels / sections */
+      --muted-panel: #1f1f1f;       /* alternate panels */
+      --text-color: #ffffff;        /* main text */
+      --muted-text: #bdbdbd;        /* secondary text */
+      --accent-color: #ffffff;      /* used for borders / emphasis */
 
-  <!--
-    CUSTOMIZATION SECTION (Edit these values to change text, sizes and colours)
-    - Change the JSON below. Sizes should include units (e.g., "18px", "2rem").
-    - Colours can be hex, rgb(), or common colour names.
-  -->
-  <script id="drumadon-custom" type="application/json">
-  {
-    "siteTitle": "Drumadon",
-    "logoText": "Drumadon",
-    "accentColor": "#e74c3c",
-    "bgColor": "#000000",
-    "textColor": "#ffffff",
-    "mutedColor": "#999999",
+      /* Sizing */
+      --nav-font-size: 16px;        /* nav button text */
+      --site-title-size: 20px;      /* site title in header */
+      --hero-title-size: 40px;      /* main hero heading */
+      --hero-subtitle-size: 18px;   /* hero subheading */
+      --body-font-size: 16px;       /* paragraph text */
 
-    "sizes": {
-      "navSize": "16px",
-      "logoSize": "20px",
-      "headingSize": "2.2rem",
-      "subheadingSize": "1rem",
-      "bodySize": "16px",
-      "buttonPadding": "12px 20px",
-      "containerMaxWidth": "980px"
-    },
+      /* Buttons */
+      --button-padding: 12px 18px;
+      --button-radius: 8px;
 
-    "nav": {
-      "home": "Home",
-      "about": "About",
-      "pricing": "Pricing",
-      "resources": "Resources",
-      "contact": "Contact",
-      "book": "Book a free trial"
-    },
-
-    "hero": {
-      "headline": "xxxx",
-      "sub": "xxxx",
-      "cta": "Book a free trial"
-    },
-
-    "about": {
-      "title": "About",
-      "text": "xxxx"
-    },
-
-    "pricing": {
-      "title": "Pricing",
-      "text": "xxxx"
-    },
-
-    "resources": {
-      "title": "Resources",
-      "text": "xxxx"
-    },
-
-    "contact": {
-      "title": "Contact",
-      "text": "xxxx",
-      "email": "xxxx@example.com"
+      /* Layout */
+      --max-width: 1100px;
+      --gutter: 20px;
     }
-  }
-  </script>
 
-  <link rel="stylesheet" href="/styles.css">
+    /* Basic reset + layout */
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;border:0}
+    body{background:var(--bg-color);color:var(--text-color);-webkit-font-smoothing:antialiased}
+
+    .container{max-width:var(--max-width);margin:0 auto;padding:30px var(--gutter)}
+
+    /* Header / Nav */
+    header{background:transparent;padding:16px 0}
+    .header-inner{display:flex;align-items:center;justify-content:space-between}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:46px;height:46px;border-radius:8px;background:linear-gradient(180deg,#222,#111);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px}
+    .site-title{font-size:var(--site-title-size);font-weight:700}
+
+    nav{display:flex;gap:10px;align-items:center}
+    .nav-link{background:transparent;color:var(--text-color);border:1px solid rgba(255,255,255,0.08);padding:8px 12px;border-radius:6px;text-decoration:none;font-size:var(--nav-font-size);transition:all .18s}
+    .nav-link:hover{background:var(--muted-panel);transform:translateY(-2px)}
+    .cta{background:var(--text-color);color:var(--bg-color);padding:var(--button-padding);border-radius:var(--button-radius);font-weight:600;border:none;cursor:pointer}
+
+    /* Hero */
+    .hero{padding:60px 0;display:flex;gap:40px;align-items:center}
+    .hero-left{flex:1}
+    .hero-right{flex:1;display:flex;justify-content:center}
+    .hero-card{background:var(--panel-color);padding:28px;border-radius:12px;max-width:420px}
+    h1{margin:0 0 12px 0;font-size:var(--hero-title-size)}
+    p.lead{margin:0 0 20px 0;font-size:var(--hero-subtitle-size);color:var(--muted-text)}
+
+    /* Sections */
+    section.panel{padding:48px 0}
+    .panel .card{background:var(--panel-color);padding:20px;border-radius:10px}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+
+    footer{padding:28px 0;color:var(--muted-text)}
+
+    /* Responsive */
+    @media (max-width:900px){
+      .hero{flex-direction:column;text-align:center}
+      .grid{grid-template-columns:1fr}
+      nav{flex-wrap:wrap;justify-content:flex-end}
+    }
+
+    @media (max-width:480px){
+      h1{font-size:28px}
+      :root{--hero-title-size:28px;--hero-subtitle-size:15px}
+    }
+  </style>
 </head>
 <body>
-  <header class="site-header">
-    <div class="container">
-      <div class="logo" id="logo">Drumadon</div>
-      <nav class="nav" aria-label="Primary">
-        <a href="#home" id="nav-home">Home</a>
-        <a href="#about" id="nav-about">About</a>
-        <a href="#pricing" id="nav-pricing">Pricing</a>
-        <a href="#resources" id="nav-resources">Resources</a>
-        <a href="#contact" id="nav-contact">Contact</a>
-        <a href="#book" class="cta" id="nav-book">Book</a>
+  <header class="container">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="logo">D</div>
+        <div>
+          <div id="site-title" class="site-title">Drumadon</div>
+          <div id="site-tag" style="font-size:13px;color:var(--muted-text)">xxxx</div>
+        </div>
+      </div>
+
+      <nav aria-label="Primary">
+        <a class="nav-link" href="#home" data-key="home">Home</a>
+        <a class="nav-link" href="#about" data-key="about">About</a>
+        <a class="nav-link" href="#pricing" data-key="pricing">Pricing</a>
+        <a class="nav-link" href="#resources" data-key="resources">Resources</a>
+        <a class="nav-link" href="#contact" data-key="contact">Contact</a>
+        <a class="nav-link cta" href="#book" data-key="trial">Book a Free Trial Lesson</a>
       </nav>
     </div>
   </header>
 
-  <main>
+  <main class="container">
     <section id="home" class="hero">
-      <div class="container">
-        <h1 id="hero-head">xxxx</h1>
-        <p id="hero-sub">xxxx</p>
-        <p>
-          <a href="#book" class="btn primary" id="hero-cta">Book a free trial</a>
-        </p>
+      <div class="hero-left">
+        <h1 id="hero-title">xxxx</h1>
+        <p id="hero-sub" class="lead">xxxx</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <a id="btn-cta" class="cta" href="#book">Book a Free Trial Lesson</a>
+          <a class="nav-link" href="#resources">Resources</a>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="hero-card">
+          <h3 style="margin:0 0 8px 0">xxxx</h3>
+          <p style="margin:0;color:var(--muted-text)">xxxx</p>
+        </div>
       </div>
     </section>
 
-    <section id="about" class="section">
-      <div class="container">
-        <h2 id="about-title">About</h2>
-        <p id="about-text">xxxx</p>
+    <section id="about" class="panel">
+      <div class="card">
+        <h2>About</h2>
+        <p>xxxx</p>
       </div>
     </section>
 
-    <section id="pricing" class="section">
-      <div class="container">
-        <h2 id="pricing-title">Pricing</h2>
-        <p id="pricing-text">xxxx</p>
+    <section id="pricing" class="panel">
+      <div class="card">
+        <h2>Pricing</h2>
+        <p>xxxx</p>
       </div>
     </section>
 
-    <section id="resources" class="section">
-      <div class="container">
-        <h2 id="resources-title">Resources</h2>
-        <p id="resources-text">xxxx</p>
+    <section id="resources" class="panel">
+      <div class="card">
+        <h2>Resources</h2>
+        <div class="grid">
+          <div class="card">xxxx</div>
+          <div class="card">xxxx</div>
+          <div class="card">xxxx</div>
+        </div>
       </div>
     </section>
 
-    <section id="contact" class="section">
-      <div class="container">
-        <h2 id="contact-title">Contact</h2>
-        <p id="contact-text">xxxx</p>
-        <p>Email: <a href="#" id="contact-email">xxxx@example.com</a></p>
+    <section id="contact" class="panel">
+      <div class="card">
+        <h2>Contact</h2>
+        <p>xxxx</p>
+        <p style="margin-top:12px"><a class="nav-link" href="mailto:hello@example.com">hello@example.com</a></p>
       </div>
     </section>
 
-    <section id="book" class="section">
-      <div class="container">
-        <h2>Book a free trial</h2>
-        <p>To book your free trial lesson, email <a href="#" id="book-email">xxxx@example.com</a> or use the contact form.</p>
+    <section id="book" class="panel">
+      <div class="card">
+        <h2>Book a Free Trial Lesson</h2>
+        <p>xxxx</p>
+        <p style="margin-top:12px"><a class="cta" href="#contact">Get in touch</a></p>
       </div>
     </section>
   </main>
 
-  <footer class="site-footer">
-    <div class="container">
-      <small>&copy; <span id="footer-year"></span> <span id="footer-site">Drumadon</span>. All rights reserved.</small>
+  <footer class="container">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <div style="color:var(--muted-text)">© <span id="footer-year"></span> Drumadon — <span id="footer-text">xxxx</span></div>
+      <div style="color:var(--muted-text)">Site — Simple single-file demo</div>
     </div>
   </footer>
 
   <script>
-    // Read customization JSON and apply styles + texts
-    (function(){
-      try {
-        const raw = document.getElementById('drumadon-custom').textContent.trim();
-        const cfg = JSON.parse(raw);
-        const root = document.documentElement.style;
+    /* ================== TEXT CONFIG ==================
+       Edit these values to change visible text across the page.
+       This keeps all text in one place for quick customization.
+       ================================================== */
+    window.DRUMADON_CONFIG = {
+      siteTitle: 'Drumadon',
+      siteTag: 'xxxx',
+      nav: {
+        home: 'Home',
+        about: 'About',
+        contact: 'Contact',
+        trial: 'Book a Free Trial Lesson',
+        pricing: 'Pricing',
+        resources: 'Resources'
+      },
+      heroTitle: 'xxxx',
+      heroSubtitle: 'xxxx',
+      heroCardTitle: 'xxxx',
+      heroCardText: 'xxxx',
+      footerText: 'xxxx'
+    };
 
-        // Apply colours
-        if(cfg.accentColor) root.setProperty('--accent', cfg.accentColor);
-        if(cfg.bgColor) root.setProperty('--bg', cfg.bgColor);
-        if(cfg.textColor) root.setProperty('--text', cfg.textColor);
-        if(cfg.mutedColor) root.setProperty('--muted', cfg.mutedColor);
+    /* Populate DOM from config */
+    (function applyConfig(cfg){
+      if(!cfg) return;
+      document.title = cfg.siteTitle + ' - ' + (cfg.heroTitle || 'xxxx');
+      document.getElementById('site-title').textContent = cfg.siteTitle || 'Drumadon';
+      document.getElementById('site-tag').textContent = cfg.siteTag || 'xxxx';
 
-        // Apply sizes
-        const s = cfg.sizes || {};
-        if(s.navSize) root.setProperty('--nav-size', s.navSize);
-        if(s.logoSize) root.setProperty('--logo-size', s.logoSize);
-        if(s.headingSize) root.setProperty('--heading-size', s.headingSize);
-        if(s.subheadingSize) root.setProperty('--subheading-size', s.subheadingSize);
-        if(s.bodySize) root.setProperty('--body-size', s.bodySize);
-        if(s.buttonPadding) root.setProperty('--button-padding', s.buttonPadding);
-        if(s.containerMaxWidth) root.setProperty('--container-max-width', s.containerMaxWidth);
+      // Nav items
+      document.querySelectorAll('[data-key]').forEach(el => {
+        const key = el.getAttribute('data-key');
+        if(key && cfg.nav && cfg.nav[key]) el.textContent = cfg.nav[key];
+      });
 
-        // Texts
-        document.title = cfg.siteTitle || document.title;
-        const byId = (id, text) => { const el = document.getElementById(id); if(el && text) el.textContent = text; };
+      // Hero
+      document.getElementById('hero-title').textContent = cfg.heroTitle || 'xxxx';
+      document.getElementById('hero-sub').textContent = cfg.heroSubtitle || 'xxxx';
+      document.querySelector('#btn-cta').textContent = cfg.nav && cfg.nav.trial ? cfg.nav.trial : (cfg.heroCTA || 'Book a Free Trial Lesson');
 
-        byId('logo', cfg.logoText || cfg.siteTitle);
-        byId('hero-head', (cfg.hero && cfg.hero.headline) || 'xxxx');
-        byId('hero-sub', (cfg.hero && cfg.hero.sub) || 'xxxx');
-        byId('hero-cta', (cfg.hero && cfg.hero.cta) || (cfg.nav && cfg.nav.book) || 'Book');
+      // Hero card
+      document.querySelector('.hero-card h3').textContent = cfg.heroCardTitle || 'xxxx';
+      document.querySelector('.hero-card p').textContent = cfg.heroCardText || 'xxxx';
 
-        if(cfg.nav){
-          byId('nav-home', cfg.nav.home);
-          byId('nav-about', cfg.nav.about);
-          byId('nav-pricing', cfg.nav.pricing);
-          byId('nav-resources', cfg.nav.resources);
-          byId('nav-contact', cfg.nav.contact);
-          byId('nav-book', cfg.nav.book);
-        }
-
-        if(cfg.about) { byId('about-title', cfg.about.title); byId('about-text', cfg.about.text); }
-        if(cfg.pricing) { byId('pricing-title', cfg.pricing.title); byId('pricing-text', cfg.pricing.text); }
-        if(cfg.resources) { byId('resources-title', cfg.resources.title); byId('resources-text', cfg.resources.text); }
-        if(cfg.contact) { byId('contact-title', cfg.contact.title); byId('contact-text', cfg.contact.text); byId('contact-email', cfg.contact.email || '#'); byId('book-email', cfg.contact.email || '#'); }
-
-        byId('footer-site', cfg.siteTitle || 'Drumadon');
-        document.getElementById('footer-year').textContent = new Date().getFullYear();
-
-        // Make sure email links are proper hrefs
-        const email = (cfg.contact && cfg.contact.email) || '';
-        if(email){
-          const e1 = document.getElementById('contact-email');
-          const e2 = document.getElementById('book-email');
-          if(e1) e1.setAttribute('href','mailto:'+email);
-          if(e2) e2.setAttribute('href','mailto:'+email);
-        }
-
-      } catch (err){
-        console.warn('Customization JSON parse error', err);
-      }
-    })();
+      // Footer
+      document.getElementById('footer-year').textContent = new Date().getFullYear();
+      document.getElementById('footer-text').textContent = cfg.footerText || 'xxxx';
+    })(window.DRUMADON_CONFIG);
   </script>
 </body>
 </html>
