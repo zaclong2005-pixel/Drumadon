@@ -1,226 +1,98 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Drumadon - xxxx</title>
-  <style>
-    /* ================= CUSTOMIZE HERE =================
-       Edit the CSS variables below to change colors, sizes
-       and spacing across the page. You can also edit the
-       `window.DRUMADON_CONFIG` object in the script near the
-       bottom to change all visible text.
-       ================================================== */
-    :root{
-      /* Colors (black / grey / white palette) */
-      --bg-color: #0b0b0b;          /* page background */
-      --panel-color: #111111;       /* panels / sections */
-      --muted-panel: #1f1f1f;       /* alternate panels */
-      --text-color: #ffffff;        /* main text */
-      --muted-text: #bdbdbd;        /* secondary text */
-      --accent-color: #ffffff;      /* used for borders / emphasis */
-
-      /* Sizing */
-      --nav-font-size: 16px;        /* nav button text */
-      --site-title-size: 20px;      /* site title in header */
-      --hero-title-size: 40px;      /* main hero heading */
-      --hero-subtitle-size: 18px;   /* hero subheading */
-      --body-font-size: 16px;       /* paragraph text */
-
-      /* Buttons */
-      --button-padding: 12px 18px;
-      --button-radius: 8px;
-
-      /* Layout */
-      --max-width: 1100px;
-      --gutter: 20px;
-    }
-
-    /* Basic reset + layout */
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;border:0}
-    body{background:var(--bg-color);color:var(--text-color);-webkit-font-smoothing:antialiased}
-
-    .container{max-width:var(--max-width);margin:0 auto;padding:30px var(--gutter)}
-
-    /* Header / Nav */
-    header{background:transparent;padding:16px 0}
-    .header-inner{display:flex;align-items:center;justify-content:space-between}
-    .brand{display:flex;align-items:center;gap:12px}
-    .logo{width:46px;height:46px;border-radius:8px;background:linear-gradient(180deg,#222,#111);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px}
-    .site-title{font-size:var(--site-title-size);font-weight:700}
-
-    nav{display:flex;gap:10px;align-items:center}
-    .nav-link{background:transparent;color:var(--text-color);border:1px solid rgba(255,255,255,0.08);padding:8px 12px;border-radius:6px;text-decoration:none;font-size:var(--nav-font-size);transition:all .18s}
-    .nav-link:hover{background:var(--muted-panel);transform:translateY(-2px)}
-    .cta{background:var(--text-color);color:var(--bg-color);padding:var(--button-padding);border-radius:var(--button-radius);font-weight:600;border:none;cursor:pointer}
-
-    /* Hero */
-    .hero{padding:60px 0;display:flex;gap:40px;align-items:center}
-    .hero-left{flex:1}
-    .hero-right{flex:1;display:flex;justify-content:center}
-    .hero-card{background:var(--panel-color);padding:28px;border-radius:12px;max-width:420px}
-    h1{margin:0 0 12px 0;font-size:var(--hero-title-size)}
-    p.lead{margin:0 0 20px 0;font-size:var(--hero-subtitle-size);color:var(--muted-text)}
-
-    /* Sections */
-    section.panel{padding:48px 0}
-    .panel .card{background:var(--panel-color);padding:20px;border-radius:10px}
-    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-
-    footer{padding:28px 0;color:var(--muted-text)}
-
-    /* Responsive */
-    @media (max-width:900px){
-      .hero{flex-direction:column;text-align:center}
-      .grid{grid-template-columns:1fr}
-      nav{flex-wrap:wrap;justify-content:flex-end}
-    }
-
-    @media (max-width:480px){
-      h1{font-size:28px}
-      :root{--hero-title-size:28px;--hero-subtitle-size:15px}
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drumadon - Home</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            color: #333;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #000;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+        nav {
+            background-color: #666;
+            padding: 10px;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            text-align: center;
+        }
+        nav li {
+            display: inline;
+            margin: 0 15px;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .hero {
+            background-color: #ccc;
+            padding: 50px;
+            text-align: center;
+        }
+        .about, .services, .contact {
+            padding: 20px;
+            margin: 20px 0;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        footer {
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+        }
+    </style>
 </head>
 <body>
-  <header class="container">
-    <div class="header-inner">
-      <div class="brand">
-        <div class="logo">D</div>
-        <div>
-          <div id="site-title" class="site-title">Drumadon</div>
-          <div id="site-tag" style="font-size:13px;color:var(--muted-text)">xxxx</div>
-        </div>
-      </div>
-
-      <nav aria-label="Primary">
-        <a class="nav-link" href="#home" data-key="home">Home</a>
-        <a class="nav-link" href="#about" data-key="about">About</a>
-        <a class="nav-link" href="#pricing" data-key="pricing">Pricing</a>
-        <a class="nav-link" href="#resources" data-key="resources">Resources</a>
-        <a class="nav-link" href="#contact" data-key="contact">Contact</a>
-        <a class="nav-link cta" href="#book" data-key="trial">Book a Free Trial Lesson</a>
-      </nav>
-    </div>
-  </header>
-
-  <main class="container">
-    <section id="home" class="hero">
-      <div class="hero-left">
-        <h1 id="hero-title">xxxx</h1>
-        <p id="hero-sub" class="lead">xxxx</p>
-        <div style="display:flex;gap:12px;flex-wrap:wrap">
-          <a id="btn-cta" class="cta" href="#book">Book a Free Trial Lesson</a>
-          <a class="nav-link" href="#resources">Resources</a>
-        </div>
-      </div>
-      <div class="hero-right">
-        <div class="hero-card">
-          <h3 style="margin:0 0 8px 0">xxxx</h3>
-          <p style="margin:0;color:var(--muted-text)">xxxx</p>
-        </div>
-      </div>
+    <header>
+        <h1>Drumadon</h1>
+        <p>Master the Drums with Expert Teaching</p>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </nav>
+    <section class="hero">
+        <h2>Welcome to Drumadon</h2>
+        <p>Learn to play drums from the best instructors in town.</p>
     </section>
-
-    <section id="about" class="panel">
-      <div class="card">
-        <h2>About</h2>
-        <p>xxxx</p>
-      </div>
+    <section class="about">
+        <h2>About Us</h2>
+        <p>Drumadon is a premier drum teaching business dedicated to helping students of all levels master the art of drumming. Our experienced instructors provide personalized lessons to build your skills and confidence.</p>
     </section>
-
-    <section id="pricing" class="panel">
-      <div class="card">
-        <h2>Pricing</h2>
-        <p>xxxx</p>
-      </div>
+    <section class="services">
+        <h2>Our Services</h2>
+        <ul>
+            <li>Beginner Drum Lessons</li>
+            <li>Advanced Technique Workshops</li>
+            <li>Group Drum Classes</li>
+            <li>Private Coaching Sessions</li>
+        </ul>
     </section>
-
-    <section id="resources" class="panel">
-      <div class="card">
-        <h2>Resources</h2>
-        <div class="grid">
-          <div class="card">xxxx</div>
-          <div class="card">xxxx</div>
-          <div class="card">xxxx</div>
-        </div>
-      </div>
+    <section class="contact">
+        <h2>Contact Us</h2>
+        <p>Get in touch to start your drumming journey!</p>
+        <p>Email: info@drumadon.com</p>
+        <p>Phone: (123) 456-7890</p>
     </section>
-
-    <section id="contact" class="panel">
-      <div class="card">
-        <h2>Contact</h2>
-        <p>xxxx</p>
-        <p style="margin-top:12px"><a class="nav-link" href="mailto:hello@example.com">hello@example.com</a></p>
-      </div>
-    </section>
-
-    <section id="book" class="panel">
-      <div class="card">
-        <h2>Book a Free Trial Lesson</h2>
-        <p>xxxx</p>
-        <p style="margin-top:12px"><a class="cta" href="#contact">Get in touch</a></p>
-      </div>
-    </section>
-  </main>
-
-  <footer class="container">
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-      <div style="color:var(--muted-text)">© <span id="footer-year"></span> Drumadon — <span id="footer-text">xxxx</span></div>
-      <div style="color:var(--muted-text)">Site — Simple single-file demo</div>
-    </div>
-  </footer>
-
-  <script>
-    /* ================== TEXT CONFIG ==================
-       Edit these values to change visible text across the page.
-       This keeps all text in one place for quick customization.
-       ================================================== */
-    window.DRUMADON_CONFIG = {
-      siteTitle: 'Drumadon',
-      siteTag: 'xxxx',
-      nav: {
-        home: 'Home',
-        about: 'About',
-        contact: 'Contact',
-        trial: 'Book a Free Trial Lesson',
-        pricing: 'Pricing',
-        resources: 'Resources'
-      },
-      heroTitle: 'xxxx',
-      heroSubtitle: 'xxxx',
-      heroCardTitle: 'xxxx',
-      heroCardText: 'xxxx',
-      footerText: 'xxxx'
-    };
-
-    /* Populate DOM from config */
-    (function applyConfig(cfg){
-      if(!cfg) return;
-      document.title = cfg.siteTitle + ' - ' + (cfg.heroTitle || 'xxxx');
-      document.getElementById('site-title').textContent = cfg.siteTitle || 'Drumadon';
-      document.getElementById('site-tag').textContent = cfg.siteTag || 'xxxx';
-
-      // Nav items
-      document.querySelectorAll('[data-key]').forEach(el => {
-        const key = el.getAttribute('data-key');
-        if(key && cfg.nav && cfg.nav[key]) el.textContent = cfg.nav[key];
-      });
-
-      // Hero
-      document.getElementById('hero-title').textContent = cfg.heroTitle || 'xxxx';
-      document.getElementById('hero-sub').textContent = cfg.heroSubtitle || 'xxxx';
-      document.querySelector('#btn-cta').textContent = cfg.nav && cfg.nav.trial ? cfg.nav.trial : (cfg.heroCTA || 'Book a Free Trial Lesson');
-
-      // Hero card
-      document.querySelector('.hero-card h3').textContent = cfg.heroCardTitle || 'xxxx';
-      document.querySelector('.hero-card p').textContent = cfg.heroCardText || 'xxxx';
-
-      // Footer
-      document.getElementById('footer-year').textContent = new Date().getFullYear();
-      document.getElementById('footer-text').textContent = cfg.footerText || 'xxxx';
-    })(window.DRUMADON_CONFIG);
-  </script>
+    <footer>
+        <p>&copy; 2026 Drumadon. All rights reserved.</p>
+    </footer>
 </body>
 </html>
