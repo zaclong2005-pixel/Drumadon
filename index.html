@@ -56,8 +56,8 @@
             padding: 0;
             background-color: var(--bg-color);
             color: var(--text-color);
-            font-size: 1.1rem;
-            font-weight: 500;
+            font-size: 1.1em;
+            font-weight: 600;
         }
         header {
             background-color: var(--header-bg);
@@ -103,7 +103,7 @@
             to { opacity: 1; }
         }
         .hero h1 {
-            font-size: 3.3rem;
+            font-size: 3rem;
             margin-bottom: 1rem;
             animation: slideIn 1s;
         }
@@ -112,7 +112,7 @@
             to { transform: translateY(0); opacity: 1; }
         }
         .hero p {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             margin-bottom: 2rem;
         }
         .btn {
@@ -136,15 +136,19 @@
         .features h2 {
             text-align: center;
             margin-bottom: 2rem;
-            font-size: 1.8rem;
         }
         .feature-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
         }
-        .feature-card h3 {
-            font-size: 1.3rem;
+        .feature-card {
+            background-color: var(--feature-bg);
+            padding: 2rem;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
         }
         .feature-card:hover {
             transform: translateY(-10px);
@@ -165,15 +169,6 @@
             text-align: center;
             padding: 2rem;
         }
-        .section {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.5s ease, transform 0.5s ease;
-        }
-        .section.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
     </style>
 </head>
 <body>
@@ -189,12 +184,12 @@
         </nav>
     </header>
 
-    <section id="home" class="hero section">
+    <section id="home" class="hero">
         <h1 id="hero-heading"></h1>
         <p id="hero-subtext"></p>
     </section>
 
-    <section id="features" class="features section">
+    <section id="features" class="features">
         <h2 id="features-heading"></h2>
         <div class="feature-grid">
             <div class="feature-card">
@@ -215,12 +210,12 @@
         </div>
     </section>
 
-    <section id="about" class="about section">
+    <section id="about" class="about">
         <h2 id="about-heading"></h2>
         <p id="about-desc"></p>
     </section>
 
-    <section id="contact" class="contact section">
+    <section id="contact" class="contact">
         <h2 id="contact-heading"></h2>
         <p id="contact-email"></p>
         <p id="contact-phone"></p>
@@ -260,28 +255,6 @@
         document.getElementById('contact-phone').textContent = 'Phone: ' + config.contactPhone;
         document.getElementById('contact-address').textContent = 'Address: ' + config.contactAddress;
         document.getElementById('footer-text').textContent = config.footerText;
-
-        // Scroll background change
-        window.addEventListener('scroll', function() {
-            const scrollTop = window.pageYOffset;
-            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-            const scrollPercent = Math.min(scrollTop / docHeight, 1);
-            const blueValue = Math.floor(scrollPercent * 255);
-            document.body.style.backgroundColor = `rgb(${255 - blueValue}, ${255 - blueValue}, 255)`;
-        });
-
-        // Scroll animations
-        const sections = document.querySelectorAll('.section');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                } else {
-                    entry.target.classList.remove('visible');
-                }
-            });
-        }, { threshold: 0.1 });
-        sections.forEach(section => observer.observe(section));
     </script>
 </body>
 </html>
