@@ -4,17 +4,77 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>xxxxxx</title>
+    <!-- Config Section for Easy Editing -->
+    <!--
+    TEXT PLACEHOLDERS (replace xxxxxx with your content):
+    - Page Title: xxxxxx
+    - Header Logo/Brand: xxxxxx
+    - Nav Link 1: xxxxxx
+    - Nav Link 2: xxxxxx
+    - Nav Link 3: xxxxxx
+    - Nav Link 4: xxxxxx
+    - Hero Heading: xxxxxx
+    - Hero Subtext: xxxxxx
+    - Hero Button: xxxxxx
+    - Features Heading: xxxxxx
+    - Feature 1 Title: xxxxxx
+    - Feature 1 Description: xxxxxx
+    - Feature 1 Button: xxxxxx
+    - Feature 2 Title: xxxxxx
+    - Feature 2 Description: xxxxxx
+    - Feature 2 Button: xxxxxx
+    - Feature 3 Title: xxxxxx
+    - Feature 3 Description: xxxxxx
+    - Feature 3 Button: xxxxxx
+    - Slide 1 Title: xxxxxx
+    - Slide 1 Description: xxxxxx
+    - Slide 2 Title: xxxxxx
+    - Slide 2 Description: xxxxxx
+    - Slide 3 Title: xxxxxx
+    - Slide 3 Description: xxxxxx
+    - About Heading: xxxxxx
+    - About Description: xxxxxx
+    - About Button: xxxxxx
+    - Contact Heading: xxxxxx
+    - Contact Name Placeholder: xxxxxx
+    - Contact Email Placeholder: xxxxxx
+    - Contact Message Placeholder: xxxxxx
+    - Contact Submit Button: xxxxxx
+    - Footer Text: xxxxxx
+    - Modal Heading: xxxxxx
+    - Modal Description: xxxxxx
+    -->
     <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --header-bg: #333333;
+            --header-text: #ffffff;
+            --nav-hover: #cccccc;
+            --hero-bg: #f0f0f0;
+            --btn-bg: #000000;
+            --btn-text: #ffffff;
+            --btn-hover: #add8e6; /* subtle blue */
+            --feature-bg: #f0f0f0;
+            --about-bg: #e0e0e0;
+            --contact-bg: #ffffff;
+            --footer-bg: #333333;
+            --footer-text: #ffffff;
+            --modal-bg: #ffffff;
+            --slide-bg: #d0d0d0;
+            --slider-btn-bg: #000000;
+            --slider-btn-text: #ffffff;
+        }
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #ffffff;
-            color: #000000;
+            background-color: var(--bg-color);
+            color: var(--text-color);
         }
         header {
-            background-color: #333333;
-            color: #ffffff;
+            background-color: var(--header-bg);
+            color: var(--header-text);
             padding: 1rem;
             position: fixed;
             width: 100%;
@@ -37,15 +97,15 @@
             margin-left: 1rem;
         }
         nav a {
-            color: #ffffff;
+            color: var(--header-text);
             text-decoration: none;
             transition: color 0.3s;
         }
         nav a:hover {
-            color: #cccccc;
+            color: var(--nav-hover);
         }
         .hero {
-            background-color: #f0f4f8;
+            background-color: var(--hero-bg);
             padding: 5rem 2rem;
             text-align: center;
             margin-top: 4rem;
@@ -69,8 +129,8 @@
             margin-bottom: 2rem;
         }
         .btn {
-            background-color: #000000;
-            color: #ffffff;
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
             padding: 1rem 2rem;
             border: none;
             cursor: pointer;
@@ -79,12 +139,12 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
         .btn:hover {
-            background-color: #666666;
+            background-color: var(--btn-hover);
             transform: scale(1.05);
         }
         .features {
             padding: 4rem 2rem;
-            background-color: #ffffff;
+            background-color: var(--contact-bg);
         }
         .features h2 {
             text-align: center;
@@ -96,7 +156,7 @@
             gap: 2rem;
         }
         .feature-card {
-            background-color: #f0f0f0;
+            background-color: var(--feature-bg);
             padding: 2rem;
             text-align: center;
             border-radius: 8px;
@@ -108,12 +168,12 @@
         }
         .about {
             padding: 4rem 2rem;
-            background-color: #e0e8f0;
+            background-color: var(--about-bg);
             text-align: center;
         }
         .contact {
             padding: 4rem 2rem;
-            background-color: #ffffff;
+            background-color: var(--contact-bg);
         }
         .contact form {
             max-width: 600px;
@@ -127,8 +187,8 @@
             background-color: #f9f9f9;
         }
         footer {
-            background-color: #333333;
-            color: #ffffff;
+            background-color: var(--footer-bg);
+            color: var(--footer-text);
             text-align: center;
             padding: 2rem;
         }
@@ -144,7 +204,7 @@
             animation: fadeIn 0.5s;
         }
         .modal-content {
-            background-color: #ffffff;
+            background-color: var(--modal-bg);
             margin: 15% auto;
             padding: 2rem;
             border: 1px solid #cccccc;
@@ -161,7 +221,7 @@
             cursor: pointer;
         }
         .close:hover {
-            color: #000000;
+            color: var(--text-color);
         }
         .slider {
             position: relative;
@@ -175,7 +235,7 @@
         }
         .slide {
             min-width: 100%;
-            background-color: #d0d8e0;
+            background-color: var(--slide-bg);
             padding: 2rem;
             text-align: center;
         }
@@ -183,8 +243,8 @@
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background-color: #000000;
-            color: #ffffff;
+            background-color: var(--slider-btn-bg);
+            color: var(--slider-btn-text);
             border: none;
             padding: 1rem;
             cursor: pointer;
