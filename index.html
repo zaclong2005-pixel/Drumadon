@@ -35,27 +35,52 @@
     </script>
     <style>
         :root {
-            --bg-color: #ffffff;
+            --bg-color: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
             --text-color: #000000;
-            --header-bg: #333333;
+            --header-bg: linear-gradient(90deg, #333333 0%, #555555 100%);
             --header-text: #ffffff;
-            --nav-hover: #cccccc;
-            --hero-bg: #f0f0f0;
+            --nav-hover: #add8e6;
+            --hero-bg: linear-gradient(135deg, #f0f0f0 0%, #e0e8f0 100%);
             --btn-bg: #000000;
             --btn-text: #ffffff;
             --btn-hover: #add8e6;
-            --feature-bg: #f0f0f0;
-            --about-bg: #e0e0e0;
-            --contact-bg: #ffffff;
-            --footer-bg: #333333;
+            --feature-bg: linear-gradient(135deg, #f0f0f0 0%, #e8f0f8 100%);
+            --about-bg: linear-gradient(135deg, #e0e0e0 0%, #d0d8e0 100%);
+            --contact-bg: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            --footer-bg: linear-gradient(90deg, #333333 0%, #555555 100%);
             --footer-text: #ffffff;
         }
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: var(--bg-color);
+            background: var(--bg-color);
             color: var(--text-color);
+            position: relative;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(173, 216, 230, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: -1;
+        }
+        body::after {
+            content: '';
+            position: absolute;
+            bottom: 20%;
+            right: -15%;
+            width: 0;
+            height: 0;
+            border-left: 200px solid transparent;
+            border-right: 200px solid transparent;
+            border-bottom: 350px solid rgba(173, 216, 230, 0.2);
+            z-index: -1;
         }
         header {
             background-color: var(--header-bg);
@@ -90,7 +115,7 @@
             color: var(--nav-hover);
         }
         .hero {
-            background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+            background-color: var(--hero-bg);
             padding: 5rem 2rem;
             text-align: center;
             margin-top: 4rem;
@@ -103,21 +128,19 @@
         .hero h1 {
             font-size: 3rem;
             margin-bottom: 1rem;
-            animation: grandEntrance 2s ease-out;
+            animation: slideIn 1s;
+            position: relative;
         }
-        @keyframes grandEntrance {
-            0% {
-                transform: translateY(-100px) scale(0.5);
-                opacity: 0;
-            }
-            50% {
-                transform: translateY(-20px) scale(1.1);
-                opacity: 0.8;
-            }
-            100% {
-                transform: translateY(0) scale(1);
-                opacity: 1;
-            }
+        .cursor {
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
         .hero p {
             font-size: 1.5rem;
@@ -139,7 +162,7 @@
         }
         .features {
             padding: 4rem 2rem;
-            background: linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%);
+            background-color: var(--contact-bg);
         }
         .features h2 {
             text-align: center;
@@ -163,20 +186,20 @@
         }
         .about {
             padding: 6rem 2rem;
-            background: linear-gradient(135deg, #e0e0e0 0%, #d0d0d0 100%);
+            background-color: var(--about-bg);
             text-align: center;
         }
         .contact {
             padding: 4rem 2rem;
-            background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+            background-color: var(--contact-bg);
             text-align: center;
         }
-        .animate-on-scroll {
+        .fade-in {
             opacity: 0;
-            transform: translateY(50px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
+            transform: translateY(30px);
+            transition: opacity 1s ease-out, transform 1s ease-out;
         }
-        .animate-on-scroll.animate {
+        .fade-in.visible {
             opacity: 1;
             transform: translateY(0);
         }
@@ -196,11 +219,11 @@
     </header>
 
     <section id="home" class="hero">
-        <h1 id="hero-heading"></h1>
+        <h1><span id="hero-heading"></span><span class="cursor">|</span></h1>
         <p id="hero-subtext"></p>
     </section>
 
-    <section id="features" class="features animate-on-scroll">
+    <section id="features" class="features fade-in">
         <h2 id="features-heading"></h2>
         <div class="feature-grid">
             <div class="feature-card">
@@ -221,12 +244,12 @@
         </div>
     </section>
 
-    <section id="about" class="about animate-on-scroll">
+    <section id="about" class="about fade-in">
         <h2 id="about-heading"></h2>
         <p id="about-desc"></p>
     </section>
 
-    <section id="contact" class="contact animate-on-scroll">
+    <section id="contact" class="contact fade-in">
         <h2 id="contact-heading"></h2>
         <p id="contact-email"></p>
         <p id="contact-phone"></p>
@@ -241,13 +264,27 @@
         // Set page title
         document.title = config.pageTitle;
 
-        // Set text content from config
+        // Typing effect for hero heading
+        const heroHeading = document.getElementById('hero-heading');
+        const text = config.heroHeading;
+        let index = 0;
+        function typeWriter() {
+            if (index < text.length) {
+                heroHeading.textContent += text.charAt(index);
+                index++;
+                setTimeout(typeWriter, 100);
+            } else {
+                document.querySelector('.cursor').style.display = 'none';
+            }
+        }
+        typeWriter();
+
+        // Set other text content from config
         document.getElementById('brand').textContent = config.brand;
         document.getElementById('nav1').textContent = config.nav1;
         document.getElementById('nav2').textContent = config.nav2;
         document.getElementById('nav3').textContent = config.nav3;
         document.getElementById('nav4').textContent = config.nav4;
-        document.getElementById('hero-heading').textContent = config.heroHeading;
         document.getElementById('hero-subtext').textContent = config.heroSubtext;
         document.getElementById('features-heading').textContent = config.featuresHeading;
         document.getElementById('feature1-title').textContent = config.feature1Title;
@@ -267,18 +304,16 @@
         document.getElementById('contact-address').textContent = 'Address: ' + config.contactAddress;
         document.getElementById('footer-text').textContent = config.footerText;
 
-        // Scroll animations
+        // Intersection Observer for fade-in on scroll
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add('animate');
+                    entry.target.classList.add('visible');
                 }
             });
         }, { threshold: 0.1 });
 
-        document.querySelectorAll('.animate-on-scroll').forEach(el => {
-            observer.observe(el);
-        });
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
     </script>
 </body>
 </html>
