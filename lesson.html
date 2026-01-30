@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drumadon - Lessons</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
+    }
+
+    body {
+      background-color: #111;
+      color: #eee;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 2rem;
+      text-align: center;
+      background-color: #222;
+    }
+
+    header h1 {
+      font-size: 3rem;
+      letter-spacing: 2px;
+      color: #fff;
+    }
+
+    nav {
+      margin-top: 1rem;
+    }
+
+    nav a {
+      color: #aaa;
+      text-decoration: none;
+      margin: 0 1rem;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #fff;
+    }
+
+    main {
+      flex: 1;
+      padding: 3rem 1rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    main h1 {
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    section h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: #fff;
+      border-bottom: 1px solid #444;
+      padding-bottom: 0.5rem;
+    }
+
+    section p {
+      font-size: 1.1rem;
+      color: #ccc;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+      margin-bottom: 1rem;
+    }
+
+    ul li {
+      padding: 0.5rem 0;
+      font-size: 1.1rem;
+      color: #ddd;
+      border-bottom: 1px solid #333;
+    }
+
+    .price {
+      font-weight: bold;
+      color: #fff;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background-color: #222;
+      font-size: 0.9rem;
+      color: #888;
+    }
+
+    button {
+      margin-top: 1rem;
+      padding: 0.8rem 2rem;
+      background-color: #fff;
+      color: #111;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Drumadon</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="lessons.html">Lessons</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Drum Lessons</h1>
+
+    <section>
+      <h2>Beginner Lessons</h2>
+      <p>Perfect for those just starting out on the drums. Learn basic rhythms, stick control, and timing fundamentals.</p>
+      <ul>
+        <li>Introduction to drums and setup</li>
+        <li>Basic drum patterns and beats</li>
+        <li>Simple songs and exercises</li>
+        <li>Reading basic drum notation</li>
+      </ul>
+      <p class="price">$30 per 45-minute session</p>
+    </section>
+
+    <section>
+      <h2>Intermediate Lessons</h2>
+      <p>Designed for drummers with some experience who want to expand their skills and play more complex rhythms.</p>
+      <ul>
+        <li>Improving coordination and independence</li>
+        <li>Advanced drum patterns and fills</li>
+        <li>Playing along with songs and recordings</li>
+        <li>Introduction to improvisation</li>
+      </ul>
+      <p class="price">$40 per 60-minute session</p>
+    </section>
+
+    <section>
+      <h2>Advanced Lessons</h2>
+      <p>For experienced drummers looking to refine their technique, speed, and creative expression.</p>
+      <ul>
+        <li>Advanced rhythms and polyrhythms</li>
+        <li>Speed and precision exercises</li>
+        <li>Soloing and improvisation techniques</li>
+        <li>Song arrangement and performance skills</li>
+      </ul>
+      <p class="price">$50 per 60-minute session</p>
+    </section>
+
+    <section>
+      <h2>Specialty Lessons</h2>
+      <p>Extra options to tailor your drumming experience:</p>
+      <ul>
+        <li>Online lessons via video call</li>
+        <li>Recording and production tips for drummers</li>
+        <li>Drum kit setup and maintenance guidance</li>
+        <li>Custom lesson plans for specific goals</li>
+      </ul>
+      <p class="price">Prices vary – contact for details</p>
+    </section>
+
+    <div style="text-align:center;">
+      <button onclick="location.href='index.html#contact'">Book a Lesson</button>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2026 Drumadon. All rights reserved.
+  </footer>
+</body>
+</html>
