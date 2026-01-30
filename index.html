@@ -3,125 +3,329 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drumadon - Drum Teaching</title>
+    <title>xxxxxx</title>
     <style>
-        :root {
-            --black: #000000;
-            --dark-grey: #333333;
-            --medium-grey: #666666;
-            --light-grey: #cccccc;
-            --white: #ffffff;
-        }
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            color: var(--black);
-            background-color: var(--white);
+            background-color: #ffffff;
+            color: #000000;
         }
         header {
-            background-color: var(--black);
-            color: var(--white);
+            background-color: #333333;
+            color: #ffffff;
             padding: 1rem;
-            text-align: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
         }
         nav {
-            margin-top: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+        nav ul li {
+            margin-left: 2rem;
         }
         nav a {
-            color: var(--white);
-            margin: 0 1rem;
+            color: #ffffff;
             text-decoration: none;
+            transition: color 0.3s;
+        }
+        nav a:hover {
+            color: #cccccc;
         }
         .hero {
-            background-color: var(--light-grey);
-            padding: 4rem 2rem;
+            background-color: #f0f0f0;
+            padding: 5rem 2rem;
             text-align: center;
+            margin-top: 4rem;
+            animation: fadeIn 2s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         .hero h1 {
             font-size: 3rem;
             margin-bottom: 1rem;
-            color: var(--black);
+            animation: slideIn 1s;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
         .hero p {
-            font-size: 1.2rem;
-            color: var(--black);
-        }
-        section {
-            padding: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .about, .services, .contact {
+            font-size: 1.5rem;
             margin-bottom: 2rem;
         }
-        .services {
-            background-color: var(--white);
-        }
-        .contact {
-            background-color: var(--light-grey);
-        }
-        footer {
-            background-color: var(--black);
-            color: var(--white);
-            text-align: center;
-            padding: 1rem;
-        }
         .btn {
-            display: inline-block;
-            background-color: var(--black);
-            color: var(--white);
-            padding: 0.5rem 1rem;
-            text-decoration: none;
-            border-radius: 5px;
-            margin-top: 1rem;
+            background-color: #000000;
+            color: #ffffff;
+            padding: 1rem 2rem;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s, transform 0.3s;
         }
         .btn:hover {
-            background-color: var(--dark-grey);
+            background-color: #666666;
+            transform: scale(1.05);
+        }
+        .features {
+            padding: 4rem 2rem;
+            background-color: #ffffff;
+        }
+        .features h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .feature-card {
+            background-color: #f0f0f0;
+            padding: 2rem;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+        .about {
+            padding: 4rem 2rem;
+            background-color: #e0e0e0;
+            text-align: center;
+        }
+        .contact {
+            padding: 4rem 2rem;
+            background-color: #ffffff;
+        }
+        .contact form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .contact input, .contact textarea {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #cccccc;
+            background-color: #f9f9f9;
+        }
+        footer {
+            background-color: #333333;
+            color: #ffffff;
+            text-align: center;
+            padding: 2rem;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.5s;
+        }
+        .modal-content {
+            background-color: #ffffff;
+            margin: 15% auto;
+            padding: 2rem;
+            border: 1px solid #cccccc;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+        }
+        .close {
+            color: #aaaaaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: #000000;
+        }
+        .slider {
+            position: relative;
+            max-width: 100%;
+            margin: 2rem auto;
+            overflow: hidden;
+        }
+        .slides {
+            display: flex;
+            transition: transform 0.5s;
+        }
+        .slide {
+            min-width: 100%;
+            background-color: #d0d0d0;
+            padding: 2rem;
+            text-align: center;
+        }
+        .slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #000000;
+            color: #ffffff;
+            border: none;
+            padding: 1rem;
+            cursor: pointer;
+        }
+        .prev {
+            left: 0;
+        }
+        .next {
+            right: 0;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Drumadon</h1>
         <nav>
-            <a href="#about">About</a>
-            <a href="#services">Services</a>
-            <a href="#contact">Contact</a>
+            <div>xxxxxx</div>
+            <ul>
+                <li><a href="#home">xxxxxx</a></li>
+                <li><a href="#features">xxxxxx</a></li>
+                <li><a href="#about">xxxxxx</a></li>
+                <li><a href="#contact">xxxxxx</a></li>
+            </ul>
         </nav>
     </header>
 
-    <section class="hero">
-        <h1>Master the Drums with Drumadon</h1>
-        <p>Professional drum lessons for all levels. Unleash your rhythm!</p>
-        <a href="#contact" class="btn">Get Started</a>
+    <section id="home" class="hero">
+        <h1>xxxxxx</h1>
+        <p>xxxxxx</p>
+        <button class="btn" onclick="showModal()">xxxxxx</button>
+    </section>
+
+    <section id="features" class="features">
+        <h2>xxxxxx</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h3>xxxxxx</h3>
+                <p>xxxxxx</p>
+                <button class="btn">xxxxxx</button>
+            </div>
+            <div class="feature-card">
+                <h3>xxxxxx</h3>
+                <p>xxxxxx</p>
+                <button class="btn">xxxxxx</button>
+            </div>
+            <div class="feature-card">
+                <h3>xxxxxx</h3>
+                <p>xxxxxx</p>
+                <button class="btn">xxxxxx</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="slider">
+        <div class="slides" id="slides">
+            <div class="slide">
+                <h3>xxxxxx</h3>
+                <p>xxxxxx</p>
+            </div>
+            <div class="slide">
+                <h3>xxxxxx</h3>
+                <p>xxxxxx</p>
+            </div>
+            <div class="slide">
+                <h3>xxxxxx</h3>
+                <p>xxxxxx</p>
+            </div>
+        </div>
+        <button class="slider-btn prev" onclick="prevSlide()">&#10094;</button>
+        <button class="slider-btn next" onclick="nextSlide()">&#10095;</button>
     </section>
 
     <section id="about" class="about">
-        <h2>About Us</h2>
-        <p>At Drumadon, we believe everyone has rhythm inside them. Our experienced instructors provide personalized drum teaching to help you achieve your musical goals. Whether you're a beginner or looking to refine your skills, we're here to guide you.</p>
-    </section>
-
-    <section id="services" class="services">
-        <h2>Our Services</h2>
-        <ul>
-            <li>One-on-One Drum Lessons</li>
-            <li>Group Classes</li>
-            <li>Online Tutorials</li>
-            <li>Performance Coaching</li>
-        </ul>
+        <h2>xxxxxx</h2>
+        <p>xxxxxx</p>
+        <button class="btn" onclick="animateElement()">xxxxxx</button>
     </section>
 
     <section id="contact" class="contact">
-        <h2>Contact Us</h2>
-        <p>Email: info@drumadon.com</p>
-        <p>Phone: (123) 456-7890</p>
-        <p>Address: 123 Drum Street, Music City, USA</p>
-        <a href="mailto:info@drumadon.com" class="btn">Send Email</a>
+        <h2>xxxxxx</h2>
+        <form>
+            <input type="text" placeholder="xxxxxx">
+            <input type="email" placeholder="xxxxxx">
+            <textarea placeholder="xxxxxx"></textarea>
+            <button class="btn" type="submit">xxxxxx</button>
+        </form>
     </section>
 
     <footer>
-        <p>&copy; 2026 Drumadon. All rights reserved.</p>
+        <p>xxxxxx</p>
     </footer>
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>xxxxxx</h2>
+            <p>xxxxxx</p>
+        </div>
+    </div>
+
+    <script>
+        let slideIndex = 0;
+        showSlides();
+
+        function showSlides() {
+            const slides = document.getElementById('slides');
+            const totalSlides = slides.children.length;
+            slides.style.transform = `translateX(-${slideIndex * 100}%)`;
+        }
+
+        function nextSlide() {
+            const slides = document.getElementById('slides');
+            slideIndex = (slideIndex + 1) % slides.children.length;
+            showSlides();
+        }
+
+        function prevSlide() {
+            const slides = document.getElementById('slides');
+            slideIndex = (slideIndex - 1 + slides.children.length) % slides.children.length;
+            showSlides();
+        }
+
+        function showModal() {
+            document.getElementById('myModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('myModal').style.display = 'none';
+        }
+
+        function animateElement() {
+            const about = document.querySelector('.about');
+            about.style.animation = 'none';
+            setTimeout(() => {
+                about.style.animation = 'fadeIn 1s';
+            }, 10);
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('myModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
 </body>
 </html>
+
