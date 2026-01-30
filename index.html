@@ -95,7 +95,6 @@
             color: var(--nav-hover);
         }
         .hero {
-            background-color: var(--hero-bg);
             padding: 5rem 2rem;
             text-align: center;
             margin-top: 4rem;
@@ -124,7 +123,6 @@
         }
         .features {
             padding: 4rem 2rem;
-            background-color: var(--contact-bg);
         }
         .features h2 {
             text-align: center;
@@ -151,12 +149,10 @@
         }
         .about {
             padding: 6rem 2rem;
-            background-color: var(--about-bg);
             text-align: center;
         }
         .contact {
             padding: 4rem 2rem;
-            background-color: var(--contact-bg);
             text-align: center;
         }
         footer {
@@ -268,7 +264,28 @@
 
     <footer>
         <p id="footer-text"></p>
+        <button id="toggle-config" style="margin-top: 1rem; background: none; border: 1px solid; color: inherit;">Toggle Color Config</button>
     </footer>
+
+    <section id="color-config" style="padding: 2rem; text-align: center;">
+        <h2>Color Configuration</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; max-width: 800px; margin: 0 auto;">
+            <div><label>Background Color: <input type="color" id="bg-color-input"></label></div>
+            <div><label>Text Color: <input type="color" id="text-color-input"></label></div>
+            <div><label>Header BG: <input type="color" id="header-bg-input"></label></div>
+            <div><label>Header Text: <input type="color" id="header-text-input"></label></div>
+            <div><label>Nav Hover: <input type="color" id="nav-hover-input"></label></div>
+            <div><label>Hero BG: <input type="color" id="hero-bg-input"></label></div>
+            <div><label>Button BG: <input type="color" id="btn-bg-input"></label></div>
+            <div><label>Button Text: <input type="color" id="btn-text-input"></label></div>
+            <div><label>Button Hover: <input type="color" id="btn-hover-input"></label></div>
+            <div><label>Feature BG: <input type="color" id="feature-bg-input"></label></div>
+            <div><label>About BG: <input type="color" id="about-bg-input"></label></div>
+            <div><label>Contact BG: <input type="color" id="contact-bg-input"></label></div>
+            <div><label>Footer BG: <input type="color" id="footer-bg-input"></label></div>
+            <div><label>Footer Text: <input type="color" id="footer-text-input"></label></div>
+        </div>
+    </section>
 
     <script>
         // Set page title
@@ -290,6 +307,72 @@
         root.setProperty('--contact-bg', config.contactBg);
         root.setProperty('--footer-bg', config.footerBg);
         root.setProperty('--footer-text', config.footerText);
+
+        // Set color input values
+        document.getElementById('bg-color-input').value = config.bgColor;
+        document.getElementById('text-color-input').value = config.textColor;
+        document.getElementById('header-bg-input').value = config.headerBg;
+        document.getElementById('header-text-input').value = config.headerText;
+        document.getElementById('nav-hover-input').value = config.navHover;
+        document.getElementById('hero-bg-input').value = config.heroBg;
+        document.getElementById('btn-bg-input').value = config.btnBg;
+        document.getElementById('btn-text-input').value = config.btnText;
+        document.getElementById('btn-hover-input').value = config.btnHover;
+        document.getElementById('feature-bg-input').value = config.featureBg;
+        document.getElementById('about-bg-input').value = config.aboutBg;
+        document.getElementById('contact-bg-input').value = config.contactBg;
+        document.getElementById('footer-bg-input').value = config.footerBg;
+        document.getElementById('footer-text-input').value = config.footerText;
+
+        // Add change listeners for color inputs
+        document.getElementById('bg-color-input').addEventListener('change', (e) => {
+            root.setProperty('--bg-color', e.target.value);
+        });
+        document.getElementById('text-color-input').addEventListener('change', (e) => {
+            root.setProperty('--text-color', e.target.value);
+        });
+        document.getElementById('header-bg-input').addEventListener('change', (e) => {
+            root.setProperty('--header-bg', e.target.value);
+        });
+        document.getElementById('header-text-input').addEventListener('change', (e) => {
+            root.setProperty('--header-text', e.target.value);
+        });
+        document.getElementById('nav-hover-input').addEventListener('change', (e) => {
+            root.setProperty('--nav-hover', e.target.value);
+        });
+        document.getElementById('hero-bg-input').addEventListener('change', (e) => {
+            root.setProperty('--hero-bg', e.target.value);
+        });
+        document.getElementById('btn-bg-input').addEventListener('change', (e) => {
+            root.setProperty('--btn-bg', e.target.value);
+        });
+        document.getElementById('btn-text-input').addEventListener('change', (e) => {
+            root.setProperty('--btn-text', e.target.value);
+        });
+        document.getElementById('btn-hover-input').addEventListener('change', (e) => {
+            root.setProperty('--btn-hover', e.target.value);
+        });
+        document.getElementById('feature-bg-input').addEventListener('change', (e) => {
+            root.setProperty('--feature-bg', e.target.value);
+        });
+        document.getElementById('about-bg-input').addEventListener('change', (e) => {
+            root.setProperty('--about-bg', e.target.value);
+        });
+        document.getElementById('contact-bg-input').addEventListener('change', (e) => {
+            root.setProperty('--contact-bg', e.target.value);
+        });
+        document.getElementById('footer-bg-input').addEventListener('change', (e) => {
+            root.setProperty('--footer-bg', e.target.value);
+        });
+        document.getElementById('footer-text-input').addEventListener('change', (e) => {
+            root.setProperty('--footer-text', e.target.value);
+        });
+
+        // Toggle color config
+        document.getElementById('toggle-config').addEventListener('click', () => {
+            const configSection = document.getElementById('color-config');
+            configSection.style.display = configSection.style.display === 'none' ? 'block' : 'none';
+        });
 
         // Set text content from config
         document.getElementById('brand').textContent = config.brand;
@@ -342,3 +425,4 @@
     </script>
 </body>
 </html>
+
