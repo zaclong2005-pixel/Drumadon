@@ -30,36 +30,38 @@
             contactEmail: "info@drumadon.com.au",
             contactPhone: "0487 854 934",
             contactAddress: "5 Arthur rd Lesmurdie",
-            footerText: "© 2026 Drumadon",
-            bgColor: "#ff0000d0",
-            textColor: "#111111",
-            headerBg: "#333333",
-            headerText: "#ffffff",
-            navHover: "#7b97ac",
-            heroBg: "#7b97ac",
-            btnBg: "#000000",
-            btnText: "#ffffff",
-            btnHover: "#8fc4da",
-            featureBg: "#7b97ac",
-            aboutBg: "#7b97ac",
-            contactBg: "#ffffffd0",
-            footerBg: "#333333",
-            footerText: "#ffffff"
+            footerText: "© 2026 Drumadon"
         };
     </script>
     <style>
+        :root {
+            --bg-color: rgb(158, 56, 56);
+            --text-color: #111111;
+            --header-bg: #333333;
+            --header-text: #ffffff;
+            --nav-hover: #7b97ac;
+            --hero-bg: #7b97ac;
+            --btn-bg: #000000;
+            --btn-text: #ffffff;
+            --btn-hover: #8fc4da;
+            --feature-bg: #7b97ac;
+            --about-bg: #7b97ac;
+            --contact-bg: #ffffffd0;
+            --footer-bg: #333333;
+            --footer-text: #ffffff;
+        }
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background-color: #ffffff;
+            color: #111111;
             font-size: 1.1em;
             font-weight: 600;
         }
         header {
-            background-color: var(--header-bg);
-            color: var(--header-text);
+            background-color: #333333;
+            color: #ffffff;
             padding: 1rem;
             position: fixed;
             width: 100%;
@@ -87,14 +89,14 @@
             margin: 0 1.5rem;
         }
         nav a {
-            color: var(--header-text);
+            color: #ffffff;
             text-decoration: none;
-            transition: color 0.3s;
         }
         nav a:hover {
-            color: var(--nav-hover);
+            color: #7b97ac;
         }
         .hero {
+            background-color: #7b97ac;
             padding: 5rem 2rem;
             text-align: center;
             margin-top: 4rem;
@@ -108,21 +110,22 @@
             margin-bottom: 2rem;
         }
         .btn {
-            background-color: var(--btn-bg);
-            color: var(--btn-text);
+            background-color: #000000;
+            color: #ffffff;
             padding: 1rem 2rem;
             border: none;
             cursor: pointer;
             font-size: 1rem;
-            transition: background-color 0.3s, transform 0.3s;
+            transition: transform 0.3s;
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
         .btn:hover {
-            background-color: var(--btn-hover);
+            background-color: #8fc4da;
             transform: scale(1.05);
         }
         .features {
             padding: 4rem 2rem;
+            background-color: #ffffffd0;
         }
         .features h2 {
             text-align: center;
@@ -134,7 +137,7 @@
             gap: 2rem;
         }
         .feature-card {
-            background-color: var(--feature-bg);
+            background-color: #7b97ac;
             padding: 2rem;
             text-align: center;
             border-radius: 8px;
@@ -149,15 +152,17 @@
         }
         .about {
             padding: 6rem 2rem;
+            background-color: #7b97ac;
             text-align: center;
         }
         .contact {
             padding: 4rem 2rem;
+            background-color: #ffffffd0;
             text-align: center;
         }
         footer {
-            background-color: var(--footer-bg);
-            color: var(--footer-text);
+            background-color: #333333;
+            color: #ffffff;
             text-align: center;
             padding: 2rem;
         }
@@ -165,7 +170,7 @@
             display: none;
             background: none;
             border: none;
-            color: var(--header-text);
+            color: #ffffff;
             font-size: 1.5rem;
             cursor: pointer;
         }
@@ -192,7 +197,7 @@
                 transform: translateX(-50%);
                 width: auto;
                 min-width: 200px;
-                background-color: var(--header-bg);
+                background-color: #333333;
                 padding: 1rem;
                 border-radius: 4px;
                 box-shadow: 0 4px 8px rgba(0,0,0,0.3);
@@ -264,115 +269,11 @@
 
     <footer>
         <p id="footer-text"></p>
-        <button id="toggle-config" style="margin-top: 1rem; background: none; border: 1px solid; color: inherit;">Toggle Color Config</button>
     </footer>
-
-    <section id="color-config" style="padding: 2rem; text-align: center;">
-        <h2>Color Configuration</h2>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; max-width: 800px; margin: 0 auto;">
-            <div><label>Background Color: <input type="color" id="bg-color-input"></label></div>
-            <div><label>Text Color: <input type="color" id="text-color-input"></label></div>
-            <div><label>Header BG: <input type="color" id="header-bg-input"></label></div>
-            <div><label>Header Text: <input type="color" id="header-text-input"></label></div>
-            <div><label>Nav Hover: <input type="color" id="nav-hover-input"></label></div>
-            <div><label>Hero BG: <input type="color" id="hero-bg-input"></label></div>
-            <div><label>Button BG: <input type="color" id="btn-bg-input"></label></div>
-            <div><label>Button Text: <input type="color" id="btn-text-input"></label></div>
-            <div><label>Button Hover: <input type="color" id="btn-hover-input"></label></div>
-            <div><label>Feature BG: <input type="color" id="feature-bg-input"></label></div>
-            <div><label>About BG: <input type="color" id="about-bg-input"></label></div>
-            <div><label>Contact BG: <input type="color" id="contact-bg-input"></label></div>
-            <div><label>Footer BG: <input type="color" id="footer-bg-input"></label></div>
-            <div><label>Footer Text: <input type="color" id="footer-text-input"></label></div>
-        </div>
-    </section>
 
     <script>
         // Set page title
         document.title = config.pageTitle;
-
-        // Set CSS variables from config
-        const root = document.documentElement.style;
-        root.setProperty('--bg-color', config.bgColor);
-        root.setProperty('--text-color', config.textColor);
-        root.setProperty('--header-bg', config.headerBg);
-        root.setProperty('--header-text', config.headerText);
-        root.setProperty('--nav-hover', config.navHover);
-        root.setProperty('--hero-bg', config.heroBg);
-        root.setProperty('--btn-bg', config.btnBg);
-        root.setProperty('--btn-text', config.btnText);
-        root.setProperty('--btn-hover', config.btnHover);
-        root.setProperty('--feature-bg', config.featureBg);
-        root.setProperty('--about-bg', config.aboutBg);
-        root.setProperty('--contact-bg', config.contactBg);
-        root.setProperty('--footer-bg', config.footerBg);
-        root.setProperty('--footer-text', config.footerText);
-
-        // Set color input values
-        document.getElementById('bg-color-input').value = config.bgColor;
-        document.getElementById('text-color-input').value = config.textColor;
-        document.getElementById('header-bg-input').value = config.headerBg;
-        document.getElementById('header-text-input').value = config.headerText;
-        document.getElementById('nav-hover-input').value = config.navHover;
-        document.getElementById('hero-bg-input').value = config.heroBg;
-        document.getElementById('btn-bg-input').value = config.btnBg;
-        document.getElementById('btn-text-input').value = config.btnText;
-        document.getElementById('btn-hover-input').value = config.btnHover;
-        document.getElementById('feature-bg-input').value = config.featureBg;
-        document.getElementById('about-bg-input').value = config.aboutBg;
-        document.getElementById('contact-bg-input').value = config.contactBg;
-        document.getElementById('footer-bg-input').value = config.footerBg;
-        document.getElementById('footer-text-input').value = config.footerText;
-
-        // Add change listeners for color inputs
-        document.getElementById('bg-color-input').addEventListener('change', (e) => {
-            root.setProperty('--bg-color', e.target.value);
-        });
-        document.getElementById('text-color-input').addEventListener('change', (e) => {
-            root.setProperty('--text-color', e.target.value);
-        });
-        document.getElementById('header-bg-input').addEventListener('change', (e) => {
-            root.setProperty('--header-bg', e.target.value);
-        });
-        document.getElementById('header-text-input').addEventListener('change', (e) => {
-            root.setProperty('--header-text', e.target.value);
-        });
-        document.getElementById('nav-hover-input').addEventListener('change', (e) => {
-            root.setProperty('--nav-hover', e.target.value);
-        });
-        document.getElementById('hero-bg-input').addEventListener('change', (e) => {
-            root.setProperty('--hero-bg', e.target.value);
-        });
-        document.getElementById('btn-bg-input').addEventListener('change', (e) => {
-            root.setProperty('--btn-bg', e.target.value);
-        });
-        document.getElementById('btn-text-input').addEventListener('change', (e) => {
-            root.setProperty('--btn-text', e.target.value);
-        });
-        document.getElementById('btn-hover-input').addEventListener('change', (e) => {
-            root.setProperty('--btn-hover', e.target.value);
-        });
-        document.getElementById('feature-bg-input').addEventListener('change', (e) => {
-            root.setProperty('--feature-bg', e.target.value);
-        });
-        document.getElementById('about-bg-input').addEventListener('change', (e) => {
-            root.setProperty('--about-bg', e.target.value);
-        });
-        document.getElementById('contact-bg-input').addEventListener('change', (e) => {
-            root.setProperty('--contact-bg', e.target.value);
-        });
-        document.getElementById('footer-bg-input').addEventListener('change', (e) => {
-            root.setProperty('--footer-bg', e.target.value);
-        });
-        document.getElementById('footer-text-input').addEventListener('change', (e) => {
-            root.setProperty('--footer-text', e.target.value);
-        });
-
-        // Toggle color config
-        document.getElementById('toggle-config').addEventListener('click', () => {
-            const configSection = document.getElementById('color-config');
-            configSection.style.display = configSection.style.display === 'none' ? 'block' : 'none';
-        });
 
         // Set text content from config
         document.getElementById('brand').textContent = config.brand;
@@ -425,4 +326,3 @@
     </script>
 </body>
 </html>
-
