@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Free Trial - Drumadon</title>
+    <meta name="description" content="Sign up for a free 30-minute drum lesson trial in Lesmurdie. No drum kit required. Book now with Drumadon.">
+    <meta name="keywords" content="free drum trial, drum lessons Lesmurdie, drum teacher Perth, music trial lesson">
+    <meta name="author" content="Drumadon">
+    <link rel="canonical" href="https://www.drumadon.com.au/trial.html">
+    <meta property="og:title" content="Free Trial - Drumadon">
+    <meta property="og:description" content="Sign up for a free 30-minute drum lesson trial in Lesmurdie. No drum kit required.">
+    <meta property="og:image" content="https://www.drumadon.com.au/logo_white.png">
+    <meta property="og:url" content="https://www.drumadon.com.au/trial.html">
+    <meta property="og:type" content="website">
     <style>
         /* CSS Variables */
         :root {
@@ -126,23 +135,25 @@
 
         nav {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
+            position: relative;
         }
-
+        #brand {
+            position: absolute;
+            left: 0;
+        }
         #brand img {
             height: 40px;
         }
-
         nav ul {
             list-style: none;
             display: flex;
-            margin: 0;
+            margin: 0 auto;
             padding: 0;
         }
-
         nav ul li {
-            margin: 0 1rem;
+            margin: 0 1.5rem;
         }
 
         nav a {
@@ -156,11 +167,14 @@
 
         #menu-btn {
             display: none;
-            background: none;
+            background: rgba(255,255,255,0.1);
             border: none;
             color: var(--header-text);
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             cursor: pointer;
+            padding: 0rem 0.6rem;
+            transform: scaleX(1.5);
+            border-radius: 4px;
         }
 
         .hero {
@@ -532,27 +546,53 @@
 
         /* Mobile styles */
         @media (max-width: 768px) {
+            header {
+                padding: 1rem;
+            }
+            nav {
+                justify-content: space-between;
+                position: relative;
+            }
+            #brand {
+                position: static;
+            }
+            #menu-btn {
+                position: absolute;
+                left: 75%;
+                transform: translateX(-50%) scaleX(1.5);
+                display: block;
+            }
             nav ul {
-                display: none;
                 flex-direction: column;
                 position: absolute;
                 top: 100%;
-                left: 0;
-                width: 100%;
-                background: #000;
+                left: 75%;
+                transform: translateX(-50%) translateY(-10px);
+                width: auto;
+                min-width: 100px;
+                background: rgba(0, 0, 0, 0.5);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
                 padding: 1rem;
+                border-radius: 12px;
+                box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+                transition: opacity 0.3s ease, transform 0.3s ease;
+                visibility: hidden;
+                opacity: 0;
+                pointer-events: none;
             }
 
             nav ul.open {
-                display: flex;
+                visibility: visible;
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+                pointer-events: auto;
             }
 
             nav ul li {
                 margin: 0.5rem 0;
-            }
-
-            #menu-btn {
-                display: block;
+                text-align: center;
             }
 
             .custom-select {
@@ -571,6 +611,26 @@
 
             .social-links a {
                 margin: 0;
+            }
+        }
+
+        /* Mobile styles */
+        @media (max-width: 768px) {
+            .success-message {
+                padding: 2rem 1rem;
+                margin: 4rem auto 1rem;
+            }
+
+            .success-message h2 {
+                font-size: 2rem;
+            }
+
+            .success-message p {
+                font-size: 1.2rem;
+            }
+
+            .success-message .checkmark {
+                font-size: 3rem;
             }
         }
 
@@ -715,7 +775,7 @@
         </div>
     </footer>
 
-    <script>
+    </style><script>
         // Configuration
         const config = {
             API_KEY: 'AIzaSyAdBK5ZNBabLYGJjj_cJSNLAzu1tbsr6Qs',

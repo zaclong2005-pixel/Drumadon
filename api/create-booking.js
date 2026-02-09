@@ -7,6 +7,10 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
     throw new Error('Email service not configured');
   }
 
+  // Format date to Australian format (DD/MM/YYYY)
+  const date = new Date(preferredDay);
+  const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+
   const sendMailgunEmail = async (emailData) => {
     const apiUrl = `https://api.eu.mailgun.net/v3/${process.env.MAILGUN_DOMAIN}/messages`;
     const response = await fetch(apiUrl, {
@@ -82,7 +86,7 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
               <div class="details-table">
                 <div class="details-row">
                   <div class="details-cell details-label">📅 Date:</div>
-                  <div class="details-cell details-value">${preferredDay}</div>
+                  <div class="details-cell details-value">${formattedDate}</div>
                 </div>
                 <div class="details-row">
                   <div class="details-cell details-label">⏰ Time:</div>
@@ -123,6 +127,10 @@ async function sendAdminEmail({ name, email, phone, age, message, selectedTime, 
     throw new Error('Email service not configured');
   }
 
+  // Format date to Australian format (DD/MM/YYYY)
+  const date = new Date(preferredDay);
+  const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+
   const sendMailgunEmail = async (emailData) => {
     const apiUrl = `https://api.eu.mailgun.net/v3/${process.env.MAILGUN_DOMAIN}/messages`;
     const response = await fetch(apiUrl, {
@@ -158,8 +166,9 @@ async function sendAdminEmail({ name, email, phone, age, message, selectedTime, 
         ${age ? `<p><strong>Age:</strong> ${age}</p>` : ''}
         
         <h3>Booking Details</h3>
-        <p><strong>Date:</strong> ${preferredDay}</p>
+        <p><strong>Date:</strong> ${formattedDate}</p>
         <p><strong>Time:</strong> ${selectedTime} (30 minutes)</p>
+        <p><strong>Message:</strong> ${message || 'No additional information'}</p>
         
 
         
