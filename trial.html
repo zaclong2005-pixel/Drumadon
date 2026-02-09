@@ -861,6 +861,9 @@
         loadAvailableDays();
 
         // Custom select functionality
+        let pendingValue = null;
+        let pendingText = null;
+
         selectSelected.addEventListener('mouseup', () => {
             customSelect.classList.toggle('open');
         });
@@ -868,14 +871,20 @@
         selectItems.addEventListener('mousedown', (e) => {
             e.preventDefault();
             if (e.target.tagName === 'DIV') {
-                selectSelected.textContent = e.target.textContent;
-                daySelect.value = e.target.dataset.value;
-                document.getElementById('preferredDay').value = e.target.dataset.value;
-                daySelect.dispatchEvent(new Event('change'));
+                pendingValue = e.target.dataset.value;
+                pendingText = e.target.textContent;
             }
         });
 
-        selectItems.addEventListener('mouseup', () => {
+        selectItems.addEventListener('mouseup', (e) => {
+            if (pendingValue) {
+                selectSelected.textContent = pendingText;
+                daySelect.value = pendingValue;
+                document.getElementById('preferredDay').value = pendingValue;
+                daySelect.dispatchEvent(new Event('change'));
+                pendingValue = null;
+                pendingText = null;
+            }
             customSelect.classList.remove('open');
         });
 
