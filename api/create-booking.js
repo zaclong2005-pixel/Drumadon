@@ -38,25 +38,25 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Your Trial Booking Confirmation</title>
         <style>
-          body { margin: 0; padding: 0; background: linear-gradient(135deg, #7b97ac 0%, #8fc4da 100%); font-family: Arial, sans-serif; }
-          .email-container { max-width: 500px; margin: 0 auto; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 15px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.1); page-break-inside: avoid; }
-          .header { background: rgba(173, 216, 230, 1.0); padding: 20px 15px; text-align: center; page-break-inside: avoid; }
+          body { margin: 0; padding: 0; background: linear-gradient(135deg, #7b97ac 0%, #8fc4da 100%); font-family: Arial, sans-serif; page-break-inside: avoid; }
+          .email-container { max-width: 500px; margin: 0 auto; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 15px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.1); page-break-inside: avoid; page-break-before: avoid; page-break-after: avoid; }
+          .header { background: rgba(173, 216, 230, 1.0); padding: 20px 15px; text-align: center; page-break-inside: avoid; page-break-before: avoid; page-break-after: avoid; }
           .header h1 { color: #ffffff; margin: 0; font-size: 24px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
           .header p { color: #ffffff; margin: 8px 0 0 0; opacity: 0.9; }
-          .content { padding: 20px 15px; position: relative; page-break-inside: avoid; }
-          .welcome-text { font-size: 16px; color: #111111; margin-bottom: 15px; }
-          .booking-card { background: rgba(123, 151, 172, 0.5); border: 1px solid rgba(123, 151, 172, 0.2); border-radius: 12px; padding: 20px; margin: 15px 0; backdrop-filter: blur(5px); page-break-inside: avoid; }
-          .booking-card h2 { margin: 0 0 15px 0; font-size: 20px; color: #000000; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
-          .details-table { width: 100%; border-collapse: separate; border-spacing: 0 6px; }
-          .details-row { display: table-row; }
-          .details-cell { display: table-cell; padding: 6px 0; vertical-align: top; }
-          .details-label { font-weight: bold; color: #7b97ac; min-width: 100px; font-size: 14px; }
-          .details-value { color: #111111; font-size: 14px; }
-          .contact-section { background: rgba(123, 151, 172, 0.5); border: 1px solid rgba(123, 151, 172, 0.2); border-radius: 8px; padding: 15px; margin: 15px 0; backdrop-filter: blur(3px); page-break-inside: avoid; }
-          .contact-section h3 { margin: 0 0 10px 0; color: #000000; font-size: 16px; }
-          .contact-section p { margin: 0; color: #111111; font-size: 14px; }
-          .footer { text-align: center; margin-top: 20px; padding-top: 15px; border-top: 2px solid rgba(123, 151, 172, 0.3); page-break-inside: avoid; }
-          .footer p { color: #666666; margin: 3px 0; font-size: 13px; }
+          .content { padding: 20px 15px; position: relative; page-break-inside: avoid; page-break-before: avoid; page-break-after: avoid; }
+          .welcome-text { font-size: 16px; color: #111111; margin-bottom: 15px; page-break-inside: avoid; }
+          .booking-card { background: rgba(123, 151, 172, 0.5); border: 1px solid rgba(123, 151, 172, 0.2); border-radius: 12px; padding: 20px; margin: 15px 0; backdrop-filter: blur(5px); page-break-inside: avoid; page-break-before: avoid; page-break-after: avoid; }
+          .booking-card h2 { margin: 0 0 15px 0; font-size: 20px; color: #000000; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); page-break-inside: avoid; }
+          .details-table { width: 100%; border-collapse: separate; border-spacing: 0 6px; page-break-inside: avoid; }
+          .details-row { display: table-row; page-break-inside: avoid; }
+          .details-cell { display: table-cell; padding: 6px 0; vertical-align: top; page-break-inside: avoid; }
+          .details-label { font-weight: bold; color: #7b97ac; min-width: 100px; font-size: 14px; page-break-inside: avoid; }
+          .details-value { color: #111111; font-size: 14px; page-break-inside: avoid; }
+          .contact-section { background: rgba(123, 151, 172, 0.5); border: 1px solid rgba(123, 151, 172, 0.2); border-radius: 8px; padding: 15px; margin: 15px 0; backdrop-filter: blur(3px); page-break-inside: avoid; page-break-before: avoid; page-break-after: avoid; }
+          .contact-section h3 { margin: 0 0 10px 0; color: #000000; font-size: 16px; page-break-inside: avoid; }
+          .contact-section p { margin: 0; color: #111111; font-size: 14px; page-break-inside: avoid; }
+          .footer { text-align: center; margin-top: 20px; padding-top: 15px; border-top: 2px solid rgba(123, 151, 172, 0.3); page-break-inside: avoid; page-break-before: avoid; page-break-after: avoid; }
+          .footer p { color: #666666; margin: 3px 0; font-size: 13px; page-break-inside: avoid; }
           .footer .highlight { color: #000000; font-weight: bold; }
           .footer .address { color: #7b97ac; font-size: 12px; }
 
@@ -105,7 +105,6 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
             <!-- Footer -->
             <div class="footer">
               <p>Looking forward to seeing you!</p>
-              <p class="highlight">Drumadon</p>
             </div>
           </div>
         </div>
@@ -161,7 +160,6 @@ async function sendAdminEmail({ name, email, phone, age, message, selectedTime, 
         <h3>Booking Details</h3>
         <p><strong>Date:</strong> ${preferredDay}</p>
         <p><strong>Time:</strong> ${selectedTime} (30 minutes)</p>
-        <p><strong>Lesson Type:</strong> 30min Trial Session</p>
         
 
         
