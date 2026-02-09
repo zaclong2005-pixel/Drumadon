@@ -336,18 +336,15 @@ Isaac’s teaching philosophy emphasises fostering personal growth in students. 
         .hero h1, .hero p {
             position: relative;
             z-index: 1;
-            animation: fadeInUp 1.5s ease-out;
         }
         .hero h1 {
             font-size: 3rem;
             margin-bottom: 1rem;
             margin-top: 3rem;
-            animation-delay: 0.5s;
         }
         .hero p {
-            font-size: 1.5rem;
+            font-size: 2rem;
             margin-bottom: 2rem;
-            animation-delay: 1s;
         }
         @keyframes fadeInUp {
             from {
@@ -442,6 +439,8 @@ Isaac’s teaching philosophy emphasises fostering personal growth in students. 
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
         }
         @media (min-width: 769px) {
             .feature-grid {
@@ -695,6 +694,7 @@ Isaac’s teaching philosophy emphasises fostering personal growth in students. 
     </section>
 
     <section id="features" class="features">
+        <h2 id="features-heading"></h2>
         <div class="feature-grid">
             <div class="feature-card">
                 <h3 id="feature1-title"></h3>
