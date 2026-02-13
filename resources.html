@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resources - Drumadon</title>
-    <meta name="description" content="Access free drum learning resources at Drumadon. Materials for all skill levels in Perth.">
+    <meta name="description" content="Unlock your drumming potential with Drumadon's comprehensive free resources! From beginner basics to advanced techniques, discover expertly crafted materials tailored for all skill levels in Perth.">
     <meta name="keywords" content="drum resources, free drum material, music learning resources Perth">
     <meta name="author" content="Drumadon">
     <link rel="canonical" href="https://www.drumadon.com.au/resources.html">
     <meta property="og:title" content="Resources - Drumadon">
-    <meta property="og:description" content="Access free drum learning resources at Drumadon. Materials for all skill levels in Perth.">
+    <meta property="og:description" content="Unlock your drumming potential with Drumadon's comprehensive free resources! From beginner basics to advanced techniques, discover expertly crafted materials tailored for all skill levels.">
     <meta property="og:image" content="https://www.drumadon.com.au/logo_white.png">
     <meta property="og:url" content="https://www.drumadon.com.au/resources.html">
     <meta property="og:type" content="website">
@@ -276,8 +276,8 @@
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 20px;
-            padding: 2rem;
-            max-width: 400px;
+            padding: 1.5rem;
+            max-width: 350px;
             width: 90%;
             text-align: center;
             box-shadow: 0 20px 60px rgba(0,0,0,0.5);
@@ -285,28 +285,29 @@
         .password-content h3 {
             margin-bottom: 1rem;
             font-size: 1.8rem;
+            color: black;
         }
         .password-content p {
             margin-bottom: 1.5rem;
             opacity: 0.8;
+            color: black;
         }
         .password-input {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            width: 80%;
+            padding: 0.75rem 0.25rem;
+            border: 2px solid black;
             border-radius: 10px;
             background: rgba(255, 255, 255, 0.1);
-            color: white;
+            color: black;
             font-size: 1.1rem;
             margin-bottom: 1rem;
             outline: none;
-            transition: border-color 0.3s;
         }
         .password-input:focus {
-            border-color: var(--btn-hover);
+            border-color: black;
         }
         .password-input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
+            color: #dfdfdf;
         }
         .password-buttons {
             display: flex;
@@ -315,7 +316,7 @@
         }
         .password-btn {
             padding: 0.75rem 1.5rem;
-            border: none;
+            border: 2px solid black;
             border-radius: 10px;
             font-size: 1rem;
             cursor: pointer;
@@ -330,14 +331,15 @@
             transform: scale(1.05);
         }
         .password-btn.cancel {
-            background: #666;
-            color: white;
+            background: var(--btn-bg);
+            color: var(--btn-text);
         }
         .password-btn.cancel:hover {
-            background: #888;
+            background: var(--btn-hover);
+            transform: scale(1.05);
         }
         .error-message {
-            color: #ff6b6b;
+            color: red;
             margin-top: 1rem;
             font-weight: bold;
             display: none;
@@ -496,7 +498,7 @@
 
     <section class="resources-section">
         <h1>Drum Resources</h1>
-        <p>Access free drum materials to enhance your learning journey.</p>
+        <p>Unlock your drumming potential with our comprehensive collection of free resources! From beginner-friendly tutorials to advanced techniques, discover expertly crafted materials designed to elevate your skills at any level.</p>
         <div class="resources-grid">
             <div class="resource-card">
                 <h3>Drumadon Manual</h3>
@@ -512,7 +514,7 @@
             <div class="resource-card locked">
                 <div class="lock-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm3 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" fill="black"/></svg></div>
                 <h3>Tutorials (students only)</h3>
-                <p>Watch video tutorials on drumming basics and techniques.</p>
+                <p>Watch video walkthroughs on drumming basics and techniques.</p>
                 <button class="btn locked-btn" onclick="openPasswordModal('tutorials')">Enter Password</button>
             </div>
         </div>
@@ -549,7 +551,7 @@
     <!-- Password Modal -->
     <div id="password-modal" class="password-modal">
         <div class="password-content">
-            <h3>🔒 Student Access Required</h3>
+            <h3>Student Access Required</h3>
             <p>Enter the password to unlock premium drum resources</p>
             <input type="password" id="password-input" class="password-input" placeholder="Enter password...">
             <div class="password-buttons">
@@ -610,7 +612,7 @@
             const errorMessage = document.getElementById('error-message');
 
             if (password === 'drumadon') {
-                unlockResource(currentResource);
+                unlockResource('all');
                 closePasswordModal();
             } else {
                 errorMessage.style.display = 'block';
@@ -635,8 +637,14 @@
                     const button = card.querySelector('.locked-btn');
                     if (button) {
                         button.className = 'btn';
-                        button.textContent = resource === 'transcriptions' ? 'Download' : 'Watch';
-                        button.onclick = () => alert(`${resource.charAt(0).toUpperCase() + resource.slice(1)} coming soon!`);
+                        const heading = card.querySelector('h3').textContent;
+                        if (heading.includes('Transcriptions')) {
+                            button.textContent = 'Access';
+                            button.onclick = () => alert('Transcriptions coming soon!');
+                        } else if (heading.includes('Tutorials')) {
+                            button.textContent = 'Access';
+                            button.onclick = () => alert('Tutorials coming soon!');
+                        }
                     }
                     
                     // Update heading to remove "(students only)"
