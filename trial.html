@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Trial - Drumadon</title>
+    <meta name="description" content="Sign up for a free 30-minute drum lesson trial in Lesmurdie. No drum kit required. Book now with Drumadon.">
+    <meta name="keywords" content="free drum trial, drum lessons Lesmurdie, drum teacher Perth, music trial lesson">
+    <meta name="author" content="Drumadon">
+    <link rel="canonical" href="https://www.drumadon.com.au/trial.html">
+    <meta property="og:title" content="Free Trial - Drumadon">
+    <meta property="og:description" content="Sign up for a free 30-minute drum lesson trial in Lesmurdie. No drum kit required.">
+    <meta property="og:image" content="https://www.drumadon.com.au/logo_white.png">
+    <meta property="og:url" content="https://www.drumadon.com.au/trial.html">
+    <meta property="og:type" content="website">
+    <style>
+        /* CSS Variables */
+        :root {
+            --bg-color: rgba(201, 201, 201, 0.63);
+            --text-color: #111111;
+            --header-bg: #000000;
+            --header-text: #ffffff;
+            --nav-hover: #7b97ac;
+            --hero-bg: #7b97ac;
+            --btn-bg: #000000;
+            --btn-text: #ffffff;
+            --btn-hover: #8fc4da;
+            --feature-bg: #7b97ac;
+            --about-bg: #7b97ac;
+            --footer-bg: #000000;
+            --footer-text: #ffffff;
+        }
+
+        /* Background Shapes and Parallax */
+        #bg-container {
+            position: fixed;
+            top: -50%;
+            left: -10%;
+            width: 120%;
+            height: 150%;
+            z-index: -1;
+            overflow: hidden;
+            will-change: transform;
+            background-color: #e0e0e0;
+        }
+        .bg-shape {
+            position: absolute;
+            background: linear-gradient(45deg, rgba(0, 191, 255, 0.2), rgba(30, 144, 255, 0.3));
+            border-radius: 50%;
+            animation: bgFloat 7s ease-in-out infinite;
+        }
+        .bg-shape:nth-child(1) {
+            width: 200px;
+            height: 200px;
+            top: 45%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        .bg-shape:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            top: 55%;
+            right: 15%;
+            animation-delay: 1s;
+        }
+        .bg-shape:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            top: 65%;
+            left: 20%;
+            animation-delay: 2s;
+        }
+        .bg-shape:nth-child(4) {
+            width: 250px;
+            height: 250px;
+            top: 75%;
+            right: 10%;
+            animation-delay: 3s;
+        }
+        .bg-shape:nth-child(5) {
+            width: 120px;
+            height: 120px;
+            top: 85%;
+            right: 30%;
+            animation-delay: 4s;
+        }
+        .bg-shape:nth-child(6) {
+            width: 90px;
+            height: 90px;
+            top: 40%;
+            left: 60%;
+            animation-delay: 5s;
+        }
+        .bg-shape:nth-child(7) {
+            width: 180px;
+            height: 180px;
+            top: 50%;
+            right: 5%;
+            animation-delay: 6s;
+        }
+        .bg-texture {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="bgTexture" patternUnits="userSpaceOnUse" width="20" height="20"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.05)"/><circle cx="10" cy="10" r="0.5" fill="rgba(0,0,0,0.02)"/></pattern></defs><rect width="100" height="100" fill="url(%23bgTexture)"/></svg>');
+            opacity: 0.3;
+        }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 191, 255, 0.5); }
+            50% { box-shadow: 0 0 30px rgba(0, 191, 255, 0.8); }
+        }
+
+        body {
+            font-family: Candara, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: transparent;
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--header-bg);
+            color: var(--header-text);
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        #brand {
+            position: absolute;
+            left: 0;
+        }
+        #brand img {
+            height: 40px;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            margin: 0 auto;
+            padding: 0;
+        }
+        nav ul li {
+            margin: 0 1.5rem;
+        }
+
+        nav a {
+            color: var(--header-text);
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            color: var(--nav-hover);
+        }
+
+        #menu-btn {
+            display: none;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: var(--header-text);
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 0rem 0.6rem;
+            transform: scaleX(1.5);
+            border-radius: 4px;
+        }
+
+        .hero {
+            padding: 2rem 1rem 1rem;
+            text-align: center;
+            margin-top: 80px;
+        }
+
+        .hero h1, .hero p {
+            color: var(--text-color);
+        }
+
+        .trial-booking-banner {
+            padding: 2rem 1rem;
+            text-align: center;
+        }
+
+        .trial-card {
+            background: rgba(123, 151, 172, 0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem;
+            text-align: center;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .day-selection-section h3,
+        .time-selection-section h3,
+        .booking-form-section h3 {
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+
+        .custom-select {
+            position: relative;
+            width: 50%;
+            margin: 0 auto 1rem;
+        }
+
+        .select-selected {
+            background: rgba(211, 211, 211, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 2px solid #000000;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #1a1a1a;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 5;
+        }
+
+        .select-selected::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            pointer-events: none;
+        }
+
+        .select-selected:hover {
+            background: rgba(211, 211, 211, 0.95);
+            border-color: #000000;
+        }
+
+        .select-selected:focus {
+            outline: none;
+            border-color: #000000;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .select-selected:after {
+            content: "▼";
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #1a1a1a;
+            font-size: 0.9rem;
+            transition: transform 0.3s ease;
+            z-index: 6;
+        }
+
+        .custom-select.open .select-selected:after {
+            transform: translateY(-50%) rotate(180deg);
+        }
+
+        .select-items {
+            background: rgba(211, 211, 211, 0.9);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 2px solid #000000;
+            border-radius: 8px;
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            z-index: 15;
+            overflow: hidden;
+            display: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            animation: dropdownSlide 0.2s ease-out;
+        }
+
+        .select-items::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes dropdownSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .custom-select.open .select-items {
+            display: block;
+        }
+
+        .select-items div {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+            user-select: none;
+            transition: all 0.2s ease;
+            color: #1a1a1a;
+            font-weight: 500;
+            position: relative;
+            z-index: 2;
+        }
+
+        .select-items div:last-child {
+            border-bottom: none;
+        }
+
+        .select-items div:hover {
+            background: #8fc4da;
+            color: #fff;
+        }
+
+        .time-selection-section {
+            display: none;
+        }
+
+        .time-bubbles {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .time-bubble {
+            padding: 0.5rem 0.5rem;
+            border: 2px solid #000000;
+            border-radius: 20px;
+            background: rgba(211, 211, 211, 0.9);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            width: 100px;
+            font-weight: bold;
+        }
+
+        .time-bubble:hover {
+            border-color: #000000;
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .time-bubble.selected {
+            background: #8fc4da;
+            color: #fff;
+            border-color: #000000;
+            outline: 1px solid #000;
+        }
+
+        .booking-form-section {
+            display: none;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.25rem;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .form-group label::after {
+            content: ' *';
+            color: #ff0000;
+            font-weight: bold;
+        }
+
+        .form-group label[for="message"]::after {
+            content: '';
+        }
+
+        .form-group input {
+            width: 50%;
+            padding: 0.5rem;
+            border: 2px solid #000000;
+            border-radius: 10px;
+            background: rgba(211, 211, 211, 0.9);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .form-group textarea {
+            width: 50%;
+            padding: 0.5rem;
+            border: 2px solid #000000;
+            border-radius: 10px;
+            background: rgba(211, 211, 211, 0.9);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            height: 100px;
+            resize: none;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #000000;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-group.error input,
+        .form-group.error textarea {
+            border-color: #ff0000;
+            box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.2);
+        }
+
+        .error-message {
+            color: #ff0000;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            text-align: center;
+            display: none;
+        }
+
+        .form-group.error .error-message {
+            display: block;
+        }
+
+        .submit-btn {
+            background: var(--btn-bg);
+            color: var(--btn-text);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.3s, background-color 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .submit-btn:hover {
+            background: var(--btn-hover);
+            transform: scale(1.05);
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, rgba(0, 191, 255, 0.1), rgba(30, 144, 255, 0.1));
+            border-radius: 20px;
+            border: 2px solid #00BFFF;
+            margin: 8rem auto 2rem;
+            max-width: 600px;
+            box-shadow: 0 8px 32px rgba(0, 191, 255, 0.2);
+        }
+
+        .success-message h2 {
+            color: #000000;
+            font-size: 3.5rem;
+            margin: 0 0 1rem 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            font-weight: bold;
+        }
+
+        .success-message p {
+            color: #000000;
+            font-size: 1.5rem;
+            margin: 1rem 0;
+            line-height: 1.6;
+        }
+
+        .success-message .checkmark {
+            font-size: 4rem;
+            color: #000000;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        footer {
+            background-color: var(--footer-bg);
+            color: var(--footer-text);
+            padding: 1rem;
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .footer-left {
+            text-align: left;
+        }
+
+        .footer-center {
+            text-align: center;
+        }
+
+        .footer-right {
+            text-align: right;
+        }
+
+        .social-links {
+            margin-top: 0;
+        }
+
+        .social-links a {
+            color: var(--footer-text);
+            text-decoration: none;
+            margin: 0 0.5rem;
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: var(--nav-hover);
+        }
+
+        /* Mobile styles */
+        @media (max-width: 768px) {
+            header {
+                padding: 1rem;
+            }
+            nav {
+                justify-content: space-between;
+                position: relative;
+            }
+            #brand {
+                position: static;
+            }
+            #menu-btn {
+                position: absolute;
+                left: 75%;
+                transform: translateX(-50%) scaleX(1.5);
+                display: block;
+            }
+            nav ul {
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 75%;
+                transform: translateX(-50%) translateY(-10px);
+                width: auto;
+                min-width: 100px;
+                background: rgba(0, 0, 0, 0.5);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                padding: 1rem;
+                border-radius: 12px;
+                box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+                transition: opacity 0.3s ease, transform 0.3s ease;
+                visibility: hidden;
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            nav ul.open {
+                visibility: visible;
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+                pointer-events: auto;
+            }
+
+            nav ul li {
+                margin: 0.5rem 0;
+                text-align: center;
+            }
+
+            .custom-select {
+                width: 70%;
+            }
+
+            footer {
+                justify-content: space-between;
+            }
+
+            .social-links {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .social-links a {
+                margin: 0;
+            }
+        }
+
+        /* Mobile styles */
+        @media (max-width: 768px) {
+            .success-message {
+                padding: 2rem 1rem;
+                margin: 4rem auto 1rem;
+            }
+
+            .success-message h2 {
+                font-size: 2rem;
+            }
+
+            .success-message p {
+                font-size: 1.2rem;
+            }
+
+            .success-message .checkmark {
+                font-size: 3rem;
+            }
+        }
+
+        /* Desktop styles */
+        @media (min-width: 769px) {
+            .footer-left img {
+                margin-left: 0;
+            }
+
+            .footer-left {
+                padding-left: 0;
+            }
+
+            .footer-right {
+                padding-right: 0;
+            }
+
+            footer {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="bg-container">
+        <div class="bg-texture"></div>
+        <div class="bg-shape"></div>
+        <div class="bg-shape"></div>
+        <div class="bg-shape"></div>
+        <div class="bg-shape"></div>
+        <div class="bg-shape"></div>
+        <div class="bg-shape"></div>
+        <div class="bg-shape"></div>
+    </div>
+    <header>
+        <nav>
+            <a id="brand" href="index.html">
+                <img src="logo_white.png" alt="Drumadon" />
+            </a>
+            <button id="menu-btn">☰</button>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="index.html#faq">FAQ</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h1>Free Trial Lesson</h1>
+        <p>Can't find a suitable day? Email us at <a href="mailto:info@drumadon.com.au">info@drumadon.com.au</a></p>
+    </section>
+
+    <section class="trial-booking-banner">
+        <div class="trial-card">
+            <div class="day-selection-section">
+                <h3>Select Date</h3>
+                <div class="custom-select">
+                    <div class="select-selected">Select a day</div>
+                    <div class="select-items"></div>
+                </div>
+                <select id="daySelect" name="preferredDay" style="display: none;">
+                    <option value="">Select a day</option>
+                </select>
+            </div>
+
+            <div class="time-selection-section" id="timeSelection">
+                <h3>Available Times</h3>
+                <div class="time-bubbles" id="timeBubbles"></div>
+            </div>
+
+            <div class="booking-form-section" id="bookingForm">
+                <h3>Your Details</h3>
+                <form name="trial-booking" method="POST" action="/api/create-booking">
+                    <input type="hidden" name="form-name" value="trial-booking">
+                    <input type="hidden" id="selectedTime" name="selectedTime">
+                    <input type="hidden" id="preferredDay" name="preferredDay">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" placeholder="Enter your name" required>
+                        <div class="error-message">This field is required.</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                        <div class="error-message">Please enter a valid email.</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input type="tel" id="phone" name="phone" placeholder="Enter your phone" required>
+                        <div class="error-message">This field is required.</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="age">Age</label>
+                        <input type="number" id="age" name="age" placeholder="Enter your age" min="6" max="100" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Additional Information</label>
+                        <textarea id="message" name="message" placeholder="Tell us about your experience and goals"></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Book My Free Trial</button>
+                </form>
+            </div>
+
+        </div>
+
+        <!-- Success Message -->
+        <div class="success-message" id="successMessage">
+            <span class="checkmark">✓</span>
+            <h2>Booking Confirmed!</h2>
+            <p><strong>Your free trial lesson has been successfully booked!</strong></p>
+            <p>You should receive a confirmation email shortly with all the details.</p>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-left">
+            <img src="wwcc.png" alt="WWCC Logo" style="height: 80px; width: auto;">
+        </div>
+        <div class="footer-center">
+            <p>© 2026 Drumadon</p>
+        </div>
+        <div class="footer-right">
+            <div class="social-links">
+                <a href="https://www.instagram.com/drumadon" target="_blank" aria-label="Follow us on Instagram">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" fill="currentColor"/>
+                    </svg>
+                </a>
+                <a href="https://www.facebook.com/drumadon" target="_blank" aria-label="Follow us on Facebook">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" fill="currentColor"/>
+                    </svg>
+                </a>
+                <a href="https://www.tiktok.com/@drumadon" target="_blank" aria-label="Follow us on TikTok">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" fill="currentColor"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    </style><script>
+        // Configuration
+        const config = {
+            API_KEY: 'AIzaSyAdBK5ZNBabLYGJjj_cJSNLAzu1tbsr6Qs',
+            CALENDAR_ID: '59683306c8ffeebac6749efbf825530d86a8a4997d0c7b44aa9be6f1ab5fd9d9@group.calendar.google.com',
+            advanceBookingHours: 48,
+            timeSlotDuration: 30,
+            defaultWorkingHours: { start: '09:00', end: '17:00' },
+            daysOfWeek: ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+        };
+
+        // Elements
+        const daySelect = document.getElementById('daySelect');
+        const timeSelection = document.getElementById('timeSelection');
+        const bookingForm = document.getElementById('bookingForm');
+        const customSelect = document.querySelector('.custom-select');
+        const selectSelected = document.querySelector('.select-selected');
+        const selectItems = document.querySelector('.select-items');
+        let freeEvents = [];
+        let bookedEvents = [];
+
+        // Load available days
+        async function loadAvailableDays() {
+            const now = new Date();
+            const nineDaysLater = new Date(now);
+            nineDaysLater.setDate(now.getDate() + 9);
+            const url = `https://www.googleapis.com/calendar/v3/calendars/${config.CALENDAR_ID}/events?key=${config.API_KEY}&timeMin=${now.toISOString()}&timeMax=${nineDaysLater.toISOString()}&singleEvents=true&orderBy=startTime&maxResults=250`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                // Separate free events and booked events
+                freeEvents = data.items.filter(event => event.summary === 'Free');
+                bookedEvents = data.items.filter(event => event.summary && event.summary.startsWith('Drumadon Trial -'));
+
+                const availableDates = new Set();
+                const fortyEightHoursLater = new Date(now.getTime() + config.advanceBookingHours * 60 * 60 * 1000);
+
+                freeEvents.forEach(event => {
+                    let hasAvailableTime = false;
+                    let start, end;
+                    if (event.start.dateTime) {
+                        start = new Date(event.start.dateTime);
+                        end = new Date(event.end.dateTime);
+                    } else {
+                        const dateStr = event.start.date;
+                        start = new Date(`${dateStr}T${config.defaultWorkingHours.start}:00`);
+                        end = new Date(`${dateStr}T${config.defaultWorkingHours.end}:00`);
+                    }
+
+                    // Get booked events for this date
+                    const eventDate = new Date(event.start.date || event.start.dateTime);
+                    const dateStr = eventDate.toISOString().split('T')[0];
+                    const filteredBookedEvents = bookedEvents.filter(event => {
+                        const bookedDate = new Date(event.start.dateTime).toISOString().split('T')[0];
+                        return bookedDate === dateStr;
+                    });
+
+                    for (let time = new Date(start); time < end; time.setMinutes(time.getMinutes() + config.timeSlotDuration)) {
+                        if (time > fortyEightHoursLater) {
+                            // Check if this time slot overlaps with any booked events
+                            const slotEnd = new Date(time.getTime() + config.timeSlotDuration * 60 * 1000);
+                            let isAvailable = true;
+
+                            for (const bookedEvent of filteredBookedEvents) {
+                                const bookedStart = new Date(bookedEvent.start.dateTime);
+                                const bookedEnd = new Date(bookedEvent.end.dateTime);
+
+                                // Check for overlap: slot overlaps with booking if slot starts before booking ends AND slot ends after booking starts
+                                if (time < bookedEnd && slotEnd > bookedStart) {
+                                    isAvailable = false;
+                                    break;
+                                }
+                            }
+
+                            if (isAvailable) {
+                                hasAvailableTime = true;
+                                break; // Found at least one available slot, no need to check more
+                            }
+                        }
+                    }
+
+                    if (hasAvailableTime) {
+                        const eventDate = new Date(event.start.date || event.start.dateTime);
+                        const dateStr = eventDate.toISOString().split('T')[0];
+                        availableDates.add(dateStr);
+                    }
+                });
+
+                const sortedDates = Array.from(availableDates).sort((a, b) => new Date(a) - new Date(b));
+
+                daySelect.innerHTML = '<option value="">Select a day</option>';
+                selectItems.innerHTML = '';
+                selectSelected.textContent = 'Select a day';
+
+                sortedDates.forEach(dateStr => {
+                    const date = new Date(dateStr);
+                    const dayName = config.daysOfWeek[date.getDay()];
+                    const displayText = `${dayName.charAt(0).toUpperCase() + dayName.slice(1)} - ${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+
+                    const option = document.createElement('option');
+                    option.value = dateStr;
+                    option.textContent = displayText;
+                    daySelect.appendChild(option);
+
+                    const itemDiv = document.createElement('div');
+                    itemDiv.textContent = displayText;
+                    itemDiv.dataset.value = dateStr;
+                    selectItems.appendChild(itemDiv);
+                });
+
+                // Check if no available days
+                if (sortedDates.length === 0) {
+                    // Hide entire trial card and show no availability message
+                    document.querySelector('.trial-card').style.display = 'none';
+                    
+                    // Create and show no availability message
+                    const noAvailabilityMessage = document.createElement('div');
+                    noAvailabilityMessage.style.textAlign = 'center';
+                    noAvailabilityMessage.style.padding = '2rem';
+                    noAvailabilityMessage.style.background = 'rgba(123, 151, 172, 0.5)';
+                    noAvailabilityMessage.style.backdropFilter = 'blur(10px)';
+                    noAvailabilityMessage.style.border = '1px solid rgba(255, 255, 255, 0.2)';
+                    noAvailabilityMessage.style.borderRadius = '12px';
+                    noAvailabilityMessage.style.margin = '2rem auto';
+                    noAvailabilityMessage.style.maxWidth = '600px';
+                    noAvailabilityMessage.style.boxShadow = '0 8px 32px rgba(0,0,0,0.3)';
+                    noAvailabilityMessage.innerHTML = `
+                        <h3 style="color: #000000; margin-bottom: 1rem; font-size: 2rem; font-weight: bold;">No Available Trial Dates</h3>
+                        <p style="color: #000000; font-size: 1.1rem; margin-bottom: 1rem;">There are no dates available right now but don't worry, email us at info@drumadon.com.au and we can arrange a day/time for you.</p>
+                    `;
+                    
+                    // Insert the message into the trial-booking-banner section
+                    const bannerSection = document.querySelector('.trial-booking-banner');
+                    bannerSection.appendChild(noAvailabilityMessage);
+                }
+            } catch (error) {
+                console.error('Error fetching events:', error);
+            }
+        }
+
+        // Initialize
+        loadAvailableDays();
+
+        // Custom select functionality
+        let pendingValue = null;
+        let pendingText = null;
+
+        selectSelected.addEventListener('mouseup', () => {
+            customSelect.classList.toggle('open');
+        });
+
+        selectItems.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            if (e.target.tagName === 'DIV') {
+                pendingValue = e.target.dataset.value;
+                pendingText = e.target.textContent;
+            }
+        });
+
+        selectItems.addEventListener('mouseup', (e) => {
+            if (pendingValue) {
+                selectSelected.textContent = pendingText;
+                daySelect.value = pendingValue;
+                document.getElementById('preferredDay').value = pendingValue;
+                daySelect.dispatchEvent(new Event('change'));
+                pendingValue = null;
+                pendingText = null;
+            }
+            customSelect.classList.remove('open');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('mouseup', (e) => {
+            if (!customSelect.contains(e.target)) {
+                customSelect.classList.remove('open');
+            }
+        });
+
+        // Handle day selection
+        daySelect.addEventListener('change', () => {
+            if (daySelect.value) {
+                const selectedDate = daySelect.value;
+                const availableTimes = [];
+
+                const filteredFreeEvents = freeEvents.filter(event => {
+                    const eventDate = new Date(event.start.date || event.start.dateTime).toISOString().split('T')[0];
+                    return eventDate === selectedDate;
+                });
+
+                // Get booked events for this date
+                const filteredBookedEvents = bookedEvents.filter(event => {
+                    const eventDate = new Date(event.start.dateTime).toISOString().split('T')[0];
+                    return eventDate === selectedDate;
+                });
+
+                console.log(`Found ${filteredFreeEvents.length} free events and ${filteredBookedEvents.length} booked events for ${selectedDate}`);
+
+                filteredFreeEvents.forEach(event => {
+                    let start, end;
+                    if (event.start.dateTime) {
+                        start = new Date(event.start.dateTime);
+                        end = new Date(event.end.dateTime);
+                    } else {
+                        const dateStr = event.start.date;
+                        start = new Date(`${dateStr}T${config.defaultWorkingHours.start}:00`);
+                        end = new Date(`${dateStr}T${config.defaultWorkingHours.end}:00`);
+                    }
+
+                    const now = new Date();
+                    const fortyEightHoursLater = new Date(now.getTime() + config.advanceBookingHours * 60 * 60 * 1000);
+
+                    for (let time = new Date(start); time < end; time.setMinutes(time.getMinutes() + config.timeSlotDuration)) {
+                        if (time > fortyEightHoursLater) {
+                            // Check if this time slot overlaps with any booked events
+                            const slotEnd = new Date(time.getTime() + config.timeSlotDuration * 60 * 1000);
+                            let isAvailable = true;
+
+                            for (const bookedEvent of filteredBookedEvents) {
+                                const bookedStart = new Date(bookedEvent.start.dateTime);
+                                const bookedEnd = new Date(bookedEvent.end.dateTime);
+
+                                // Check for overlap: slot overlaps with booking if slot starts before booking ends AND slot ends after booking starts
+                                if (time < bookedEnd && slotEnd > bookedStart) {
+                                    isAvailable = false;
+                                    break;
+                                }
+                            }
+
+                            if (isAvailable) {
+                                availableTimes.push(time.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }));
+                            } else {
+                                console.log(`Time slot ${time.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })} overlaps with existing booking`);
+                            }
+                        }
+                    }
+                });
+
+                const uniqueTimes = [...new Set(availableTimes)].sort((a, b) => {
+                    const timeA = new Date(`1970-01-01 ${a}`).getTime();
+                    const timeB = new Date(`1970-01-01 ${b}`).getTime();
+                    return timeA - timeB;
+                });
+
+                const timeBubbles = document.getElementById('timeBubbles');
+                timeBubbles.innerHTML = '';
+
+                uniqueTimes.forEach(time => {
+                    const bubble = document.createElement('div');
+                    bubble.className = 'time-bubble';
+                    bubble.textContent = time;
+                    bubble.dataset.time = time;
+                    bubble.addEventListener('click', () => {
+                        document.querySelectorAll('.time-bubble').forEach(b => b.classList.remove('selected'));
+                        bubble.classList.add('selected');
+                        document.getElementById('selectedTime').value = time;
+                        console.log('Time selected:', time, 'Setting selectedTime to:', document.getElementById('selectedTime').value);
+                        bookingForm.style.display = 'block';
+                    });
+                    timeBubbles.appendChild(bubble);
+                });
+
+                timeSelection.style.display = 'block';
+                bookingForm.style.display = 'none';
+            } else {
+                timeSelection.style.display = 'none';
+                bookingForm.style.display = 'none';
+            }
+        });
+
+        // Mobile menu
+        document.getElementById('menu-btn').addEventListener('click', () => {
+            document.querySelector('nav ul').classList.toggle('open');
+        });
+
+        // Parallax effect for background
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const bgContainer = document.getElementById('bg-container');
+            bgContainer.style.transform = `translate3d(0, ${scrolled * 0.1}px, 0)`;
+        }, { passive: true });
+
+        // Handle form submission
+        document.querySelector('form[name="trial-booking"]').addEventListener('submit', async (e) => {
+            // Always prevent default form submission
+            e.preventDefault();
+
+            // Clear previous errors
+            document.querySelectorAll('.form-group').forEach(group => {
+                group.classList.remove('error');
+            });
+
+            // Validate required fields before submission
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const age = document.getElementById('age').value.trim();
+            const selectedTime = document.getElementById('selectedTime').value;
+            const preferredDay = document.getElementById('preferredDay').value;
+
+            let hasErrors = false;
+
+            // Check required fields
+            if (!name) {
+                document.querySelector('label[for="name"]').parentElement.classList.add('error');
+                hasErrors = true;
+            }
+            if (!email) {
+                document.querySelector('label[for="email"]').parentElement.classList.add('error');
+                hasErrors = true;
+            }
+            if (!phone) {
+                document.querySelector('label[for="phone"]').parentElement.classList.add('error');
+                hasErrors = true;
+            }
+            if (!age) {
+                document.querySelector('label[for="age"]').parentElement.classList.add('error');
+                hasErrors = true;
+            }
+            if (!preferredDay) {
+                alert('Please select a date.');
+                document.getElementById('daySelect').focus();
+                return;
+            }
+            if (!selectedTime) {
+                alert('Please select a time.');
+                return;
+            }
+
+            // Basic email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (email && !emailRegex.test(email)) {
+                document.querySelector('label[for="email"]').parentElement.classList.add('error');
+                hasErrors = true;
+            }
+
+            if (hasErrors) {
+                return;
+            }
+
+            e.preventDefault();
+
+            const form = e.target;
+            const submitBtn = form.querySelector('.submit-btn');
+            const originalText = submitBtn.textContent;
+
+            // Disable button and show loading
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+
+            try {
+                const formData = new FormData(form);
+                console.log('Form data being sent:');
+                for (let [key, value] of formData.entries()) {
+                    console.log(`${key}: ${value}`);
+                }
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: new URLSearchParams(formData),
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // Success - hide all main content and show success message
+                    document.querySelector('.hero').style.display = 'none';
+                    document.querySelector('.trial-card').style.display = 'none';
+                    document.getElementById('successMessage').style.display = 'block';
+                    submitBtn.textContent = 'Booking Confirmed!';
+                    submitBtn.style.backgroundColor = '#4CAF50';
+                    submitBtn.disabled = true;
+                } else {
+                    // Error - show detailed error info
+                    const errorDetails = result.details || result.error || 'Unknown error';
+                    const errorType = result.type || 'Error';
+                    const errorCode = result.code || '';
+                    const debugInfo = result.debug || {};
+
+                    submitBtn.textContent = 'Error - Check Details';
+                    submitBtn.style.backgroundColor = '#f44336';
+
+                    console.error('=== EMAIL SUBMISSION ERROR ===');
+                    console.error('Submission error:', result);
+                    console.error('Response status:', response.status);
+                    console.error('Error details:', {
+                        details: errorDetails,
+                        type: errorType,
+                        code: errorCode,
+                        debug: debugInfo,
+                        fullResponse: result
+                    });
+
+                    // Show generic error message
+                    alert('Sorry, there was an error processing your booking. Please try again or contact us directly.');
+                }
+            } catch (error) {
+                submitBtn.textContent = 'Error - Check Console';
+                submitBtn.style.backgroundColor = '#f44336';
+                console.error('Network error:', error);
+                console.error('Error details:', {
+                    message: error.message,
+                    stack: error.stack,
+                    name: error.name
+                });
+                alert('Sorry, there was a connection error. Please check your internet connection and try again.');
+            }
+
+            // Re-enable button after 3 seconds
+            setTimeout(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+                submitBtn.style.backgroundColor = '';
+            }, 3000);
+        });
+
+        // Clear error messages when user starts typing
+        document.getElementById('name').addEventListener('input', () => {
+            document.getElementById('name').parentElement.classList.remove('error');
+        });
+        document.getElementById('email').addEventListener('input', () => {
+            document.getElementById('email').parentElement.classList.remove('error');
+        });
+        document.getElementById('phone').addEventListener('input', () => {
+            document.getElementById('phone').parentElement.classList.remove('error');
+        });
+        document.getElementById('age').addEventListener('input', () => {
+            document.getElementById('age').parentElement.classList.remove('error');
+        });
+    </script>
+</body>
+</html>

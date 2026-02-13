@@ -1,0 +1,13 @@
+{
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "destination": "https://www.drumadon.com.au/$1",
+      "statusCode": 301,
+      "condition": {
+        "host": "drumadon.com.au"
+      }
+    }
+  ],
+  "trailingSlash": false
+}

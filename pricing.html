@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing - Drumadon</title>
+    <meta name="description" content="Explore drum lesson pricing at Drumadon. Flexible plans for all ages and skill levels in Perth.">
+    <meta name="keywords" content="drum lesson pricing, music lesson plans, drum teacher rates Perth">
+    <meta name="author" content="Drumadon">
+    <link rel="canonical" href="https://www.drumadon.com.au/pricing.html">
+    <meta property="og:title" content="Pricing - Drumadon">
+    <meta property="og:description" content="Explore drum lesson pricing at Drumadon. Flexible plans for all ages and skill levels in Perth.">
+    <meta property="og:image" content="https://www.drumadon.com.au/logo_white.png">
+    <meta property="og:url" content="https://www.drumadon.com.au/pricing.html">
+    <meta property="og:type" content="website">
+    <style>
+        :root {
+            --bg-color: rgba(201, 201, 201, 0.63);
+            --text-color: #111111;
+            --header-bg: #000000;
+            --header-text: #ffffff;
+            --nav-hover: #7b97ac;
+            --hero-bg: #7b97ac;
+            --btn-bg: #000000;
+            --btn-text: #ffffff;
+            --btn-hover: #8fc4da;
+            --feature-bg: #7b97ac;
+            --about-bg: #7b97ac;
+            --footer-bg: #000000;
+            --footer-text: #ffffff;
+        }
+        html, body {
+            height: 100%;
+        }
+        body {
+            font-family: Candara, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: transparent;
+            color: var(--text-color);
+            font-size: 1.1em;
+            font-weight: 600;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Background Shapes and Parallax */
+        #bg-container {
+            position: fixed;
+            top: -50%;
+            left: -10%;
+            width: 120%;
+            height: 150%;
+            z-index: -1;
+            overflow: hidden;
+            will-change: transform;
+            background-color: #e0e0e0;
+        }
+        .bg-shape {
+            position: absolute;
+            background: linear-gradient(45deg, rgba(0, 191, 255, 0.2), rgba(30, 144, 255, 0.3));
+            border-radius: 50%;
+            animation: bgFloat 7s ease-in-out infinite;
+        }
+        .bg-shape:nth-child(1) {
+            width: 200px;
+            height: 200px;
+            top: 45%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        .bg-shape:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            top: 55%;
+            right: 15%;
+            animation-delay: 1s;
+        }
+        .bg-shape:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            top: 65%;
+            left: 20%;
+            animation-delay: 2s;
+        }
+        .bg-shape:nth-child(4) {
+            width: 250px;
+            height: 250px;
+            top: 75%;
+            right: 10%;
+            animation-delay: 3s;
+        }
+        .bg-shape:nth-child(6) {
+            width: 120px;
+            height: 120px;
+            top: 85%;
+            right: 30%;
+            animation-delay: 4s;
+        }
+        .bg-shape:nth-child(7) {
+            width: 90px;
+            height: 90px;
+            top: 40%;
+            left: 60%;
+            animation-delay: 5s;
+        }
+        .bg-shape:nth-child(8) {
+            width: 180px;
+            height: 180px;
+            top: 50%;
+            right: 5%;
+            animation-delay: 6s;
+        }
+        .bg-texture {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="bgTexture" patternUnits="userSpaceOnUse" width="20" height="20"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.05)"/><circle cx="10" cy="10" r="0.5" fill="rgba(0,0,0,0.02)"/></pattern></defs><rect width="100" height="100" fill="url(%23bgTexture)"/></svg>');
+            opacity: 0.3;
+        }
+        @keyframes bgFloat {
+            0%, 100% {
+                transform: translate(0px, 0px) rotate(0deg);
+            }
+            25% {
+                transform: translate(15px, -30px) rotate(90deg);
+            }
+            50% {
+                transform: translate(-15px, -60px) rotate(180deg);
+            }
+            75% {
+                transform: translate(10px, -30px) rotate(270deg);
+            }
+        }
+
+        header {
+            background-color: var(--header-bg);
+            color: var(--header-text);
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        #brand {
+            position: absolute;
+            left: 0;
+        }
+        #brand img {
+            height: 40px;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            margin: 0 auto;
+            padding: 0;
+        }
+        nav ul li {
+            margin: 0 1.5rem;
+        }
+        nav a {
+            color: var(--header-text);
+            text-decoration: none;
+        }
+        nav a:hover {
+            color: var(--nav-hover);
+        }
+        .pricing-section {
+            padding: 2rem 2rem 2rem;
+            text-align: center;
+        }
+        .pricing-section h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .pricing-section p {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .pricing-card {
+            background: rgba(123, 151, 172, 0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .pricing-card .price {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        .pricing-card ul {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 2rem;
+        }
+        .pricing-card li {
+            margin-bottom: 0.25rem;
+        }
+        .btn {
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.3s, background-color 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        .btn:hover {
+            background-color: var(--btn-hover);
+            transform: scale(1.05);
+        }
+        footer {
+            background-color: var(--footer-bg);
+            color: var(--footer-text);
+            padding: 1.5rem;
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+        .footer-left {
+            text-align: left;
+        }
+        .footer-center {
+            text-align: center;
+        }
+        .footer-right {
+            text-align: right;
+        }
+        .social-links {
+            margin-top: 0;
+        }
+        .social-links a {
+            color: var(--footer-text);
+            text-decoration: none;
+            margin: 0 0.5rem;
+            transition: color 0.3s;
+        }
+        .social-links a:hover {
+            color: var(--nav-hover);
+        }
+
+        /* Desktop Styles */
+        @media (min-width: 769px) {
+            .footer-left img {
+                margin-left: 2rem;
+            }
+            .footer-left {
+                padding-left: 1rem;
+            }
+            .footer-right {
+                padding-right: 1rem;
+            }
+            footer {
+                justify-content: center;
+            }
+        }
+
+        #menu-btn {
+            display: none;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: var(--header-text);
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 0rem 0.6rem;
+            transform: scaleX(1.5);
+            border-radius: 4px;
+        }
+        @media (max-width: 768px) {
+            header {
+                padding: 1rem;
+            }
+            nav {
+                justify-content: space-between;
+                position: relative;
+            }
+            #brand {
+                position: static;
+            }
+            #menu-btn {
+                position: absolute;
+                left: 75%;
+                transform: translateX(-50%) scaleX(1.5);
+            }
+            nav ul {
+                margin: 0;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 75%;
+                transform: translateX(-50%) translateY(-10px);
+                width: auto;
+                min-width: 100px;
+                background: rgba(0, 0, 0, 0.5);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                padding: 1rem;
+                border-radius: 12px;
+                box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+                transition: opacity 0.3s ease, transform 0.3s ease;
+                visibility: hidden;
+                opacity: 0;
+                pointer-events: none;
+            }
+            nav ul.open {
+                visibility: visible;
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+                pointer-events: auto;
+            }
+            nav ul li {
+                margin: 0.5rem 0;
+                text-align: center;
+            }
+            #menu-btn {
+                display: block;
+            }
+            footer {
+                justify-content: space-around;
+            }
+            .social-links {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .social-links a {
+                margin: 0;
+            }
+            #brand img {
+                height: 30px;
+            }
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+            .pricing-section {
+                padding-top: 4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="bg-container">
+        <div class="bg-texture"></div>
+        <div class="bg-shape"></div>
+        <div class="bg-shape"></div>
+        <div class="bg-shape"></div>
+        <div class="bg-shape"></div>
+        <div class="bg-shape"></div>
+        <div class="bg-shape"></div>
+        <div class="bg-shape"></div>
+    </div>
+    <header>
+        <nav>
+            <a id="brand" href="index.html" aria-label="Drumadon home">
+                <img src="logo_white.png" alt="Drumadon" />
+            </a>
+            <button id="menu-btn">≡</button>
+            <ul>
+                <li><a href="index.html#home">Home</a></li>
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="index.html#faq">FAQ</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="pricing-section">
+        <h1>Lesson Plans</h1>
+        <p>*Please provide at least 24 hours’ notice to receive a make-up lesson.</p>
+        <p>Lessons missed without notice are charged as usual.</p>
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <div class="price">FREE</div>
+                <ul>
+                    <li>A 30-minute trial with Isaac</li>
+                    <li></li>
+                    <li>Perfect for EVERYBODY!</li>
+                    <li>see if drumming is for you</li>
+                </ul>
+                <button class="btn" onclick="window.location.href='trial.html'">Book Trial</button>
+            </div>
+            <div class="pricing-card">
+                <div class="price">$40/session</div>
+                <ul>
+                    <li>30-minute lessons.</li>
+                    <li></li>
+                    <li>Great for beginners and </li>
+                    <li>students aged 6 and above</li>
+                </ul>
+                <button class="btn" onclick="alert('Beginner package inquiry coming soon!')">Get Started</button>
+            </div>
+            <div class="pricing-card">
+                <div class="price">$55/session</div>
+                <ul>
+                    <li>45-minute lessons.</li>
+                    <li></li>
+                    <li>For mature students seeking </li>
+                    <li>more in depth learning</li>
+                </ul>
+                <button class="btn" onclick="alert('Intermediate package inquiry coming soon!')">Get Started</button>
+            </div>
+            <div class="pricing-card">
+                <div class="price">$70/session</div>
+                <ul>
+                    <li>60-minute lessons.</li>
+                    <li></li>
+                    <li>Comprehensive deep dives and </li>
+                    <li>personalised guidance</li>
+                </ul>
+                <button class="btn" onclick="alert('Advanced package inquiry coming soon!')">Get Started</button>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-left">
+            <img src="wwcc.png" alt="WWCC Logo" style="height: 80px;">
+        </div>
+        <div class="footer-center">
+            <p>© 2026 Drumadon</p>
+        </div>
+        <div class="footer-right">
+            <div class="social-links">
+                <a href="https://www.instagram.com/drumadon" target="_blank" aria-label="Follow us on Instagram">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" fill="currentColor"/>
+                    </svg>
+                </a>
+                <a href="https://www.facebook.com/drumadon" target="_blank" aria-label="Follow us on Facebook">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" fill="currentColor"/>
+                    </svg>
+                </a>
+                <a href="https://www.tiktok.com/@drumadon" target="_blank" aria-label="Follow us on TikTok">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" fill="currentColor"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('menu-btn').addEventListener('click', () => {
+            document.querySelector('nav ul').classList.toggle('open');
+        });
+
+        // Close menu when a nav link is clicked
+        document.querySelectorAll('nav ul li a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.querySelector('nav ul').classList.remove('open');
+            });
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const menu = document.querySelector('nav ul');
+            const menuBtn = document.getElementById('menu-btn');
+            if (!menu.contains(e.target) && !menuBtn.contains(e.target) && menu.classList.contains('open')) {
+                menu.classList.remove('open');
+            }
+        });
+
+        // Parallax effect for background
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const bgContainer = document.getElementById('bg-container');
+            bgContainer.style.transform = `translate3d(0, ${scrolled * 0.1}px, 0)`;
+        }, { passive: true });
+    </script>
+</body>
+</html>
