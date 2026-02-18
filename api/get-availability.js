@@ -37,13 +37,18 @@ export default async function handler(req, res) {
     const timeSlotDuration = type === 'trial' ? 30 : parseInt(type);
     const defaultWorkingHours = { start: '09:00', end: '17:00' };
 
+    // Perth timezone offset (UTC+8)
+    const perthOffset = 8 * 60 * 60 * 1000; // 8 hours in milliseconds
+
     const now = new Date();
-    const nineDaysLater = new Date(now);
-    nineDaysLater.setDate(now.getDate() + 9);
+    // Convert current time to Perth time
+    const nowPerth = new Date(now.getTime() + perthOffset);
+    const nineDaysLater = new Date(nowPerth);
+    nineDaysLater.setDate(nowPerth.getDate() + 9);
 
     const response = await calendar.events.list({
       calendarId: process.env.GOOGLE_CALENDAR_ID,
-      timeMin: now.toISOString(),
+      timeMin: nowPerth.toISOString(),
       timeMax: nineDaysLater.toISOString(),
       singleEvents: true,
       orderBy: 'startTime',
@@ -83,7 +88,7 @@ export default async function handler(req, res) {
           end = new Date(`${dateStr}T${defaultWorkingHours.end}:00`);
         }
 
-        const fortyEightHoursLater = new Date(now.getTime() + advanceBookingHours * 60 * 60 * 1000);
+        const fortyEightHoursLater = new Date(nowPerth.getTime() + advanceBookingHours * 60 * 60 * 1000);
 
         for (let time = new Date(start); time < end; time.setMinutes(time.getMinutes() + timeSlotDuration)) {
           if (time > fortyEightHoursLater) {
@@ -103,7 +108,7 @@ export default async function handler(req, res) {
             }
 
             if (isAvailable) {
-              availableTimes.push(time.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }));
+              availableTimes.push(time.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Australia/Perth' }));
             }
           }
         }
@@ -122,7 +127,7 @@ export default async function handler(req, res) {
     } else {
       // Return available dates
       const availableDates = new Set();
-      const fortyEightHoursLater = new Date(now.getTime() + advanceBookingHours * 60 * 60 * 1000);
+      const fortyEightHoursLater = new Date(nowPerth.getTime() + advanceBookingHours * 60 * 60 * 1000);
 
       freeEvents.forEach(event => {
         let hasAvailableTime = false;
