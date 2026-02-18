@@ -698,6 +698,7 @@
                     <input type="hidden" name="form-name" value="trial-booking">
                     <input type="hidden" id="selectedTime" name="selectedTime">
                     <input type="hidden" id="preferredDay" name="preferredDay">
+                    <input type="hidden" id="lessonType" name="type">
                     <div class="form-group">
                         <label for="name">Name</label>
                         <input type="text" id="name" name="name" placeholder="Enter your name" required>
@@ -766,8 +767,6 @@
     </style><script>
         // Configuration
         const config = {
-            API_KEY: 'AIzaSyAdBK5ZNBabLYGJjj_cJSNLAzu1tbsr6Qs',
-            CALENDAR_ID: '59683306c8ffeebac6749efbf825530d86a8a4997d0c7b44aa9be6f1ab5fd9d9@group.calendar.google.com',
             advanceBookingHours: 48,
             timeSlotDuration: 30,
             defaultWorkingHours: { start: '09:00', end: '17:00' },
@@ -781,79 +780,18 @@
         const customSelect = document.querySelector('.custom-select');
         const selectSelected = document.querySelector('.select-selected');
         const selectItems = document.querySelector('.select-items');
-        let freeEvents = [];
-        let bookedEvents = [];
 
         // Load available days
         async function loadAvailableDays() {
-            const now = new Date();
-            const nineDaysLater = new Date(now);
-            nineDaysLater.setDate(now.getDate() + 9);
-            const url = `https://www.googleapis.com/calendar/v3/calendars/${config.CALENDAR_ID}/events?key=${config.API_KEY}&timeMin=${now.toISOString()}&timeMax=${nineDaysLater.toISOString()}&singleEvents=true&orderBy=startTime&maxResults=250`;
-
             try {
-                const response = await fetch(url);
+                const response = await fetch(`/api/get-availability?type=${lessonType}`);
                 const data = await response.json();
-                
-                // Separate free events and booked events
-                freeEvents = data.items.filter(event => event.summary === 'Free');
-                bookedEvents = data.items.filter(event => event.summary && event.summary.startsWith('Drumadon Trial -'));
 
-                const availableDates = new Set();
-                const fortyEightHoursLater = new Date(now.getTime() + config.advanceBookingHours * 60 * 60 * 1000);
+                if (!data.success) {
+                    throw new Error(data.message || 'Failed to fetch availability');
+                }
 
-                freeEvents.forEach(event => {
-                    let hasAvailableTime = false;
-                    let start, end;
-                    if (event.start.dateTime) {
-                        start = new Date(event.start.dateTime);
-                        end = new Date(event.end.dateTime);
-                    } else {
-                        const dateStr = event.start.date;
-                        start = new Date(`${dateStr}T${config.defaultWorkingHours.start}:00`);
-                        end = new Date(`${dateStr}T${config.defaultWorkingHours.end}:00`);
-                    }
-
-                    // Get booked events for this date
-                    const eventDate = new Date(event.start.date || event.start.dateTime);
-                    const dateStr = eventDate.toISOString().split('T')[0];
-                    const filteredBookedEvents = bookedEvents.filter(event => {
-                        const bookedDate = new Date(event.start.dateTime).toISOString().split('T')[0];
-                        return bookedDate === dateStr;
-                    });
-
-                    for (let time = new Date(start); time < end; time.setMinutes(time.getMinutes() + config.timeSlotDuration)) {
-                        if (time > fortyEightHoursLater) {
-                            // Check if this time slot overlaps with any booked events
-                            const slotEnd = new Date(time.getTime() + config.timeSlotDuration * 60 * 1000);
-                            let isAvailable = true;
-
-                            for (const bookedEvent of filteredBookedEvents) {
-                                const bookedStart = new Date(bookedEvent.start.dateTime);
-                                const bookedEnd = new Date(bookedEvent.end.dateTime);
-
-                                // Check for overlap: slot overlaps with booking if slot starts before booking ends AND slot ends after booking starts
-                                if (time < bookedEnd && slotEnd > bookedStart) {
-                                    isAvailable = false;
-                                    break;
-                                }
-                            }
-
-                            if (isAvailable) {
-                                hasAvailableTime = true;
-                                break; // Found at least one available slot, no need to check more
-                            }
-                        }
-                    }
-
-                    if (hasAvailableTime) {
-                        const eventDate = new Date(event.start.date || event.start.dateTime);
-                        const dateStr = eventDate.toISOString().split('T')[0];
-                        availableDates.add(dateStr);
-                    }
-                });
-
-                const sortedDates = Array.from(availableDates).sort((a, b) => new Date(a) - new Date(b));
+                const sortedDates = data.availableDates;
 
                 daySelect.innerHTML = '<option value="">Select a day</option>';
                 selectItems.innerHTML = '';
@@ -944,90 +882,44 @@
         });
 
         // Handle day selection
-        daySelect.addEventListener('change', () => {
+        daySelect.addEventListener('change', async () => {
             if (daySelect.value) {
                 const selectedDate = daySelect.value;
-                const availableTimes = [];
 
-                const filteredFreeEvents = freeEvents.filter(event => {
-                    const eventDate = new Date(event.start.date || event.start.dateTime).toISOString().split('T')[0];
-                    return eventDate === selectedDate;
-                });
+                try {
+                    const response = await fetch(`/api/get-availability?date=${selectedDate}&type=${lessonType}`);
+                    const data = await response.json();
 
-                // Get booked events for this date
-                const filteredBookedEvents = bookedEvents.filter(event => {
-                    const eventDate = new Date(event.start.dateTime).toISOString().split('T')[0];
-                    return eventDate === selectedDate;
-                });
-
-                console.log(`Found ${filteredFreeEvents.length} free events and ${filteredBookedEvents.length} booked events for ${selectedDate}`);
-
-                filteredFreeEvents.forEach(event => {
-                    let start, end;
-                    if (event.start.dateTime) {
-                        start = new Date(event.start.dateTime);
-                        end = new Date(event.end.dateTime);
-                    } else {
-                        const dateStr = event.start.date;
-                        start = new Date(`${dateStr}T${config.defaultWorkingHours.start}:00`);
-                        end = new Date(`${dateStr}T${config.defaultWorkingHours.end}:00`);
+                    if (!data.success) {
+                        throw new Error(data.message || 'Failed to fetch times');
                     }
 
-                    const now = new Date();
-                    const fortyEightHoursLater = new Date(now.getTime() + config.advanceBookingHours * 60 * 60 * 1000);
+                    const uniqueTimes = data.availableTimes;
 
-                    for (let time = new Date(start); time < end; time.setMinutes(time.getMinutes() + config.timeSlotDuration)) {
-                        if (time > fortyEightHoursLater) {
-                            // Check if this time slot overlaps with any booked events
-                            const slotEnd = new Date(time.getTime() + config.timeSlotDuration * 60 * 1000);
-                            let isAvailable = true;
+                    const timeBubbles = document.getElementById('timeBubbles');
+                    timeBubbles.innerHTML = '';
 
-                            for (const bookedEvent of filteredBookedEvents) {
-                                const bookedStart = new Date(bookedEvent.start.dateTime);
-                                const bookedEnd = new Date(bookedEvent.end.dateTime);
-
-                                // Check for overlap: slot overlaps with booking if slot starts before booking ends AND slot ends after booking starts
-                                if (time < bookedEnd && slotEnd > bookedStart) {
-                                    isAvailable = false;
-                                    break;
-                                }
-                            }
-
-                            if (isAvailable) {
-                                availableTimes.push(time.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }));
-                            } else {
-                                console.log(`Time slot ${time.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })} overlaps with existing booking`);
-                            }
-                        }
-                    }
-                });
-
-                const uniqueTimes = [...new Set(availableTimes)].sort((a, b) => {
-                    const timeA = new Date(`1970-01-01 ${a}`).getTime();
-                    const timeB = new Date(`1970-01-01 ${b}`).getTime();
-                    return timeA - timeB;
-                });
-
-                const timeBubbles = document.getElementById('timeBubbles');
-                timeBubbles.innerHTML = '';
-
-                uniqueTimes.forEach(time => {
-                    const bubble = document.createElement('div');
-                    bubble.className = 'time-bubble';
-                    bubble.textContent = time;
-                    bubble.dataset.time = time;
-                    bubble.addEventListener('click', () => {
-                        document.querySelectorAll('.time-bubble').forEach(b => b.classList.remove('selected'));
-                        bubble.classList.add('selected');
-                        document.getElementById('selectedTime').value = time;
-                        console.log('Time selected:', time, 'Setting selectedTime to:', document.getElementById('selectedTime').value);
-                        bookingForm.style.display = 'block';
+                    uniqueTimes.forEach(time => {
+                        const bubble = document.createElement('div');
+                        bubble.className = 'time-bubble';
+                        bubble.textContent = time;
+                        bubble.dataset.time = time;
+                        bubble.addEventListener('click', () => {
+                            document.querySelectorAll('.time-bubble').forEach(b => b.classList.remove('selected'));
+                            bubble.classList.add('selected');
+                            document.getElementById('selectedTime').value = time;
+                            console.log('Time selected:', time, 'Setting selectedTime to:', document.getElementById('selectedTime').value);
+                            bookingForm.style.display = 'block';
+                        });
+                        timeBubbles.appendChild(bubble);
                     });
-                    timeBubbles.appendChild(bubble);
-                });
 
-                timeSelection.style.display = 'block';
-                bookingForm.style.display = 'none';
+                    timeSelection.style.display = 'block';
+                    bookingForm.style.display = 'none';
+                } catch (error) {
+                    console.error('Error fetching times:', error);
+                    alert('Sorry, there was an error loading available times. Please try again.');
+                }
             } else {
                 timeSelection.style.display = 'none';
                 bookingForm.style.display = 'none';
@@ -1195,6 +1087,47 @@
         document.getElementById('age').addEventListener('input', () => {
             document.getElementById('age').parentElement.classList.remove('error');
         });
+    </script>
+    <script>
+        // Get URL parameter
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        // Set lesson type and update UI
+        const lessonType = getUrlParameter('type') || 'trial';
+        document.getElementById('lessonType').value = lessonType;
+
+        const heroTitle = document.querySelector('.hero h1');
+        const submitBtn = document.querySelector('.submit-btn');
+        const successMessage = document.querySelector('#successMessage p strong');
+
+        let pageTitle, metaDesc, ogTitle, ogDesc;
+        if (lessonType === 'trial') {
+            pageTitle = 'Free Trial - Drumadon';
+            metaDesc = 'Sign up for a free 30-minute drum lesson trial in Lesmurdie. No drum kit required. Book now with Drumadon.';
+            ogTitle = 'Free Trial - Drumadon';
+            ogDesc = 'Sign up for a free 30-minute drum lesson trial in Lesmurdie. No drum kit required.';
+            heroTitle.textContent = 'Free Trial Lesson';
+            submitBtn.textContent = 'Book My Free Trial';
+            successMessage.textContent = 'Your free trial lesson has been successfully booked!';
+        } else {
+            pageTitle = lessonType + '-Minute Lesson - Drumadon';
+            metaDesc = 'Book a ' + lessonType + '-minute drum lesson in Lesmurdie. Professional instruction for all skill levels.';
+            ogTitle = lessonType + '-Minute Lesson - Drumadon';
+            ogDesc = 'Book a ' + lessonType + '-minute drum lesson in Lesmurdie. Professional instruction for all skill levels.';
+            heroTitle.textContent = lessonType + '-Minute Lesson Booking';
+            submitBtn.textContent = 'Book My Lesson';
+            successMessage.textContent = 'Your lesson has been successfully booked!';
+        }
+
+        document.title = pageTitle;
+        document.querySelector('meta[name="description"]').setAttribute('content', metaDesc);
+        document.querySelector('meta[property="og:title"]').setAttribute('content', ogTitle);
+        document.querySelector('meta[property="og:description"]').setAttribute('content', ogDesc);
     </script>
 </body>
 </html>

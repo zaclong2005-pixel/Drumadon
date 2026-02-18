@@ -1,7 +1,7 @@
 import { google } from 'googleapis';
 
 // Email sending function for user confirmation
-async function sendUserConfirmationEmail({ name, email, phone, age, message, selectedTime, preferredDay }) {
+async function sendUserConfirmationEmail({ name, email, phone, age, message, selectedTime, preferredDay, type }) {
   // Validate Mailgun environment variables
   if (!process.env.MAILGUN_API_KEY || !process.env.MAILGUN_DOMAIN) {
     throw new Error('Email service not configured');
@@ -33,7 +33,7 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
   const userEmailData = {
     from: `Drumadon <noreply@${process.env.MAILGUN_DOMAIN}>`,
     to: email,
-    subject: 'Your Drumadon Trial Booking is Confirmed!',
+    subject: type === 'trial' ? 'Your Drumadon Trial Booking is Confirmed!' : 'Your Drumadon Lesson Booking is Confirmed!',
     html: `
       <!DOCTYPE html>
       <html>
@@ -77,7 +77,7 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
           <!-- Main Content -->
           <div class="content">
             <p class="welcome-text">Hi ${name},</p>
-            <p style="font-size: 14px; color: #666666; margin-bottom: 20px;">Your free trial has been booked! Here are the details:</p>
+            <p style="font-size: 14px; color: #666666; margin-bottom: 20px;">${type === 'trial' ? 'Your free trial has been booked!' : 'Your lesson has been booked!'} Here are the details:</p>
             
             <!-- Booking Details Card -->
             <div class="booking-card">
@@ -90,7 +90,7 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
                 </div>
                 <div class="details-row">
                   <div class="details-cell details-label">⏰ Time:</div>
-                  <div class="details-cell details-value">${selectedTime} (30 minutes)</div>
+                  <div class="details-cell details-value">${selectedTime} (${type === 'trial' ? '30' : type} minutes)</div>
                 </div>
                 <div class="details-row">
                   <div class="details-cell details-label">📍 Location:</div>
@@ -121,7 +121,7 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
 }
 
 // Email sending function for admin notification
-async function sendAdminEmail({ name, email, phone, age, message, selectedTime, preferredDay, eventId }) {
+async function sendAdminEmail({ name, email, phone, age, message, selectedTime, preferredDay, eventId, type }) {
   // Validate Mailgun environment variables
   if (!process.env.MAILGUN_API_KEY || !process.env.MAILGUN_DOMAIN) {
     throw new Error('Email service not configured');
@@ -153,11 +153,11 @@ async function sendAdminEmail({ name, email, phone, age, message, selectedTime, 
   const adminEmailData = {
     from: `Drumadon Website <noreply@${process.env.MAILGUN_DOMAIN}>`,
     to: 'info@drumadon.com.au',
-    subject: 'New Trial Booking',
+    subject: type === 'trial' ? 'New Trial Booking' : 'New Lesson Booking',
     html: `
       <html>
       <body>
-        <h2>New Trial Booking</h2>
+        <h2>${type === 'trial' ? 'New Trial Booking' : 'New Lesson Booking'}</h2>
         
         <h3>Student Details</h3>
         <p><strong>Name:</strong> ${name}</p>
@@ -166,8 +166,9 @@ async function sendAdminEmail({ name, email, phone, age, message, selectedTime, 
         ${age ? `<p><strong>Age:</strong> ${age}</p>` : ''}
         
         <h3>Booking Details</h3>
+        <p><strong>Type:</strong> ${type === 'trial' ? 'Free Trial' : type + '-Minute Lesson'}</p>
         <p><strong>Date:</strong> ${formattedDate}</p>
-        <p><strong>Time:</strong> ${selectedTime} (30 minutes)</p>
+        <p><strong>Time:</strong> ${selectedTime} (${type === 'trial' ? '30' : type} minutes)</p>
         <p><strong>Message:</strong> ${message || 'No additional information'}</p>
         
 
@@ -218,7 +219,7 @@ export default async function handler(req, res) {
       data[key] = value;
     }
 
-    const { name, email, phone, age, message, selectedTime, preferredDay } = data;
+    const { name, email, phone, age, message, selectedTime, preferredDay, type } = data;
 
     // Validate required fields
     if (!name || !email || !phone || !selectedTime || !preferredDay) {
@@ -243,7 +244,7 @@ export default async function handler(req, res) {
     // This is the ONLY step that must succeed before proceeding
     // If user email fails, NO calendar event and NO admin email will be created
     try {
-      await sendUserConfirmationEmail({ name, email, phone, age, message, selectedTime, preferredDay });
+      await sendUserConfirmationEmail({ name, email, phone, age, message, selectedTime, preferredDay, type });
       console.log('✅ User confirmation email sent successfully - proceeding with booking');
     } catch (emailError) {
       console.error('❌ CRITICAL: User confirmation email failed - aborting booking process:', emailError);
@@ -282,18 +283,19 @@ export default async function handler(req, res) {
     // Create ISO string with Perth timezone
     const isoString = `${preferredDay}T${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00${offsetString}`;
     const eventStart = new Date(isoString);
-    const eventEnd = new Date(eventStart.getTime() + 30 * 60 * 1000); // 30 minutes
+    const durationMinutes = type === 'trial' ? 30 : parseInt(type);
+    const eventEnd = new Date(eventStart.getTime() + durationMinutes * 60 * 1000); // dynamic minutes
     
-    // Calculate end time (30 minutes later)
-    const endHours = Math.floor((hours * 60 + minutes + 30) / 60);
-    const endMinutes = (hours * 60 + minutes + 30) % 60;
+    // Calculate end time (duration minutes later)
+    const endHours = Math.floor((hours * 60 + minutes + durationMinutes) / 60);
+    const endMinutes = (hours * 60 + minutes + durationMinutes) % 60;
     const endTimeString = `${preferredDay}T${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}:00+08:00`;
 
     // Create calendar event
     const event = {
-      summary: `Drumadon Trial - ${name}`,
+      summary: `Drumadon ${type === 'trial' ? 'Trial' : type + '-Minute Lesson'} - ${name}`,
       description: `
-        Trial Booking Details:
+        ${type === 'trial' ? 'Trial' : type + '-Minute Lesson'} Booking Details:
         Name: ${name}
         Email: ${email}
         Phone: ${phone}
@@ -305,7 +307,7 @@ export default async function handler(req, res) {
         timeZone: 'Australia/Perth',
       },
       end: {
-        dateTime: endTimeString, // 30 minutes later in Perth timezone
+        dateTime: endTimeString, // duration minutes later in Perth timezone
         timeZone: 'Australia/Perth',
       },
       colorId: '6', // Tangerine color (orange, vibrant)
@@ -322,7 +324,7 @@ export default async function handler(req, res) {
 
     // Send admin email (only because user confirmation email already succeeded)
     try {
-      await sendAdminEmail({ name, email, phone, age, message, selectedTime, preferredDay, eventId: calendarResponse.data.id });
+      await sendAdminEmail({ name, email, phone, age, message, selectedTime, preferredDay, eventId: calendarResponse.data.id, type });
       console.log('Admin notification email sent successfully');
     } catch (adminEmailError) {
       console.error('Admin email failed, but booking is confirmed:', adminEmailError);
