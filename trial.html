@@ -7,6 +7,10 @@
     <meta name="description" content="Sign up for a free 30-minute drum lesson trial in Lesmurdie. No drum kit required. Book now with Drumadon.">
     <meta name="keywords" content="free drum trial, drum lessons Lesmurdie, drum teacher Perth, music trial lesson">
     <meta name="author" content="Drumadon">
+    <link rel="icon" type="image/png" sizes="32x32" href="logo.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="logo.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="logo.png">
+    <link rel="manifest" href="manifest.json">
     <link rel="canonical" href="https://www.drumadon.com.au/trial.html">
     <meta property="og:title" content="Free Trial - Drumadon">
     <meta property="og:description" content="Sign up for a free 30-minute drum lesson trial in Lesmurdie. No drum kit required.">
@@ -1128,6 +1132,11 @@
         document.querySelector('meta[name="description"]').setAttribute('content', metaDesc);
         document.querySelector('meta[property="og:title"]').setAttribute('content', ogTitle);
         document.querySelector('meta[property="og:description"]').setAttribute('content', ogDesc);
+        
+        // Update canonical URL dynamically based on lesson type
+        const canonicalUrl = lessonType === 'trial' ? 'https://www.drumadon.com.au/trial.html' : `https://www.drumadon.com.au/trial.html?type=${lessonType}`;
+        document.querySelector('link[rel="canonical"]').setAttribute('href', canonicalUrl);
+        document.querySelector('meta[property="og:url"]').setAttribute('content', canonicalUrl);
     </script>
 </body>
 </html>

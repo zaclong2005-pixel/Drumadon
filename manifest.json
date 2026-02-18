@@ -1,0 +1,21 @@
+{
+  "name": "Drumadon - Drum Lessons Perth",
+  "short_name": "Drumadon",
+  "description": "Professional drum lessons in Perth with experienced teacher Isaac Long",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#7b97ac",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
