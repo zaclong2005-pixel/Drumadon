@@ -174,6 +174,24 @@
         nav a:hover {
             color: var(--nav-hover);
         }
+        .hero {
+            padding: 6rem 2rem 4rem;
+            text-align: center;
+            background: var(--hero-bg);
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+        .hero h1, .hero p {
+            margin: 0;
+        }
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .hero p {
+            font-size: 1.2rem;
+        }
         .resources-section {
             padding: 3rem 2rem 2rem;
             text-align: center;
@@ -260,9 +278,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
             z-index: 2000;
             justify-content: center;
             align-items: center;
@@ -275,31 +293,31 @@
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 20px;
-            padding: 1.5rem;
-            max-width: 350px;
+            border-radius: 10px;
+            padding: 1rem;
+            max-width: 280px;
             width: 90%;
             text-align: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         .password-content h3 {
-            margin-bottom: 1rem;
-            font-size: 1.8rem;
+            margin-bottom: 0.75rem;
+            font-size: 1.5rem;
             color: black;
         }
         .password-content p {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             opacity: 0.8;
             color: black;
         }
         .password-input {
             width: 80%;
-            padding: 0.75rem 0.25rem;
+            padding: 0.5rem 0.25rem;
             border: 2px solid black;
             border-radius: 10px;
             background: rgba(255, 255, 255, 0.1);
             color: black;
-            font-size: 1.1rem;
+            font-size: 1rem;
             margin-bottom: 1rem;
             outline: none;
         }
@@ -467,6 +485,22 @@
             #brand img {
                 height: 30px;
             }
+            .hero {
+                padding: 4rem 1rem 2rem;
+            }
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .hero p {
+                font-size: 1rem;
+            }
+            .password-content {
+                padding: 0.75rem;
+                max-width: 250px;
+            }
+            .password-content h3 {
+                font-size: 1.3rem;
+            }
         }
     </style>
 </head>
@@ -500,10 +534,11 @@
         <h1>Drum Resources</h1>
         <p>Unlock your drumming potential with our comprehensive collection of free resources! From beginner-friendly tutorials to advanced techniques, discover expertly crafted materials designed to elevate your skills at any level.</p>
         <div class="resources-grid">
-            <div class="resource-card">
-                <h3>Drumadon Manual</h3>
+            <div class="resource-card locked">
+                <div class="lock-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm3 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" fill="black"/></svg></div>
+                <h3>Drumadon Manual (students only)</h3>
                 <p>Access the comprehensive Drumadon manual for all skill levels.</p>
-                <button class="btn" onclick="alert('Drumadon Manual coming soon!')">Access</button>
+                <button class="btn locked-btn" onclick="openPasswordModal('manual')">Enter Password</button>
             </div>
             <div class="resource-card locked">
                 <div class="lock-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm3 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" fill="black"/></svg></div>
@@ -644,6 +679,9 @@
                         } else if (heading.includes('Tutorials')) {
                             button.textContent = 'Access';
                             button.onclick = () => alert('Tutorials coming soon!');
+                        } else if (heading.includes('Manual')) {
+                            button.textContent = 'Access';
+                            button.onclick = () => alert('Manual coming soon!');
                         }
                     }
                     
