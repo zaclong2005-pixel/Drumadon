@@ -198,14 +198,18 @@
             max-width: 1000px;
             margin: 0 auto;
         }
-        .pricing-card {
-            background: rgba(123, 151, 172, 0.5);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 1.5rem;
+        .pricing-card.best-value {
+            border: 2px solid #ff6b35;
+            position: relative;
+        }
+        .badge {
+            background-color: #ff6b35;
+            color: white;
+            padding: 0.2rem 0.5rem;
             border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 0.5rem;
         }
         .pricing-card .price {
             font-size: 1.8rem;
@@ -399,42 +403,42 @@
         <p>Lessons missed without notice are charged as usual.</p>
         <div class="pricing-grid">
             <div class="pricing-card">
-                <div class="price">FREE</div>
+                <div class="price">20 Minutes</div>
                 <ul>
-                    <li>A 30-minute trial with Isaac</li>
-                    <li></li>
-                    <li>Perfect for EVERYBODY!</li>
-                    <li>see if drumming is for you</li>
+                    <li>Single Lesson: $26</li>
+                    <li>10× Pack: $250</li>
+                    <li>Save $10 on pack!</li>
+                    <li>Perfect for quick sessions</li>
                 </ul>
-                <button class="btn" onclick="window.location.href='trial.html?type=trial'">Book Trial</button>
+                <button class="btn" onclick="window.location.href='trial.html?type=20'">Book Lesson</button>
             </div>
             <div class="pricing-card">
-                <div class="price">$40/session</div>
+                <div class="price">30 Minutes</div>
                 <ul>
-                    <li>30-minute lessons.</li>
-                    <li></li>
-                    <li>Great for beginners and </li>
-                    <li>students aged 6 and above</li>
+                    <li>Single Lesson: $39</li>
+                    <li>10× Pack: $370</li>
+                    <li>Save $20 on pack!</li>
+                    <li>Great for beginners</li>
                 </ul>
                 <button class="btn" onclick="window.location.href='trial.html?type=30'">Book Lesson</button>
             </div>
             <div class="pricing-card">
-                <div class="price">$55/session</div>
+                <div class="price">45 Minutes</div>
                 <ul>
-                    <li>45-minute lessons.</li>
-                    <li></li>
-                    <li>For mature students seeking </li>
-                    <li>more in depth learning</li>
+                    <li>Single Lesson: $57</li>
+                    <li>10× Pack: $540</li>
+                    <li>Save $30 on pack!</li>
+                    <li>For in-depth learning</li>
                 </ul>
                 <button class="btn" onclick="window.location.href='trial.html?type=45'">Book Lesson</button>
             </div>
-            <div class="pricing-card">
-                <div class="price">$70/session</div>
+            <div class="pricing-card best-value">
+                <div class="price">60 Minutes <span class="badge">Best Value</span></div>
                 <ul>
-                    <li>60-minute lessons.</li>
-                    <li></li>
-                    <li>Comprehensive deep dives and </li>
-                    <li>personalised guidance</li>
+                    <li>Single Lesson: $74</li>
+                    <li>10× Pack: $700</li>
+                    <li>Save $40 on pack!</li>
+                    <li>Comprehensive guidance</li>
                 </ul>
                 <button class="btn" onclick="window.location.href='trial.html?type=60'">Book Lesson</button>
             </div>

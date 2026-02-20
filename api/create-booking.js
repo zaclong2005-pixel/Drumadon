@@ -11,6 +11,19 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
   const date = new Date(preferredDay);
   const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
 
+  // Get pricing info
+  const getPricing = (lessonType) => {
+    const prices = {
+      '20': { single: 26, pack: 250, duration: 20 },
+      '30': { single: 39, pack: 370, duration: 30 },
+      '45': { single: 57, pack: 540, duration: 45 },
+      '60': { single: 74, pack: 700, duration: 60 }
+    };
+    return prices[lessonType] || { single: 0, pack: 0, duration: 30 };
+  };
+
+  const pricing = getPricing(type);
+
   const sendMailgunEmail = async (emailData) => {
     const apiUrl = `https://api.eu.mailgun.net/v3/${process.env.MAILGUN_DOMAIN}/messages`;
     const response = await fetch(apiUrl, {
@@ -90,12 +103,18 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
                 </div>
                 <div class="details-row">
                   <div class="details-cell details-label">⏰ Time:</div>
-                  <div class="details-cell details-value">${selectedTime} (${type === 'trial' ? '30' : type} minutes)</div>
+                  <div class="details-cell details-value">${selectedTime} (${pricing.duration} minutes)</div>
                 </div>
                 <div class="details-row">
                   <div class="details-cell details-label">📍 Location:</div>
                   <div class="details-cell details-value">5 Arthur Rd, Lesmurdie, WA</div>
                 </div>
+                ${type !== 'trial' ? `
+                <div class="details-row">
+                  <div class="details-cell details-label">💰 Price:</div>
+                  <div class="details-cell details-value">$${pricing.single} (Single) / $${pricing.pack} (10× Pack)</div>
+                </div>
+                ` : ''}
               </div>
               
             </div>
@@ -130,6 +149,19 @@ async function sendAdminEmail({ name, email, phone, age, message, selectedTime, 
   // Format date to Australian format (DD/MM/YYYY)
   const date = new Date(preferredDay);
   const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+
+  // Get pricing info
+  const getPricing = (lessonType) => {
+    const prices = {
+      '20': { single: 26, pack: 250, duration: 20 },
+      '30': { single: 39, pack: 370, duration: 30 },
+      '45': { single: 57, pack: 540, duration: 45 },
+      '60': { single: 74, pack: 700, duration: 60 }
+    };
+    return prices[lessonType] || { single: 0, pack: 0, duration: 30 };
+  };
+
+  const pricing = getPricing(type);
 
   const sendMailgunEmail = async (emailData) => {
     const apiUrl = `https://api.eu.mailgun.net/v3/${process.env.MAILGUN_DOMAIN}/messages`;
@@ -168,7 +200,8 @@ async function sendAdminEmail({ name, email, phone, age, message, selectedTime, 
         <h3>Booking Details</h3>
         <p><strong>Type:</strong> ${type === 'trial' ? 'Free Trial' : type + '-Minute Lesson'}</p>
         <p><strong>Date:</strong> ${formattedDate}</p>
-        <p><strong>Time:</strong> ${selectedTime} (${type === 'trial' ? '30' : type} minutes)</p>
+        <p><strong>Time:</strong> ${selectedTime} (${pricing.duration} minutes)</p>
+        ${type !== 'trial' ? `<p><strong>Pricing:</strong> $${pricing.single} (Single) / $${pricing.pack} (10× Pack)</p>` : ''}
         <p><strong>Message:</strong> ${message || 'No additional information'}</p>
         
 
