@@ -428,6 +428,10 @@
             content: '';
         }
 
+        .form-group .toggle-switch::after {
+            content: '';
+        }
+
         .form-group input {
             width: 50%;
             padding: 0.5rem;
@@ -512,6 +516,10 @@
             margin-right: auto;
         }
 
+        .school-term-section .toggle-container {
+            width: 100%;
+        }
+
         .term-alignment-row {
             display: flex;
             align-items: center;
@@ -519,63 +527,10 @@
             width: 100%;
         }
 
-        .term-checkbox-label {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            font-weight: 600;
-            flex: 1;
-        }
-
-        .term-checkbox-label input[type="checkbox"] {
-            position: absolute;
-            opacity: 0;
-            cursor: pointer;
-            left: 8px;
-            top: 0;
-            width: 20px;
-            height: 20px;
-        }
-
-        .term-checkbox-label input[type="checkbox"] + .term-checkbox-text::before {
-            content: '';
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #000000;
-            border-radius: 4px;
-            background: rgba(211, 211, 211, 0.95);
-            transition: all 0.3s ease;
-            vertical-align: middle;
-            margin-right: 8px;
-        }
-
-        .term-checkbox-label input[type="checkbox"]:checked + .term-checkbox-text::before {
-            background: #000000;
-        }
-
-        .term-checkbox-label input[type="checkbox"]:checked + .term-checkbox-text::after {
-            content: '✓';
-            position: absolute;
-            color: #ffffff;
-            font-size: 20px;
-            font-weight: bold;
-            left: 8px;
-            top: 0;
-            pointer-events: none;
-        }
-
-        .term-checkbox-text {
-            position: relative;
-            color: #000000;
-            font-family: 'Candara';
-        }
-
         .info-btn {
-            background: #000000;
-            border: 2px solid #000000;
-            border-radius: 50%;
+            background: var(--btn-bg);
+            border: 2px solid var(--btn-bg);
+            border-radius: 5px;
             width: 32px;
             height: 32px;
             cursor: pointer;
@@ -584,15 +539,29 @@
             justify-content: center;
             font-size: 16px;
             font-weight: bold;
-            color: #ffffff;
+            color: var(--btn-text);
             transition: all 0.3s ease;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .info-btn:hover {
-            background: #555555;
-            border-color: #555555;
+            background: var(--btn-hover);
+            border-color: var(--btn-hover);
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .info-content p {
+            color: #000000;
+            font-family: 'Candara';
+            font-size: 1.2em;
+        }
+
+        .info-content strong {
+            color: #000000;
+        }
+
+        .info-content span {
+            color: #000000;
         }
 
         .card-container {
@@ -610,88 +579,104 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
 
-        .pack-container {
-            width: 48%;
-            margin: 0 auto;
-        }
-
-        .term-container {
-            width: 54%;
-            margin: 0 auto;
-        }
-
-        .lesson-pack-selection {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-        }
-
-        .pack-checkbox-label {
+        /* Toggle Switch Design */
+        .toggle-container {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            font-weight: 600;
+            justify-content: center;
+            padding: 0.5rem 0;
+            width: 50%;
+            margin: 0 auto;
+        }
+
+        .toggle-label {
+            font-size: 1.2rem;
+            color: #000000;
             flex: 1;
-            padding: 0.5rem 0.75rem;
-            transition: all 0.3s ease;
+            font-family: 'Candara';
+            text-align: center;
+        }
+
+        .toggle-switch {
             position: relative;
-        }
-
-        .pack-checkbox-label:hover {
-            background: rgba(0, 0, 0, 0.05);
-        }
-
-        .pack-checkbox-label input[type="checkbox"] {
-            position: absolute;
-            opacity: 0;
-            cursor: pointer;
-            left: 8px;
-            top: 0;
-            width: 20px;
-            height: 20px;
-        }
-
-        .pack-checkbox-label input[type="checkbox"] + .pack-checkbox-text::before {
-            content: '';
             display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #000000;
-            border-radius: 4px;
-            background: rgba(211, 211, 211, 0.95);
-            transition: all 0.3s ease;
-            vertical-align: middle;
-            margin-right: 8px;
+            width: 50px;
+            height: 24px;
+            margin-left: 1rem;
         }
 
-        .pack-checkbox-label input[type="checkbox"]:checked + .pack-checkbox-text::before {
-            background: #000000;
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
         }
 
-        .pack-checkbox-label input[type="checkbox"]:checked + .pack-checkbox-text::after {
-            content: '✓';
+        .toggle-slider {
             position: absolute;
-            color: #ffffff;
-            font-size: 20px;
-            font-weight: bold;
-            left: 8px;
+            cursor: pointer;
             top: 0;
-            pointer-events: none;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 24px;
         }
 
-        .pack-checkbox-label input[type="checkbox"]:checked {
-            background: #000000;
-            color: #ffffff;
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        .pack-checkbox-label input[type="checkbox"]:checked + .pack-checkbox-text {
-            color: #000000;
+        input:checked + .toggle-slider {
+            background-color: #2196F3;
         }
 
-        .pack-checkbox-text {
-            position: relative;
-            color: #000000;
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .info-btn {
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #666;
+            margin-left: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .info-btn:hover {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .term-info {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: #f9f9f9;
+            border-radius: 4px;
+            border-left: 3px solid #2196F3;
+        }
+
+        .term-info p {
+            margin: 0.25rem 0;
+            font-size: 1rem;
+            color: #555;
             font-family: 'Candara';
         }
 
@@ -975,31 +960,30 @@
 
                     <!-- Lesson Pack Selection -->
                     <div class="form-group pack-form-group">
-                        <div class="card-container pack-container">
-                            <div class="lesson-pack-selection">
-                                <label class="pack-checkbox-label">
-                                    <input type="checkbox" name="lessonPack" value="pack">
-                                    <span class="pack-checkbox-text">10 lesson Bulk</span>
-                                </label>
-                            </div>
+                        <div class="toggle-container">
+                            <span class="toggle-label">10 Lesson Pack</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="bulkToggle" name="lessonPack" value="pack">
+                                <span class="toggle-slider"></span>
+                            </label>
                         </div>
                     </div>
 
                     <!-- School Term Alignment (shown only when 10× Pack is selected) -->
                     <div class="school-term-section" id="schoolTermSection" style="display: none;">
-                        <div class="card-container term-container">
-                            <div class="term-alignment-row">
-                                <label class="term-checkbox-label">
-                                    <input type="checkbox" id="alignWithTerm" name="alignWithTerm">
-                                    <span class="term-checkbox-text">Align with school term</span>
-                                </label>
-                                <button type="button" class="info-btn" id="termInfoBtn">i</button>
-                            </div>
+                        <div class="toggle-container">
+                            <span class="toggle-label">Sync With School Terms</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="alignWithTerm" name="alignWithTerm">
+                                <span class="toggle-slider"></span>
+                            </label>
                         </div>
-                        <div class="term-info" id="termInfo" style="display: none;">
-                            <p><strong>Current Term:</strong> <span id="currentTerm"></span></p>
-                            <p><strong>Weeks remaining:</strong> <span id="weeksRemaining"></span></p>
-                            <p><strong>Calculated cost:</strong> $<span id="calculatedCostDisplay"></span> (Save $<span id="savings"></span>)</p>
+                        <div class="term-info" id="termInfo">
+                            <div class="info-content">
+                                <p><strong>Current Term:</strong> <span id="currentTerm"></span></p>
+                                <p><strong>Lessons remaining:</strong> <span id="weeksRemaining"></span></p>
+                                <p><strong>Total cost:</strong> $<span id="calculatedCostDisplay"></span></p>
+                            </div>
                         </div>
                     </div>
 
@@ -1078,7 +1062,7 @@
                 sortedDates.forEach(dateStr => {
                     const date = new Date(dateStr);
                     const dayName = config.daysOfWeek[date.getDay()];
-                    const displayText = `${dayName.charAt(0).toUpperCase() + dayName.slice(1)} - ${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+                    const displayText = `${dayName.charAt(0).toUpperCase() + dayName.slice(1)} ${date.getDate()} ${date.toLocaleDateString('en-US', { month: 'short' })}`;
 
                     const option = document.createElement('option');
                     option.value = dateStr;
@@ -1379,7 +1363,7 @@
     <script>
         // School term data for 2026
         const schoolTerms2026 = [
-            { name: 'Term 1', start: '2026-02-02', end: '2026-04-13' },
+            { name: 'Term 1', start: '2026-02-02', end: '2026-04-02' },
             { name: 'Term 2', start: '2026-04-20', end: '2026-07-03' },
             { name: 'Term 3', start: '2026-07-20', end: '2026-09-25' },
             { name: 'Term 4', start: '2026-10-12', end: '2026-12-17' }
@@ -1395,47 +1379,75 @@
 
         // Calculate pricing for school term alignment
         function calculateTermPricing() {
+            console.log('calculateTermPricing called');
             const now = new Date();
+            console.log('Current date:', now);
             const currentTerm = schoolTerms2026.find(term =>
                 now >= new Date(term.start) && now <= new Date(term.end)
             );
+            console.log('Current term found:', currentTerm);
 
             if (!currentTerm) {
+                console.log('No current term found, hiding termInfo');
+                termInfo.style.display = 'none';
+                return;
+            }
+
+            // Only show term info if sync is checked
+            const alignChecked = document.getElementById('alignWithTerm').checked;
+            console.log('alignWithTerm checked:', alignChecked);
+            if (!alignChecked) {
+                console.log('alignWithTerm not checked, hiding termInfo');
                 termInfo.style.display = 'none';
                 return;
             }
 
             const termEnd = new Date(currentTerm.end);
+            console.log('Term end:', termEnd);
+
+            // Get selected day value
+            const selectedDayValue = daySelect.value;
+            console.log('Selected day value:', selectedDayValue);
 
             // Get selected day of the week (0-6, Sunday=0)
-            const selectedDayValue = daySelect.value;
             let selectedDayOfWeek = null;
 
             if (selectedDayValue) {
                 const selectedDate = new Date(selectedDayValue);
                 selectedDayOfWeek = selectedDate.getDay();
+            } else {
+                // If no date selected, use current day of week
+                selectedDayOfWeek = now.getDay();
             }
+            console.log('Selected day of week:', selectedDayOfWeek);
 
             // Count occurrences of selected day in remaining term
             let dayCount = 0;
-            if (selectedDayOfWeek !== null) {
-                let currentDate = new Date(now);
-                // Start from next occurrence of selected day
-                while (currentDate.getDay() !== selectedDayOfWeek) {
-                    currentDate.setDate(currentDate.getDate() + 1);
-                }
-
-                while (currentDate <= termEnd) {
-                    if (currentDate >= now) {
-                        dayCount++;
+            let currentDate;
+            if (selectedDayValue) {
+                const selectedDate = new Date(selectedDayValue);
+                if (selectedDate >= now) {
+                    currentDate = new Date(selectedDate);
+                } else {
+                    currentDate = new Date(now);
+                    // Start from next occurrence of selected day
+                    while (currentDate.getDay() !== selectedDayOfWeek) {
+                        currentDate.setDate(currentDate.getDate() + 1);
                     }
-                    currentDate.setDate(currentDate.getDate() + 7); // Next week
                 }
             } else {
-                // Fallback to weeks calculation if no day selected
-                const daysRemaining = (termEnd - now) / (24 * 60 * 60 * 1000);
-                dayCount = Math.ceil((daysRemaining + 3) / 7);
+                // Start from current date
+                currentDate = new Date(now);
             }
+
+            console.log('Starting count from:', currentDate);
+            while (currentDate <= termEnd) {
+                if (currentDate >= now) {
+                    dayCount++;
+                }
+                currentDate.setDate(currentDate.getDate() + 7); // Next week
+            }
+            console.log('Day count:', dayCount);
 
             // Get pricing based on lesson type
             let singlePrice, packPrice;
@@ -1457,19 +1469,29 @@
                 packPrice = 250;
             }
 
+            console.log('Pricing - single:', singlePrice, 'pack:', packPrice);
+
             // Calculate term-aligned pricing based on day count
             const termCost = Math.round(packPrice * (dayCount / 10)); // Pro-rate based on days remaining
             const individualCost = singlePrice * dayCount; // Cost of buying individual lessons
             const termSavings = individualCost - termCost; // Savings compared to buying individual lessons
 
+            console.log('Calculated costs - term:', termCost, 'individual:', individualCost, 'savings:', termSavings);
+
             // Update display
             currentTermSpan.textContent = currentTerm.name;
             weeksRemainingSpan.textContent = dayCount;
             calculatedCostSpan.textContent = termCost;
-            savingsSpan.textContent = termSavings;
+            if (savingsSpan) {
+                savingsSpan.textContent = termSavings;
+            }
+
+            // Show term info
+            console.log('Showing termInfo');
+            termInfo.style.display = 'block';
 
             // Store calculated values in hidden fields
-            document.getElementById('calculatedWeeks').value = weeksRemaining;
+            document.getElementById('calculatedWeeks').value = dayCount;
             document.getElementById('calculatedCost').value = termCost;
         }
 
@@ -1527,55 +1549,49 @@
         document.querySelector('link[rel="canonical"]').setAttribute('href', canonicalUrl);
         document.querySelector('meta[property="og:url"]').setAttribute('content', canonicalUrl);
 
-        // Handle lesson pack checkbox and school term
-        if (lessonType === 'trial') {
+        // Handle lesson pack toggle
+        const bulkToggle = document.getElementById('bulkToggle');
+        if (bulkToggle) {
+            bulkToggle.addEventListener('change', () => {
+                console.log('bulkToggle changed, checked:', bulkToggle.checked);
+                const currentScroll = window.pageYOffset;
+                if (bulkToggle.checked) {
+                    selectedPack = 'pack';
+                    schoolTermSection.style.display = 'block';
+                    calculateTermPricing();
+                } else {
+                    selectedPack = 'single';
+                    schoolTermSection.style.display = 'none';
+                    console.log('Unchecking alignWithTerm');
+                    document.getElementById('alignWithTerm').checked = false;
+                    termInfo.style.display = 'none';
+                }
+                document.getElementById('selectedPack').value = selectedPack;
+                window.scrollTo(0, currentScroll);
+            });
+            // Initial state
             selectedPack = 'single';
-            document.getElementById('selectedPack').value = selectedPack;
             schoolTermSection.style.display = 'none';
-        } else {
-            // Handle lesson pack checkbox (optional now)
-            const packCheckbox = document.querySelector('input[name="lessonPack"]');
-            if (packCheckbox) {
-                packCheckbox.addEventListener('change', () => {
-                    if (packCheckbox.checked) {
-                        selectedPack = 'pack';
-                        schoolTermSection.style.display = 'block';
-                        calculateTermPricing();
-                    } else {
-                        selectedPack = 'single';
-                        schoolTermSection.style.display = 'none';
-                    }
-                    document.getElementById('selectedPack').value = selectedPack;
-                });
-                // Initial state - not checked by default
-                selectedPack = 'single';
-                schoolTermSection.style.display = 'none';
-            }
+            termInfo.style.display = 'none';
         }
 
         // Handle school term alignment checkbox
-        const alignWithTermCheckbox = document.getElementById('alignWithTerm');
-        if (alignWithTermCheckbox) {
-            alignWithTermCheckbox.addEventListener('change', () => {
-                if (alignWithTermCheckbox.checked) {
+        const alignWithTermLabel = document.querySelector('#alignWithTerm').closest('label');
+        console.log('alignWithTermLabel element:', alignWithTermLabel);
+        if (alignWithTermLabel) {
+            console.log('Attaching click event listener to alignWithTermLabel');
+            alignWithTermLabel.addEventListener('click', () => {
+                // Use setTimeout to ensure the checkbox state has updated
+                setTimeout(() => {
+                    const checkbox = document.getElementById('alignWithTerm');
+                    console.log('alignWithTerm label clicked, checkbox checked:', checkbox.checked);
+                    const currentScroll = window.pageYOffset;
                     calculateTermPricing();
-                    termInfo.style.display = 'block';
-                } else {
-                    termInfo.style.display = 'none';
-                }
+                    window.scrollTo(0, currentScroll);
+                }, 0);
             });
-        }
-
-        // Handle info button to toggle term details
-        const termInfoBtn = document.getElementById('termInfoBtn');
-        if (termInfoBtn) {
-            termInfoBtn.addEventListener('click', () => {
-                if (termInfo.style.display === 'none') {
-                    termInfo.style.display = 'block';
-                } else {
-                    termInfo.style.display = 'none';
-                }
-            });
+        } else {
+            console.log('alignWithTermLabel not found');
         }
 
         // Mobile menu toggle

@@ -113,7 +113,7 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
                 ${type !== 'trial' ? `
                 <div class="details-row">
                   <div class="details-cell details-label">💰 Price:</div>
-                  <div class="details-cell details-value">${selectedPack === 'pack' ? (alignWithTerm === 'true' ? `$${calculatedCost} (10× Pack - Term Aligned, ${calculatedWeeks} weeks)` : `$${pricing.pack} (10× Pack)`) : `$${pricing.single} (Single Lesson)`}</div>
+                  <div class="details-cell details-value">${selectedPack === 'pack' ? (alignWithTerm === 'true' ? `$${calculatedCost} (${calculatedWeeks}× Pack - Term Aligned)` : `$${pricing.pack} (10× Pack)`) : `$${pricing.single} (Single Lesson)`}</div>
                 </div>
                 ` : ''}
               </div>
@@ -203,7 +203,8 @@ async function sendAdminEmail({ name, email, phone, age, message, selectedTime, 
         <p><strong>Type:</strong> ${type === 'trial' ? 'Free Trial' : type + '-Minute Lesson'}</p>
         <p><strong>Date:</strong> ${formattedDate}</p>
         <p><strong>Time:</strong> ${selectedTime} (${pricing.duration} minutes)</p>
-        ${type !== 'trial' ? `<p><strong>Pricing:</strong> ${selectedPack === 'pack' ? (alignWithTerm === 'true' ? `$${calculatedCost} (10× Pack - Term Aligned, ${calculatedWeeks} weeks)` : `$${pricing.pack} (10× Pack)`) : `$${pricing.single} (Single Lesson)`}</p>` : ''}
+        ${selectedPack === 'pack' ? `<p><strong>10x Bulk Lessons:</strong> Yes${alignWithTerm === 'true' ? ` (Term Aligned - ${calculatedWeeks} lessons remaining, $${calculatedCost})` : ''}</p>` : `<p><strong>10x Bulk Lessons:</strong> No</p>`}
+        ${type !== 'trial' ? `<p><strong>Pricing:</strong> ${selectedPack === 'pack' ? (alignWithTerm === 'true' ? `$${calculatedCost} (${calculatedWeeks}× Pack - Term Aligned)` : `$${pricing.pack} (10× Pack)`) : `$${pricing.single} (Single Lesson)`}</p>` : ''}
         <p><strong>Message:</strong> ${message || 'No additional information'}</p>
         
 
