@@ -198,18 +198,67 @@
             max-width: 1000px;
             margin: 0 auto;
         }
-        .pricing-card .price {
-            font-size: 1.8rem;
+        .pricing-card {
+            background: rgba(123, 151, 172, 0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .pricing-card .duration {
+            font-size: 1.5rem;
             font-weight: bold;
             margin-bottom: 1rem;
+            color: #000;
         }
-        .pricing-card ul {
-            list-style: none;
-            padding: 0;
-            margin-bottom: 2rem;
+        .pricing-options {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
-        .pricing-card li {
-            margin-bottom: 0.25rem;
+        .option {
+            flex: 1;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .option.pack {
+            background: rgba(0, 123, 255, 0.1);
+            border: 2px solid rgba(0, 123, 255, 0.3);
+            position: relative;
+        }
+        .option.pack::before {
+            content: "BEST VALUE";
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #007bff;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        .option-title {
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .option-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 0.5rem;
+        }
+        .option-savings {
+            font-size: 0.9rem;
+            color: #28a745;
+            font-weight: bold;
         }
         .btn {
             background-color: var(--btn-bg);
@@ -390,39 +439,63 @@
         <p>Lessons missed without notice are charged as usual.</p>
         <div class="pricing-grid">
             <div class="pricing-card">
-                <div class="price">20 Minutes</div>
-                <ul>
-                    <li>Single Lesson: $26</li>
-                    <li>10× Pack: $250</li>
-                    <li>Save $10 on pack!</li>
-                </ul>
+                <div class="duration">20 Minutes</div>
+                <div class="pricing-options">
+                    <div class="option">
+                        <div class="option-title">Single Lesson</div>
+                        <div class="option-price">$26</div>
+                    </div>
+                    <div class="option pack">
+                        <div class="option-title">10× Pack</div>
+                        <div class="option-price">$250</div>
+                        <div class="option-savings">Save $10!</div>
+                    </div>
+                </div>
                 <button class="btn" onclick="window.location.href='trial.html?type=20'">Book Lesson</button>
             </div>
             <div class="pricing-card">
-                <div class="price">30 Minutes</div>
-                <ul>
-                    <li>Single Lesson: $39</li>
-                    <li>10× Pack: $370</li>
-                    <li>Save $20 on pack!</li>
-                </ul>
+                <div class="duration">30 Minutes</div>
+                <div class="pricing-options">
+                    <div class="option">
+                        <div class="option-title">Single Lesson</div>
+                        <div class="option-price">$39</div>
+                    </div>
+                    <div class="option pack">
+                        <div class="option-title">10× Pack</div>
+                        <div class="option-price">$370</div>
+                        <div class="option-savings">Save $20!</div>
+                    </div>
+                </div>
                 <button class="btn" onclick="window.location.href='trial.html?type=30'">Book Lesson</button>
             </div>
             <div class="pricing-card">
-                <div class="price">45 Minutes</div>
-                <ul>
-                    <li>Single Lesson: $57</li>
-                    <li>10× Pack: $540</li>
-                    <li>Save $30 on pack!</li>
-                </ul>
+                <div class="duration">45 Minutes</div>
+                <div class="pricing-options">
+                    <div class="option">
+                        <div class="option-title">Single Lesson</div>
+                        <div class="option-price">$57</div>
+                    </div>
+                    <div class="option pack">
+                        <div class="option-title">10× Pack</div>
+                        <div class="option-price">$540</div>
+                        <div class="option-savings">Save $30!</div>
+                    </div>
+                </div>
                 <button class="btn" onclick="window.location.href='trial.html?type=45'">Book Lesson</button>
             </div>
             <div class="pricing-card">
-                <div class="price">60 Minutes</div>
-                <ul>
-                    <li>Single Lesson: $74</li>
-                    <li>10× Pack: $700</li>
-                    <li>Save $40 on pack!</li>
-                </ul>
+                <div class="duration">60 Minutes</div>
+                <div class="pricing-options">
+                    <div class="option">
+                        <div class="option-title">Single Lesson</div>
+                        <div class="option-price">$74</div>
+                    </div>
+                    <div class="option pack">
+                        <div class="option-title">10× Pack</div>
+                        <div class="option-price">$700</div>
+                        <div class="option-savings">Save $40!</div>
+                    </div>
+                </div>
                 <button class="btn" onclick="window.location.href='trial.html?type=60'">Book Lesson</button>
             </div>
         </div>
