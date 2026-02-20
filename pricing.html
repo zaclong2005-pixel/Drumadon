@@ -207,12 +207,6 @@
             border-radius: 12px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.3);
             text-align: center;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .pricing-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.4);
         }
         .pricing-card .duration {
             font-size: 1.5rem;
@@ -252,6 +246,21 @@
             font-size: 0.9rem;
             color: #000;
             font-weight: bold;
+        }
+        .btn {
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.3s, background-color 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        .btn:hover {
+            background-color: var(--btn-hover);
+            transform: scale(1.05);
         }
         footer {
             background-color: var(--footer-bg);
@@ -416,7 +425,7 @@
         <p>*Please provide at least 24 hours’ notice to receive a make-up lesson.</p>
         <p>Lessons missed without notice are charged as usual.</p>
         <div class="pricing-grid">
-            <div class="pricing-card" onclick="window.location.href='trial.html?type=20'">
+            <div class="pricing-card">
                 <div class="duration">20 Minutes</div>
                 <div class="pricing-options">
                     <div class="option">
@@ -429,8 +438,9 @@
                         <div class="option-savings">Save $10!</div>
                     </div>
                 </div>
+                <button class="btn" onclick="window.location.href='trial.html?type=20'">Book Lesson</button>
             </div>
-            <div class="pricing-card" onclick="window.location.href='trial.html?type=30'">
+            <div class="pricing-card">
                 <div class="duration">30 Minutes</div>
                 <div class="pricing-options">
                     <div class="option">
@@ -443,8 +453,9 @@
                         <div class="option-savings">Save $20!</div>
                     </div>
                 </div>
+                <button class="btn" onclick="window.location.href='trial.html?type=30'">Book Lesson</button>
             </div>
-            <div class="pricing-card" onclick="window.location.href='trial.html?type=45'">
+            <div class="pricing-card">
                 <div class="duration">45 Minutes</div>
                 <div class="pricing-options">
                     <div class="option">
@@ -457,8 +468,9 @@
                         <div class="option-savings">Save $30!</div>
                     </div>
                 </div>
+                <button class="btn" onclick="window.location.href='trial.html?type=45'">Book Lesson</button>
             </div>
-            <div class="pricing-card" onclick="window.location.href='trial.html?type=60'">
+            <div class="pricing-card">
                 <div class="duration">60 Minutes</div>
                 <div class="pricing-options">
                     <div class="option">
@@ -471,6 +483,7 @@
                         <div class="option-savings">Save $40!</div>
                     </div>
                 </div>
+                <button class="btn" onclick="window.location.href='trial.html?type=60'">Book Lesson</button>
             </div>
         </div>
     </section>
