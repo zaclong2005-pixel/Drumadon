@@ -20,7 +20,6 @@
     <style>
         /* CSS Variables */
         :root {
-            --bg-color: rgba(201, 201, 201, 0.63);
             --text-color: #111111;
             --header-bg: #000000;
             --header-text: #ffffff;
@@ -29,8 +28,6 @@
             --btn-bg: #000000;
             --btn-text: #ffffff;
             --btn-hover: #8fc4da;
-            --feature-bg: #7b97ac;
-            --about-bg: #7b97ac;
             --footer-bg: #000000;
             --footer-text: #ffffff;
         }
@@ -111,11 +108,6 @@
             background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="bgTexture" patternUnits="userSpaceOnUse" width="20" height="20"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.05)"/><circle cx="10" cy="10" r="0.5" fill="rgba(0,0,0,0.02)"/></pattern></defs><rect width="100" height="100" fill="url(%23bgTexture)"/></svg>');
             opacity: 0.3;
         }
-        @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 20px rgba(0, 191, 255, 0.5); }
-            50% { box-shadow: 0 0 30px rgba(0, 191, 255, 0.8); }
-        }
-
         body {
             font-family: Candara, sans-serif;
             margin: 0;
@@ -500,15 +492,6 @@
             transform: scale(1.05);
         }
 
-        .lesson-pack-section {
-            margin-bottom: 2rem;
-        }
-
-        .continue-btn {
-            display: block;
-            margin: 0 auto;
-        }
-
         .school-term-section {
             margin-bottom: 1.5rem;
             width: 50%;
@@ -517,13 +500,6 @@
         }
 
         .school-term-section .toggle-container {
-            width: 100%;
-        }
-
-        .term-alignment-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
             width: 100%;
         }
 
@@ -564,21 +540,6 @@
             color: #000000;
         }
 
-        .card-container {
-            background: rgba(211, 211, 211, 0.95);
-            border: 2px solid #333333;
-            border-radius: 12px;
-            padding: 1rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
-
-        .card-container:hover {
-            background: rgba(211, 211, 211, 1);
-            border-color: #000000;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-
         /* Toggle Switch Design */
         .toggle-container {
             display: flex;
@@ -600,8 +561,8 @@
         .toggle-switch {
             position: relative;
             display: inline-block;
-            width: 50px;
-            height: 24px;
+            width: 72px;
+            height: 36px;
             margin-left: 1rem;
         }
 
@@ -620,16 +581,16 @@
             bottom: 0;
             background-color: #ccc;
             transition: 0.4s;
-            border-radius: 24px;
+            border-radius: 36px;
         }
 
         .toggle-slider:before {
             position: absolute;
             content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
+            height: 28px;
+            width: 28px;
+            left: 4px;
+            bottom: 4px;
             background-color: white;
             transition: 0.4s;
             border-radius: 50%;
@@ -641,43 +602,7 @@
         }
 
         input:checked + .toggle-slider:before {
-            transform: translateX(26px);
-        }
-
-        .info-btn {
-            background: #f0f0f0;
-            border: 1px solid #ccc;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            color: #666;
-            margin-left: 0.5rem;
-            transition: all 0.2s ease;
-        }
-
-        .info-btn:hover {
-            background: #e0e0e0;
-            color: #333;
-        }
-
-        .term-info {
-            margin-top: 0.5rem;
-            padding: 0.5rem;
-            background: #f9f9f9;
-            border-radius: 4px;
-            border-left: 3px solid #2196F3;
-        }
-
-        .term-info p {
-            margin: 0.25rem 0;
-            font-size: 1rem;
-            color: #555;
-            font-family: 'Candara';
+            transform: translateX(36px);
         }
 
         .term-info {
@@ -828,10 +753,7 @@
             .social-links a {
                 margin: 0;
             }
-        }
 
-        /* Mobile styles */
-        @media (max-width: 768px) {
             .success-message {
                 padding: 2rem 1rem;
                 margin: 4rem auto 1rem;
@@ -843,16 +765,6 @@
 
             .success-message p {
                 font-size: 1.2rem;
-            }
-
-            .lesson-pack-selection {
-                flex-direction: row !important;
-                gap: 0 !important;
-            }
-
-            .pack-option {
-                flex: 1 !important;
-                min-width: 0 !important;
             }
         }
 
@@ -976,7 +888,7 @@
                         <div class="toggle-container">
                             <span class="toggle-label">Sync With School Terms</span>
                             <label class="toggle-switch">
-                                <input type="checkbox" id="alignWithTerm" name="alignWithTerm">
+                                <input type="checkbox" id="alignWithTerm">
                                 <span class="toggle-slider"></span>
                             </label>
                         </div>
@@ -1032,11 +944,6 @@
     </footer>
 
     <script>
-        // Config object for trial page
-        const config = {
-            daysOfWeek: ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
-        };
-
         // Elements
         const daySelect = document.getElementById('daySelect');
         const timeSelection = document.getElementById('timeSelection');
@@ -1071,8 +978,8 @@
 
                 sortedDates.forEach(dateStr => {
                     const date = new Date(dateStr);
-                    const dayName = config.daysOfWeek[date.getDay()];
-                    const displayText = `${dayName.charAt(0).toUpperCase() + dayName.slice(1)} ${date.getDate()} ${date.toLocaleDateString('en-US', { month: 'short' })}`;
+                    const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
+                    const displayText = `${dayName} ${date.getDate()} ${date.toLocaleDateString('en-US', { month: 'short' })}`;
 
                     const option = document.createElement('option');
                     option.value = dateStr;
@@ -1174,28 +1081,34 @@
 
                 const selectedDate = daySelect.value;
 
-                try {
-                    // Add timeout to prevent hanging requests
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+                // Show loading state immediately
+                const timeBubbles = document.getElementById('timeBubbles');
+                timeBubbles.innerHTML = '<span style="color:#333;font-size:1rem;">Loading times...</span>';
+                timeSelection.style.display = 'block';
+                bookingForm.style.display = 'none';
 
-                    const response = await fetch(`/api/get-availability?date=${selectedDate}&type=${lessonType}`, {
-                        signal: controller.signal
-                    });
-                    clearTimeout(timeoutId);
-
-                    const data = await response.json();
-
-                    if (!data.success) {
-                        throw new Error(data.message || 'Failed to fetch times');
+                let data = null;
+                for (let attempt = 0; attempt < 4; attempt++) {
+                    try {
+                        if (attempt > 0) await new Promise(r => setTimeout(r, 2000));
+                        const controller = new AbortController();
+                        const timeoutId = setTimeout(() => controller.abort(), 10000);
+                        const response = await fetch(`/api/get-availability?date=${selectedDate}&type=${lessonType}`, {
+                            signal: controller.signal
+                        });
+                        clearTimeout(timeoutId);
+                        const json = await response.json();
+                        if (json.success) { data = json; break; }
+                    } catch (err) {
+                        if (err.name === 'AbortError') break;
                     }
+                }
 
-                    const uniqueTimes = data.availableTimes;
-
-                    const timeBubbles = document.getElementById('timeBubbles');
+                if (!data) {
+                    timeBubbles.innerHTML = '<span style="color:#c00;font-size:1rem;">Could not load times. Please select a day again.</span>';
+                } else {
                     timeBubbles.innerHTML = '';
-
-                    uniqueTimes.forEach(time => {
+                    data.availableTimes.forEach(time => {
                         const bubble = document.createElement('div');
                         bubble.className = 'time-bubble';
                         bubble.textContent = time;
@@ -1204,25 +1117,14 @@
                             document.querySelectorAll('.time-bubble').forEach(b => b.classList.remove('selected'));
                             bubble.classList.add('selected');
                             document.getElementById('selectedTime').value = time;
-                            console.log('Time selected:', time, 'Setting selectedTime to:', document.getElementById('selectedTime').value);
                             bookingForm.style.display = 'block';
                         });
                         timeBubbles.appendChild(bubble);
                     });
 
-                    timeSelection.style.display = 'block';
-                    bookingForm.style.display = 'none';
-
                     // Update term pricing if school term alignment is selected
-                    if (document.getElementById('alignWithTerm').checked) {
-                        calculateTermPricing();
-                    }
-                } catch (error) {
-                    console.error('Error fetching times:', error);
-                    if (error.name === 'AbortError') {
-                        alert('Request timed out. The server may be busy. Please try again.');
-                    } else {
-                        alert('Sorry, there was an error loading available times. Please try again.');
+                    if (document.getElementById('alignWithTerm') && document.getElementById('alignWithTerm').checked) {
+                        if (typeof updateTermInfo === 'function') updateTermInfo();
                     }
                 }
             } else {
@@ -1295,9 +1197,6 @@
             if (hasErrors) {
                 return;
             }
-
-            // Prevent default form submission
-            e.preventDefault();
 
             const form = e.target;
             const submitBtn = form.querySelector('.submit-btn');

@@ -1,49 +1,46 @@
 import { google } from 'googleapis';
 
+// Shared pricing lookup
+function getPricing(lessonType) {
+  const prices = {
+    'trial': { single: 0, pack: 0, duration: 20 },
+    '20': { single: 26, pack: 250, duration: 20 },
+    '30': { single: 39, pack: 370, duration: 30 },
+    '45': { single: 57, pack: 540, duration: 45 },
+    '60': { single: 74, pack: 700, duration: 60 }
+  };
+  return prices[lessonType] || { single: 0, pack: 0, duration: 30 };
+}
+
+// Shared Mailgun sender
+async function sendMailgunEmail(emailData) {
+  const apiUrl = `https://api.eu.mailgun.net/v3/${process.env.MAILGUN_DOMAIN}/messages`;
+  const response = await fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Basic ${Buffer.from(`api:${process.env.MAILGUN_API_KEY}`).toString('base64')}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams(emailData),
+  });
+
+  if (!response.ok) {
+    throw new Error('Email service temporarily unavailable');
+  }
+
+  return response.json();
+}
+
 // Email sending function for user confirmation
 async function sendUserConfirmationEmail({ name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost }) {
-  // Validate Mailgun environment variables
   if (!process.env.MAILGUN_API_KEY || !process.env.MAILGUN_DOMAIN) {
     throw new Error('Email service not configured');
   }
 
-  // Format date to Australian format (DD/MM/YYYY)
   const date = new Date(preferredDay);
   const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
-
-  // Get pricing info
-  const getPricing = (lessonType) => {
-    const prices = {
-      'trial': { single: 0, pack: 0, duration: 20 },
-      '20': { single: 26, pack: 250, duration: 20 },
-      '30': { single: 39, pack: 370, duration: 30 },
-      '45': { single: 57, pack: 540, duration: 45 },
-      '60': { single: 74, pack: 700, duration: 60 }
-    };
-    return prices[lessonType] || { single: 0, pack: 0, duration: 30 };
-  };
-
   const pricing = getPricing(type);
 
-  const sendMailgunEmail = async (emailData) => {
-    const apiUrl = `https://api.eu.mailgun.net/v3/${process.env.MAILGUN_DOMAIN}/messages`;
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Basic ${Buffer.from(`api:${process.env.MAILGUN_API_KEY}`).toString('base64')}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams(emailData),
-    });
-
-    if (!response.ok) {
-      throw new Error('Email service temporarily unavailable');
-    }
-
-    return response.json();
-  };
-
-  // Email to user
   const userEmailData = {
     from: `Drumadon <noreply@${process.env.MAILGUN_DOMAIN}>`,
     to: email,
@@ -77,26 +74,18 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
           .footer p { color: #666666; margin: 3px 0; font-size: 13px; page-break-inside: avoid; }
           .footer .highlight { color: #000000; font-weight: bold; }
           .footer .address { color: #7b97ac; font-size: 12px; }
-
         </style>
       </head>
       <body>
         <div class="email-container">
-          
-          <!-- Header -->
           <div class="header">
             <img src="https://drumadon.com.au/logo_white.png" alt="Drumadon" style="max-width: 150px; height: auto;">
           </div>
-          
-          <!-- Main Content -->
           <div class="content">
             <p class="welcome-text">Hi ${name},</p>
             <p style="font-size: 14px; color: #666666; margin-bottom: 20px;">${type === 'trial' ? 'Your free trial has been booked!' : 'Your lesson has been booked!'} Here are the details:</p>
-            
-            <!-- Booking Details Card -->
             <div class="booking-card">
               <h2>🎯 Your Booking Details</h2>
-              
               <div class="details-table">
                 <div class="details-row">
                   <div class="details-cell details-label">📅 Date:</div>
@@ -117,16 +106,11 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
                 </div>
                 ` : ''}
               </div>
-              
             </div>
-            
-            <!-- Contact Info -->
             <div class="contact-section">
               <h3>📞 Need changes?</h3>
               <p>Contact <strong>info@drumadon.com.au</strong> to reschedule.</p>
             </div>
-            
-            <!-- Footer -->
             <div class="footer">
               <p>Looking forward to seeing you!</p>
             </div>
@@ -142,48 +126,14 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
 
 // Email sending function for admin notification
 async function sendAdminEmail({ name, email, phone, age, message, selectedTime, preferredDay, eventId, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost }) {
-  // Validate Mailgun environment variables
   if (!process.env.MAILGUN_API_KEY || !process.env.MAILGUN_DOMAIN) {
     throw new Error('Email service not configured');
   }
 
-  // Format date to Australian format (DD/MM/YYYY)
   const date = new Date(preferredDay);
   const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
-
-  // Get pricing info
-  const getPricing = (lessonType) => {
-    const prices = {
-      'trial': { single: 0, pack: 0, duration: 20 },
-      '20': { single: 26, pack: 250, duration: 20 },
-      '30': { single: 39, pack: 370, duration: 30 },
-      '45': { single: 57, pack: 540, duration: 45 },
-      '60': { single: 74, pack: 700, duration: 60 }
-    };
-    return prices[lessonType] || { single: 0, pack: 0, duration: 30 };
-  };
-
   const pricing = getPricing(type);
 
-  const sendMailgunEmail = async (emailData) => {
-    const apiUrl = `https://api.eu.mailgun.net/v3/${process.env.MAILGUN_DOMAIN}/messages`;
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Basic ${Buffer.from(`api:${process.env.MAILGUN_API_KEY}`).toString('base64')}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams(emailData),
-    });
-
-    if (!response.ok) {
-      throw new Error('Email service temporarily unavailable');
-    }
-
-    return response.json();
-  };
-
-  // Email to admin
   const adminEmailData = {
     from: `Drumadon Website <noreply@${process.env.MAILGUN_DOMAIN}>`,
     to: 'info@drumadon.com.au',
@@ -192,13 +142,11 @@ async function sendAdminEmail({ name, email, phone, age, message, selectedTime, 
       <html>
       <body>
         <h2>${type === 'trial' ? 'New Trial Booking' : 'New Lesson Booking'}</h2>
-        
         <h3>Student Details</h3>
         <p><strong>Name:</strong> ${name}</p>
         <p><strong>Email:</strong> ${email}</p>
         <p><strong>Phone:</strong> ${phone}</p>
         ${age ? `<p><strong>Age:</strong> ${age}</p>` : ''}
-        
         <h3>Booking Details</h3>
         <p><strong>Type:</strong> ${type === 'trial' ? 'Free Trial' : type + '-Minute Lesson'}</p>
         <p><strong>Date:</strong> ${formattedDate}</p>
@@ -206,9 +154,6 @@ async function sendAdminEmail({ name, email, phone, age, message, selectedTime, 
         ${selectedPack === 'pack' ? `<p><strong>Bulk Booking:</strong> ${alignWithTerm === 'true' ? `Term Aligned (${calculatedWeeks} lessons, $${calculatedCost})` : `Standard 10-Pack ($${pricing.pack})`}</p>` : `<p><strong>Bulk Booking:</strong> No</p>`}
         ${type !== 'trial' ? `<p><strong>Pricing:</strong> ${selectedPack === 'pack' ? (alignWithTerm === 'true' ? `$${calculatedCost} (${calculatedWeeks}× Pack - Term Aligned)` : `$${pricing.pack} (10× Pack)`) : `$${pricing.single} (Single Lesson)`}</p>` : ''}
         <p><strong>Message:</strong> ${message || 'No additional information'}</p>
-        
-
-        
       </body>
       </html>
     `,
@@ -218,13 +163,11 @@ async function sendAdminEmail({ name, email, phone, age, message, selectedTime, 
 }
 
 export default async function handler(req, res) {
-  // Only allow POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
   try {
-    // Validate environment variables
     if (!process.env.GOOGLE_SERVICE_ACCOUNT_KEY) {
       throw new Error('GOOGLE_SERVICE_ACCOUNT_KEY environment variable is not set. Please add your Google Service Account key JSON as a string.');
     }
@@ -232,7 +175,6 @@ export default async function handler(req, res) {
       throw new Error('GOOGLE_CALENDAR_ID environment variable is not set. Please add your Google Calendar ID.');
     }
 
-    // Parse the service account key
     let serviceAccountKey;
     try {
       serviceAccountKey = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY);
@@ -240,7 +182,6 @@ export default async function handler(req, res) {
       throw new Error('GOOGLE_SERVICE_ACCOUNT_KEY is not valid JSON. Please check your service account key.');
     }
 
-    // Authenticate with Google
     const auth = new google.auth.GoogleAuth({
       credentials: serviceAccountKey,
       scopes: ['https://www.googleapis.com/auth/calendar'],
@@ -248,7 +189,6 @@ export default async function handler(req, res) {
 
     const calendar = google.calendar({ version: 'v3', auth });
 
-    // Parse form data
     const params = new URLSearchParams(req.body);
     const data = {};
     for (let [key, value] of params) {
@@ -257,7 +197,6 @@ export default async function handler(req, res) {
 
     const { name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost } = data;
 
-    // Validate required fields
     if (!name || !email || !phone || !selectedTime || !preferredDay) {
       return res.status(400).json({
         error: 'Missing information',
@@ -265,7 +204,6 @@ export default async function handler(req, res) {
       });
     }
 
-    // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({
@@ -276,61 +214,42 @@ export default async function handler(req, res) {
 
     console.log('Processing booking request:', { name, email, phone, selectedTime, preferredDay, type, selectedPack, alignWithTerm });
 
-    // CRITICAL: Step 1 - Send user confirmation email FIRST
-    // This is the ONLY step that must succeed before proceeding
-    // If user email fails, NO calendar event and NO admin email will be created
+    // Step 1: Send user confirmation email — must succeed before proceeding
     try {
       await sendUserConfirmationEmail({ name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost });
-      console.log('✅ User confirmation email sent successfully - proceeding with booking');
+      console.log('✅ User confirmation email sent successfully');
     } catch (emailError) {
-      console.error('❌ CRITICAL: User confirmation email failed - aborting booking process:', emailError);
+      console.error('❌ CRITICAL: User confirmation email failed:', emailError);
       return res.status(500).json({
         error: 'Email service unavailable',
         message: 'We cannot confirm your booking at this time. Please try again later or contact us directly.'
       });
     }
 
-    // Step 2: User email confirmed - now safe to create calendar event and notify admin
-    console.log('🔄 Proceeding with calendar event creation and admin notification...');
+    // Step 2: Create calendar event(s)
+    const pricing = getPricing(type);
+    const perthOffset = 8;
+    const offsetString = `+${perthOffset.toString().padStart(2, '0')}:00`;
 
-    // CONFIRMED: User has received their confirmation email
-    // Now we can safely create the calendar event and notify admin
-    // Combine date and time into a proper datetime string
-    // preferredDay is in YYYY-MM-DD format, selectedTime is like "1:30 PM"
-    
     const time24h = selectedTime.replace(' AM', '').replace(' PM', '');
     const isPM = selectedTime.includes(' PM');
     const is12 = selectedTime.startsWith('12');
-    
+
     let [hours, minutes] = time24h.split(':').map(Number);
-    
-    // Convert to 24-hour format
     if (isPM && !is12) {
       hours += 12;
     } else if (!isPM && is12) {
-      hours = 0; // 12 AM = 0
+      hours = 0;
     }
-    
-    // Create the date in Perth timezone (Western Australia)
-    // Perth is UTC+8 year-round (no DST)
-    const perthOffset = 8;
-    const offsetString = `+${perthOffset.toString().padStart(2, '0')}:00`;
-    
-    // Create ISO string with Perth timezone
+
     const isoString = `${preferredDay}T${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00${offsetString}`;
-    const eventStart = new Date(isoString);
     const durationMinutes = type === 'trial' ? 20 : parseInt(type);
-    const eventEnd = new Date(eventStart.getTime() + durationMinutes * 60 * 1000); // dynamic minutes
-    
-    // Calculate end time (duration minutes later)
     const endHours = Math.floor((hours * 60 + minutes + durationMinutes) / 60);
     const endMinutes = (hours * 60 + minutes + durationMinutes) % 60;
     const endTimeString = `${preferredDay}T${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}:00+08:00`;
 
-    // Create calendar event(s)
     let calendarResponse;
 
-    // Handle bulk bookings - create multiple events for both term-aligned and regular 10-packs
     if (selectedPack === 'pack') {
       const totalLessons = alignWithTerm === 'true' ? calculatedWeeks : 10;
       console.log(`Creating ${totalLessons} calendar events for ${alignWithTerm === 'true' ? 'term-aligned' : 'regular 10-pack'} bulk booking`);
@@ -338,24 +257,21 @@ export default async function handler(req, res) {
       const events = [];
       const startDate = new Date(preferredDay);
 
-      // Create events for each lesson in the pack
       for (let i = 0; i < totalLessons; i++) {
         const lessonDate = new Date(startDate);
-        lessonDate.setDate(startDate.getDate() + (i * 7)); // Add weeks
+        lessonDate.setDate(startDate.getDate() + (i * 7));
 
-        // Format the date for this lesson
-        const lessonDateString = lessonDate.toISOString().split('T')[0]; // YYYY-MM-DD
+        const lessonDateString = lessonDate.toISOString().split('T')[0];
         const lessonStartString = `${lessonDateString}T${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00${offsetString}`;
         const lessonEndString = `${lessonDateString}T${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}:00+08:00`;
 
-        const remainingLessons = totalLessons - i;
         const currentLessonNumber = i + 1;
         const packDescription = alignWithTerm === 'true' ? 'Term Aligned' : '10-Pack';
 
         const bulkEvent = {
-          summary: `Drumadon ${type}-Minute Lesson (Lesson ${currentLessonNumber}/${totalLessons}) - ${name}`,
+          summary: `Drumadon ${type}-Minute Lesson (Lesson ${currentLessonNumber} out of ${totalLessons}) - ${name}`,
           description: `
-            ${type}-Minute Lesson - ${packDescription} (Lesson ${currentLessonNumber} of ${totalLessons} - ${remainingLessons} remaining)
+            ${type}-Minute Lesson - ${packDescription} (Lesson ${currentLessonNumber} of ${totalLessons})
             Name: ${name}
             Email: ${email}
             Phone: ${phone}
@@ -363,15 +279,9 @@ export default async function handler(req, res) {
             Message: ${message || 'No additional information'}
             Total Cost: $${alignWithTerm === 'true' ? calculatedCost : pricing.pack}
           `,
-          start: {
-            dateTime: lessonStartString,
-            timeZone: 'Australia/Perth',
-          },
-          end: {
-            dateTime: lessonEndString,
-            timeZone: 'Australia/Perth',
-          },
-          colorId: '11', // Red for bulk lessons
+          start: { dateTime: lessonStartString, timeZone: 'Australia/Perth' },
+          end: { dateTime: lessonEndString, timeZone: 'Australia/Perth' },
+          colorId: '11',
         };
 
         const eventResponse = await calendar.events.insert({
@@ -380,14 +290,13 @@ export default async function handler(req, res) {
         });
 
         events.push(eventResponse.data);
-        console.log(`Bulk event ${i + 1}/${totalLessons} created:`, eventResponse.data.id);
+        console.log(`Bulk event ${currentLessonNumber}/${totalLessons} created:`, eventResponse.data.id);
       }
 
       calendarResponse = { data: { id: events.map(e => e.id).join(',') } };
       console.log(`All ${totalLessons} bulk calendar events created`);
 
     } else {
-      // Single event for trial or non-bulk bookings
       const event = {
         summary: `Drumadon ${type === 'trial' ? 'Trial' : type + '-Minute Lesson'} - ${name}`,
         description: `
@@ -398,15 +307,9 @@ export default async function handler(req, res) {
           Age: ${age}
           Message: ${message || 'No additional information'}
         `,
-        start: {
-          dateTime: isoString,
-          timeZone: 'Australia/Perth',
-        },
-        end: {
-          dateTime: endTimeString,
-          timeZone: 'Australia/Perth',
-        },
-        colorId: type === 'trial' ? '6' : '11', // Orange for trials, red for lessons
+        start: { dateTime: isoString, timeZone: 'Australia/Perth' },
+        end: { dateTime: endTimeString, timeZone: 'Australia/Perth' },
+        colorId: type === 'trial' ? '6' : '11',
       };
 
       calendarResponse = await calendar.events.insert({
@@ -417,16 +320,15 @@ export default async function handler(req, res) {
       console.log('Single calendar event created:', calendarResponse.data.id);
     }
 
-    // Send admin email (only because user confirmation email already succeeded)
+    // Step 3: Send admin notification
     try {
       await sendAdminEmail({ name, email, phone, age, message, selectedTime, preferredDay, eventId: calendarResponse.data.id, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost });
       console.log('Admin notification email sent successfully');
     } catch (adminEmailError) {
       console.error('Admin email failed, but booking is confirmed:', adminEmailError);
-      // Don't fail the request since user email and calendar creation succeeded
     }
 
-    return res.status(200).json({ 
+    return res.status(200).json({
       message: 'Booking confirmed and calendar event created',
       eventId: calendarResponse.data.id
     });
