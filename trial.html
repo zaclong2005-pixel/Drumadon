@@ -958,8 +958,8 @@
                         <textarea id="message" name="message" placeholder="Tell us about your experience and goals"></textarea>
                     </div>
 
-                    <!-- Lesson Pack Selection -->
-                    <div class="form-group pack-form-group">
+                    <!-- Lesson Pack Selection - TEMPORARILY DISABLED -->
+                    <!-- <div class="form-group pack-form-group">
                         <div class="toggle-container">
                             <span class="toggle-label">10 Lesson Pack</span>
                             <label class="toggle-switch">
@@ -967,10 +967,10 @@
                                 <span class="toggle-slider"></span>
                             </label>
                         </div>
-                    </div>
+                    </div> -->
 
-                    <!-- School Term Alignment (shown only when 10× Pack is selected) -->
-                    <div class="school-term-section" id="schoolTermSection" style="display: none;">
+                    <!-- School Term Alignment (shown only when 10× Pack is selected) - TEMPORARILY DISABLED -->
+                    <!-- <div class="school-term-section" id="schoolTermSection" style="display: none;">
                         <div class="toggle-container">
                             <span class="toggle-label">Sync With School Terms</span>
                             <label class="toggle-switch">
@@ -985,7 +985,7 @@
                                 <p><strong>Total cost:</strong> $<span id="calculatedCostDisplay"></span></p>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
 
                     <button type="submit" class="submit-btn" id="submitBtn">Book My Free Trial</button>
                 </form>
@@ -1523,9 +1523,9 @@
             heroTitle.textContent = 'Free Trial Lesson';
             submitBtn.textContent = 'Book My Free Trial';
             successMessage.textContent = 'Your free trial lesson has been successfully booked!';
-            // Hide lesson pack container for trials
-            const packFormGroup = document.querySelector('.pack-form-group');
-            if (packFormGroup) packFormGroup.style.display = 'none';
+            // Hide lesson pack container for trials - TEMPORARILY DISABLED
+            // const packFormGroup = document.querySelector('.pack-form-group');
+            // if (packFormGroup) packFormGroup.style.display = 'none';
         } else {
             pageTitle = lessonType + '-Minute Lesson - Drumadon';
             metaDesc = 'Book a ' + lessonType + '-minute drum lesson in Lesmurdie. Professional instruction for all skill levels.';
@@ -1534,9 +1534,9 @@
             heroTitle.textContent = lessonType + '-Minute Lesson Booking';
             submitBtn.textContent = 'Book My Lesson';
             successMessage.textContent = 'Your lesson has been successfully booked!';
-            // Show lesson pack container for actual lessons
-            const packFormGroup = document.querySelector('.pack-form-group');
-            if (packFormGroup) packFormGroup.style.display = 'block';
+            // Show lesson pack container for actual lessons - TEMPORARILY DISABLED
+            // const packFormGroup = document.querySelector('.pack-form-group');
+            // if (packFormGroup) packFormGroup.style.display = 'block';
         }
 
         document.title = pageTitle;
@@ -1549,7 +1549,8 @@
         document.querySelector('link[rel="canonical"]').setAttribute('href', canonicalUrl);
         document.querySelector('meta[property="og:url"]').setAttribute('content', canonicalUrl);
 
-        // Handle lesson pack toggle
+        // Handle lesson pack toggle - TEMPORARILY DISABLED
+        /*
         const bulkToggle = document.getElementById('bulkToggle');
         if (bulkToggle) {
             bulkToggle.addEventListener('change', () => {
@@ -1574,8 +1575,10 @@
             schoolTermSection.style.display = 'none';
             termInfo.style.display = 'none';
         }
+        */
 
-        // Handle school term alignment checkbox
+        // Handle school term alignment checkbox - TEMPORARILY DISABLED
+        /*
         const alignWithTermLabel = document.querySelector('#alignWithTerm').closest('label');
         console.log('alignWithTermLabel element:', alignWithTermLabel);
         if (alignWithTermLabel) {
@@ -1593,6 +1596,7 @@
         } else {
             console.log('alignWithTermLabel not found');
         }
+        */
 
         // Mobile menu toggle
         document.getElementById('menu-btn').addEventListener('click', () => {
