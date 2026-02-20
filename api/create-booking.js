@@ -327,36 +327,94 @@ export default async function handler(req, res) {
     const endMinutes = (hours * 60 + minutes + durationMinutes) % 60;
     const endTimeString = `${preferredDay}T${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}:00+08:00`;
 
-    // Create calendar event
-    const event = {
-      summary: `Drumadon ${type === 'trial' ? 'Trial' : type + '-Minute Lesson'} - ${name}`,
-      description: `
-        ${type === 'trial' ? 'Trial' : type + '-Minute Lesson'} Booking Details:
-        Name: ${name}
-        Email: ${email}
-        Phone: ${phone}
-        Age: ${age}
-        Message: ${message || 'No additional information'}
-      `,
-      start: {
-        dateTime: isoString, // Use Perth time directly, not UTC conversion
-        timeZone: 'Australia/Perth',
-      },
-      end: {
-        dateTime: endTimeString, // duration minutes later in Perth timezone
-        timeZone: 'Australia/Perth',
-      },
-      colorId: type === 'trial' ? '6' : '11', // Orange for trials, red for lessons
-      // Note: Attendees removed due to service account limitations
-      // The event will be created in the calendar with booking details
-    };
+    // Create calendar event(s)
+    let calendarResponse;
+    
+    // Handle bulk bookings with term alignment - create multiple events
+    if (selectedPack === 'pack' && alignWithTerm === 'true' && calculatedWeeks > 0) {
+      console.log(`Creating ${calculatedWeeks} calendar events for term-aligned bulk booking`);
+      
+      const events = [];
+      const startDate = new Date(preferredDay);
+      const selectedDayOfWeek = startDate.getDay(); // 0=Sunday, 1=Monday, etc.
+      
+      // Create events for each remaining lesson in the term
+      for (let i = 0; i < calculatedWeeks; i++) {
+        const lessonDate = new Date(startDate);
+        lessonDate.setDate(startDate.getDate() + (i * 7)); // Add weeks
+        
+        // Format the date for this lesson
+        const lessonDateString = lessonDate.toISOString().split('T')[0]; // YYYY-MM-DD
+        const lessonStartString = `${lessonDateString}T${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00${offsetString}`;
+        const lessonEndString = `${lessonDateString}T${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}:00+08:00`;
+        
+        const remainingLessons = calculatedWeeks - i;
+        
+        const bulkEvent = {
+          summary: `Drumadon ${type}-Minute Lesson (${remainingLessons}/${calculatedWeeks}) - ${name}`,
+          description: `
+            ${type}-Minute Lesson - Bulk Booking (${remainingLessons} of ${calculatedWeeks} lessons remaining)
+            Name: ${name}
+            Email: ${email}
+            Phone: ${phone}
+            Age: ${age}
+            Message: ${message || 'No additional information'}
+            Total Cost: $${calculatedCost}
+          `,
+          start: {
+            dateTime: lessonStartString,
+            timeZone: 'Australia/Perth',
+          },
+          end: {
+            dateTime: lessonEndString,
+            timeZone: 'Australia/Perth',
+          },
+          colorId: '11', // Red for bulk lessons
+        };
+        
+        const eventResponse = await calendar.events.insert({
+          calendarId: process.env.GOOGLE_CALENDAR_ID,
+          resource: bulkEvent,
+        });
+        
+        events.push(eventResponse.data);
+        console.log(`Bulk event ${i + 1}/${calculatedWeeks} created:`, eventResponse.data.id);
+      }
+      
+      calendarResponse = { data: { id: events.map(e => e.id).join(',') } };
+      console.log(`All ${calculatedWeeks} bulk calendar events created`);
+      
+    } else {
+      // Single event for trial or non-bulk bookings
+      const event = {
+        summary: `Drumadon ${type === 'trial' ? 'Trial' : type + '-Minute Lesson'} - ${name}`,
+        description: `
+          ${type === 'trial' ? 'Trial' : type + '-Minute Lesson'} Booking Details:
+          Name: ${name}
+          Email: ${email}
+          Phone: ${phone}
+          Age: ${age}
+          Message: ${message || 'No additional information'}
+          ${selectedPack === 'pack' ? `Bulk Booking: ${alignWithTerm === 'true' ? `${calculatedWeeks} lessons (Term Aligned)` : '10-Pack'}` : ''}
+        `,
+        start: {
+          dateTime: isoString,
+          timeZone: 'Australia/Perth',
+        },
+        end: {
+          dateTime: endTimeString,
+          timeZone: 'Australia/Perth',
+        },
+        colorId: type === 'trial' ? '6' : '11', // Orange for trials, red for lessons
+      };
 
-    const calendarResponse = await calendar.events.insert({
-      calendarId: process.env.GOOGLE_CALENDAR_ID,
-      resource: event,
-    });
-
-    console.log('Calendar event created:', calendarResponse.data.id);
+      calendarResponse = await calendar.events.insert({
+        calendarId: process.env.GOOGLE_CALENDAR_ID,
+        resource: event,
+      });
+      
+      console.log('Single calendar event created:', calendarResponse.data.id);
+    }
 
     // Send admin email (only because user confirmation email already succeeded)
     try {
