@@ -280,7 +280,7 @@ export default async function handler(req, res) {
     // This is the ONLY step that must succeed before proceeding
     // If user email fails, NO calendar event and NO admin email will be created
     try {
-      await sendUserConfirmationEmail({ name, email, phone, age, message, selectedTime, preferredDay, type });
+      await sendUserConfirmationEmail({ name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost });
       console.log('✅ User confirmation email sent successfully - proceeding with booking');
     } catch (emailError) {
       console.error('❌ CRITICAL: User confirmation email failed - aborting booking process:', emailError);
@@ -419,7 +419,7 @@ export default async function handler(req, res) {
 
     // Send admin email (only because user confirmation email already succeeded)
     try {
-      await sendAdminEmail({ name, email, phone, age, message, selectedTime, preferredDay, eventId: calendarResponse.data.id, type });
+      await sendAdminEmail({ name, email, phone, age, message, selectedTime, preferredDay, eventId: calendarResponse.data.id, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost });
       console.log('Admin notification email sent successfully');
     } catch (adminEmailError) {
       console.error('Admin email failed, but booking is confirmed:', adminEmailError);
