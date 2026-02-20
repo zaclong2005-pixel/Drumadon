@@ -345,7 +345,7 @@ export default async function handler(req, res) {
         dateTime: endTimeString, // duration minutes later in Perth timezone
         timeZone: 'Australia/Perth',
       },
-      colorId: '6', // Tangerine color (orange, vibrant)
+      colorId: type === 'trial' ? '6' : '11', // Orange for trials, red for lessons
       // Note: Attendees removed due to service account limitations
       // The event will be created in the calendar with booking details
     };
