@@ -931,7 +931,7 @@
                     <input type="hidden" id="preferredDay" name="preferredDay">
                     <input type="hidden" id="lessonType" name="type">
                     <input type="hidden" id="selectedPack" name="selectedPack" value="single">
-                    <input type="hidden" id="alignWithTerm" name="alignWithTerm" value="false">
+                    <input type="hidden" id="alignWithTermHidden" name="alignWithTerm" value="false">
                     <input type="hidden" id="calculatedWeeks" name="calculatedWeeks">
                     <input type="hidden" id="calculatedCost" name="calculatedCost">
                     <div class="form-group">
@@ -1422,11 +1422,13 @@
             if (this.checked) {
                 selectedPack = 'pack';
                 schoolSection.style.display = 'block';
+                document.getElementById('alignWithTermHidden').value = syncCheckbox.checked ? 'true' : 'false';
                 updateTermInfo();
             } else {
                 selectedPack = 'single';
                 schoolSection.style.display = 'none';
                 syncCheckbox.checked = false;
+                document.getElementById('alignWithTermHidden').value = 'false';
                 document.getElementById('termInfo').style.display = 'none';
             }
 
@@ -1435,6 +1437,7 @@
 
         // Sync checkbox handler
         document.getElementById('alignWithTerm').addEventListener('change', function() {
+            document.getElementById('alignWithTermHidden').value = this.checked ? 'true' : 'false';
             updateTermInfo();
         });
 
@@ -1465,7 +1468,6 @@
             const weeksLeft = Math.ceil(daysLeft / 7);
 
             // Simple pricing
-            const lessonType = getUrlParameter('type') || 'trial';
             const packPrice = lessonType === '20' || lessonType === 'trial' ? 250 : 370;
             const termCost = Math.round(packPrice * (weeksLeft / 10));
 
