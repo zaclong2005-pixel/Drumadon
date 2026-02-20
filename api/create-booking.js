@@ -14,6 +14,7 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
   // Get pricing info
   const getPricing = (lessonType) => {
     const prices = {
+      'trial': { single: 0, pack: 0, duration: 20 },
       '20': { single: 26, pack: 250, duration: 20 },
       '30': { single: 39, pack: 370, duration: 30 },
       '45': { single: 57, pack: 540, duration: 45 },
@@ -153,6 +154,7 @@ async function sendAdminEmail({ name, email, phone, age, message, selectedTime, 
   // Get pricing info
   const getPricing = (lessonType) => {
     const prices = {
+      'trial': { single: 0, pack: 0, duration: 20 },
       '20': { single: 26, pack: 250, duration: 20 },
       '30': { single: 39, pack: 370, duration: 30 },
       '45': { single: 57, pack: 540, duration: 45 },
@@ -316,7 +318,7 @@ export default async function handler(req, res) {
     // Create ISO string with Perth timezone
     const isoString = `${preferredDay}T${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00${offsetString}`;
     const eventStart = new Date(isoString);
-    const durationMinutes = type === 'trial' ? 30 : parseInt(type);
+    const durationMinutes = type === 'trial' ? 20 : parseInt(type);
     const eventEnd = new Date(eventStart.getTime() + durationMinutes * 60 * 1000); // dynamic minutes
     
     // Calculate end time (duration minutes later)
