@@ -1392,9 +1392,11 @@
             heroTitle.textContent = 'Free Trial Lesson';
             submitBtn.textContent = 'Book My Free Trial';
             successMessage.textContent = 'Your free trial lesson has been successfully booked!';
-            // Hide lesson pack container for trials
+            // Completely remove toggle sections for trials
             const packFormGroup = document.querySelector('.pack-form-group');
-            if (packFormGroup) packFormGroup.style.display = 'none';
+            const schoolTermSection = document.getElementById('schoolTermSection');
+            if (packFormGroup) packFormGroup.remove();
+            if (schoolTermSection) schoolTermSection.remove();
         } else {
             pageTitle = lessonType + '-Minute Lesson - Drumadon';
             metaDesc = 'Book a ' + lessonType + '-minute drum lesson in Lesmurdie. Professional instruction for all skill levels.';
@@ -1421,89 +1423,94 @@
         // Simple slider logic
         let selectedPack = 'single';
 
-        // 10-pack checkbox handler
-        document.querySelector('#bulkToggle').closest('label').addEventListener('click', function() {
-            setTimeout(() => {
-                const checkbox = document.getElementById('bulkToggle');
-                const schoolSection = document.getElementById('schoolTermSection');
-                const syncCheckbox = document.getElementById('alignWithTerm');
+        // Only add toggle event listeners for non-trial lessons
+        if (lessonType !== 'trial') {
+            // 10-pack checkbox handler
+            document.querySelector('#bulkToggle').closest('label').addEventListener('click', function() {
+                setTimeout(() => {
+                    const checkbox = document.getElementById('bulkToggle');
+                    const schoolSection = document.getElementById('schoolTermSection');
+                    const syncCheckbox = document.getElementById('alignWithTerm');
 
-                if (checkbox.checked) {
-                    selectedPack = 'pack';
-                    schoolSection.style.display = 'block';
-                    document.getElementById('alignWithTermHidden').value = syncCheckbox.checked ? 'true' : 'false';
+                    if (checkbox.checked) {
+                        selectedPack = 'pack';
+                        schoolSection.style.display = 'block';
+                        document.getElementById('alignWithTermHidden').value = syncCheckbox.checked ? 'true' : 'false';
+                        updateTermInfo();
+                    } else {
+                        selectedPack = 'single';
+                        schoolSection.style.display = 'none';
+                        syncCheckbox.checked = false;
+                        document.getElementById('alignWithTermHidden').value = 'false';
+                        document.getElementById('termInfo').style.display = 'none';
+                    }
+
+                    document.getElementById('selectedPack').value = selectedPack;
+                }, 0);
+            });
+
+            // Sync checkbox handler
+            document.querySelector('#alignWithTerm').closest('label').addEventListener('click', function() {
+                setTimeout(() => {
+                    const checkbox = document.getElementById('alignWithTerm');
+                    document.getElementById('alignWithTermHidden').value = checkbox.checked ? 'true' : 'false';
                     updateTermInfo();
-                } else {
-                    selectedPack = 'single';
-                    schoolSection.style.display = 'none';
-                    syncCheckbox.checked = false;
-                    document.getElementById('alignWithTermHidden').value = 'false';
-                    document.getElementById('termInfo').style.display = 'none';
+                }, 0);
+            });
+        }
+
+        // Update term info display (only for non-trial lessons)
+        if (lessonType !== 'trial') {
+            function updateTermInfo() {
+                const syncChecked = document.getElementById('alignWithTerm').checked;
+                const termInfo = document.getElementById('termInfo');
+
+                if (!syncChecked) {
+                    termInfo.style.display = 'none';
+                    return;
                 }
 
-                document.getElementById('selectedPack').value = selectedPack;
-            }, 0);
-        });
+                // Simple term calculation
+                const now = new Date();
+                const currentTerm = schoolTerms2026.find(term =>
+                    now >= new Date(term.start) && now <= new Date(term.end)
+                );
 
-        // Sync checkbox handler
-        document.querySelector('#alignWithTerm').closest('label').addEventListener('click', function() {
-            setTimeout(() => {
-                const checkbox = document.getElementById('alignWithTerm');
-                document.getElementById('alignWithTermHidden').value = checkbox.checked ? 'true' : 'false';
-                updateTermInfo();
-            }, 0);
-        });
+                if (!currentTerm) {
+                    termInfo.style.display = 'none';
+                    return;
+                }
 
-        // Update term info display
-        function updateTermInfo() {
-            const syncChecked = document.getElementById('alignWithTerm').checked;
-            const termInfo = document.getElementById('termInfo');
+                // Count remaining weeks in term
+                const termEnd = new Date(currentTerm.end);
+                const daysLeft = Math.ceil((termEnd - now) / (1000 * 60 * 60 * 24));
+                const weeksLeft = Math.ceil(daysLeft / 7);
 
-            if (!syncChecked) {
-                termInfo.style.display = 'none';
-                return;
-            }
-
-            // Simple term calculation
-            const now = new Date();
-            const currentTerm = schoolTerms2026.find(term =>
-                now >= new Date(term.start) && now <= new Date(term.end)
-            );
-
-            if (!currentTerm) {
-                termInfo.style.display = 'none';
-                return;
-            }
-
-            // Count remaining weeks in term
-            const termEnd = new Date(currentTerm.end);
-            const daysLeft = Math.ceil((termEnd - now) / (1000 * 60 * 60 * 24));
-            const weeksLeft = Math.ceil(daysLeft / 7);
-
-            // Simple pricing - match backend pricing
-            const getPackPrice = (type) => {
-                const prices = {
-                    '20': 250,
-                    '30': 370,
-                    '45': 540,
-                    '60': 700,
-                    'trial': 250  // fallback, though trials don't show packs
+                // Simple pricing - match backend pricing
+                const getPackPrice = (type) => {
+                    const prices = {
+                        '20': 250,
+                        '30': 370,
+                        '45': 540,
+                        '60': 700,
+                        'trial': 250  // fallback, though trials don't show packs
+                    };
+                    return prices[type] || 370; // default to 370 for unknown types
                 };
-                return prices[type] || 370; // default to 370 for unknown types
-            };
-            const packPrice = getPackPrice(lessonType);
-            const termCost = Math.round(packPrice * (weeksLeft / 10));
+                const packPrice = getPackPrice(lessonType);
+                const termCost = Math.round(packPrice * (weeksLeft / 10));
 
-            // Update display
-            document.getElementById('currentTerm').textContent = currentTerm.name;
-            document.getElementById('weeksRemaining').textContent = weeksLeft;
-            document.getElementById('calculatedCostDisplay').textContent = termCost;
+                // Update display
+                document.getElementById('currentTerm').textContent = currentTerm.name;
+                document.getElementById('weeksRemaining').textContent = weeksLeft;
+                document.getElementById('calculatedCostDisplay').textContent = termCost;
 
-            // Store values
-            document.getElementById('calculatedWeeks').value = weeksLeft;
-            document.getElementById('calculatedCost').value = termCost;
+                // Store values
+                document.getElementById('calculatedWeeks').value = weeksLeft;
+                document.getElementById('calculatedCost').value = termCost;
 
-            termInfo.style.display = 'block';
+                termInfo.style.display = 'block';
+            }
         }
 
         // Mobile menu toggle
