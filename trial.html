@@ -961,7 +961,7 @@
                     </div>
 
                     <!-- Lesson Pack Selection -->
-                    <div class="form-group pack-form-group">
+                    <div class="form-group pack-form-group" style="display: block;">
                         <div class="toggle-container">
                             <span class="toggle-label">10 Lesson Pack</span>
                             <label class="toggle-switch">
@@ -1433,47 +1433,37 @@
 
         // Only add toggle event listeners for non-trial lessons
         if (lessonType !== 'trial') {
-            // 10-pack checkbox handler - more reliable approach
-            const bulkToggleLabel = document.querySelector('#bulkToggle').closest('label');
-            if (bulkToggleLabel) {
-                bulkToggleLabel.addEventListener('click', function() {
-                    setTimeout(() => {
-                        const checkbox = document.getElementById('bulkToggle');
-                        const schoolSection = document.getElementById('schoolTermSection');
-                        const syncCheckbox = document.getElementById('alignWithTerm');
+            // 10-pack checkbox handler - listen for change event on checkbox
+            const bulkToggle = document.getElementById('bulkToggle');
+            if (bulkToggle) {
+                bulkToggle.addEventListener('change', function() {
+                    const schoolSection = document.getElementById('schoolTermSection');
+                    const syncCheckbox = document.getElementById('alignWithTerm');
 
-                        if (checkbox && schoolSection) {
-                            if (checkbox.checked) {
-                                selectedPack = 'pack';
-                                schoolSection.style.display = 'block';
-                                document.getElementById('alignWithTermHidden').value = syncCheckbox ? (syncCheckbox.checked ? 'true' : 'false') : 'false';
-                                if (typeof updateTermInfo === 'function') updateTermInfo();
-                            } else {
-                                selectedPack = 'single';
-                                schoolSection.style.display = 'none';
-                                if (syncCheckbox) syncCheckbox.checked = false;
-                                document.getElementById('alignWithTermHidden').value = 'false';
-                                const termInfo = document.getElementById('termInfo');
-                                if (termInfo) termInfo.style.display = 'none';
-                            }
+                    if (bulkToggle.checked) {
+                        selectedPack = 'pack';
+                        if (schoolSection) schoolSection.style.display = 'block';
+                        document.getElementById('alignWithTermHidden').value = syncCheckbox ? (syncCheckbox.checked ? 'true' : 'false') : 'false';
+                        if (typeof updateTermInfo === 'function') updateTermInfo();
+                    } else {
+                        selectedPack = 'single';
+                        if (schoolSection) schoolSection.style.display = 'none';
+                        if (syncCheckbox) syncCheckbox.checked = false;
+                        document.getElementById('alignWithTermHidden').value = 'false';
+                        const termInfo = document.getElementById('termInfo');
+                        if (termInfo) termInfo.style.display = 'none';
+                    }
 
-                            document.getElementById('selectedPack').value = selectedPack;
-                        }
-                    }, 0);
+                    document.getElementById('selectedPack').value = selectedPack;
                 });
             }
 
-            // Sync checkbox handler - more reliable approach
-            const alignWithTermLabel = document.querySelector('#alignWithTerm').closest('label');
-            if (alignWithTermLabel) {
-                alignWithTermLabel.addEventListener('click', function() {
-                    setTimeout(() => {
-                        const checkbox = document.getElementById('alignWithTerm');
-                        if (checkbox) {
-                            document.getElementById('alignWithTermHidden').value = checkbox.checked ? 'true' : 'false';
-                            if (typeof updateTermInfo === 'function') updateTermInfo();
-                        }
-                    }, 0);
+            // Sync checkbox handler - listen for change event
+            const alignWithTerm = document.getElementById('alignWithTerm');
+            if (alignWithTerm) {
+                alignWithTerm.addEventListener('change', function() {
+                    document.getElementById('alignWithTermHidden').value = alignWithTerm.checked ? 'true' : 'false';
+                    if (typeof updateTermInfo === 'function') updateTermInfo();
                 });
             }
         }
