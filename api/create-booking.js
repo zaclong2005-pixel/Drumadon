@@ -32,7 +32,7 @@ async function sendMailgunEmail(emailData) {
 }
 
 // Email sending function for user confirmation
-async function sendUserConfirmationEmail({ name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost }) {
+async function sendUserConfirmationEmail({ name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost, invoiceUrl, invoiceNum }) {
   if (!process.env.MAILGUN_API_KEY || !process.env.MAILGUN_DOMAIN) {
     throw new Error('Email service not configured');
   }
@@ -105,6 +105,10 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
                   <div class="details-cell details-value">${selectedPack === 'pack' ? (alignWithTerm === 'true' ? `$${calculatedCost} (${calculatedWeeks}× Pack - Term Aligned)` : `$${pricing.pack} (10× Pack)`) : `$${pricing.single} (Single Lesson)`}</div>
                 </div>
                 ` : ''}
+                <div class="details-row">
+                  <div class="details-cell details-label">🧾 Invoice:</div>
+                  <div class="details-cell details-value"><a href="${invoiceUrl}" style="color:#7b97ac;font-weight:bold;">View Invoice INV-${invoiceNum}</a></div>
+                </div>
               </div>
             </div>
             <div class="contact-section">
@@ -125,7 +129,7 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
 }
 
 // Email sending function for admin notification
-async function sendAdminEmail({ name, email, phone, age, message, selectedTime, preferredDay, eventId, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost }) {
+async function sendAdminEmail({ name, email, phone, age, message, selectedTime, preferredDay, eventId, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost, invoiceUrl, invoiceNum }) {
   if (!process.env.MAILGUN_API_KEY || !process.env.MAILGUN_DOMAIN) {
     throw new Error('Email service not configured');
   }
@@ -151,8 +155,8 @@ async function sendAdminEmail({ name, email, phone, age, message, selectedTime, 
         <p><strong>Type:</strong> ${type === 'trial' ? 'Free Trial' : type + '-Minute Lesson'}</p>
         <p><strong>Date:</strong> ${formattedDate}</p>
         <p><strong>Time:</strong> ${selectedTime} (${pricing.duration} minutes)</p>
-        ${selectedPack === 'pack' ? `<p><strong>Bulk Booking:</strong> ${alignWithTerm === 'true' ? `Term Aligned (${calculatedWeeks} lessons, $${calculatedCost})` : `Standard 10-Pack ($${pricing.pack})`}</p>` : `<p><strong>Bulk Booking:</strong> No</p>`}
-        ${type !== 'trial' ? `<p><strong>Pricing:</strong> ${selectedPack === 'pack' ? (alignWithTerm === 'true' ? `$${calculatedCost} (${calculatedWeeks}× Pack - Term Aligned)` : `$${pricing.pack} (10× Pack)`) : `$${pricing.single} (Single Lesson)`}</p>` : ''}
+        ${type !== 'trial' ? `<p><strong>Pricing:</strong> ${selectedPack === 'pack' ? (alignWithTerm === 'true' ? `$${calculatedCost} (${calculatedWeeks}× lessons - Term Aligned)` : `$${pricing.pack} (10× Pack)`) : `$${pricing.single} (Single Lesson)`}</p>` : ''}
+        <p><strong>Invoice:</strong> <a href="${invoiceUrl}">INV-${invoiceNum}</a></p>
         <p><strong>Message:</strong> ${message || 'No additional information'}</p>
       </body>
       </html>
@@ -214,9 +218,19 @@ export default async function handler(req, res) {
 
     console.log('Processing booking request:', { name, email, phone, selectedTime, preferredDay, type, selectedPack, alignWithTerm });
 
+    // Generate invoice number (6-hour blocks since 2026-02-20 00:00 Perth, 1-based)
+    const referenceMs = new Date('2026-02-19T16:00:00.000Z').getTime();
+    const invoiceNum = String(Math.max(1, Math.floor((Date.now() - referenceMs) / (1000 * 60 * 60 * 6)) + 1)).padStart(4, '0');
+    const invoiceToken = Buffer.from(JSON.stringify({
+      inv: invoiceNum, name, email, phone, age, type,
+      selectedTime, preferredDay, selectedPack,
+      alignWithTerm, calculatedWeeks, calculatedCost,
+    })).toString('base64url');
+    const invoiceUrl = `https://www.drumadon.com.au/api/invoice?d=${invoiceToken}`;
+
     // Step 1: Send user confirmation email — must succeed before proceeding
     try {
-      await sendUserConfirmationEmail({ name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost });
+      await sendUserConfirmationEmail({ name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost, invoiceUrl, invoiceNum });
       console.log('✅ User confirmation email sent successfully');
     } catch (emailError) {
       console.error('❌ CRITICAL: User confirmation email failed:', emailError);
@@ -322,7 +336,7 @@ export default async function handler(req, res) {
 
     // Step 3: Send admin notification
     try {
-      await sendAdminEmail({ name, email, phone, age, message, selectedTime, preferredDay, eventId: calendarResponse.data.id, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost });
+      await sendAdminEmail({ name, email, phone, age, message, selectedTime, preferredDay, eventId: calendarResponse.data.id, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost, invoiceUrl, invoiceNum });
       console.log('Admin notification email sent successfully');
     } catch (adminEmailError) {
       console.error('Admin email failed, but booking is confirmed:', adminEmailError);
