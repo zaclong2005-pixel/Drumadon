@@ -349,11 +349,12 @@ export default async function handler(req, res) {
         const lessonEndString = `${lessonDateString}T${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}:00+08:00`;
         
         const remainingLessons = calculatedWeeks - i;
+        const currentLessonNumber = i + 1;
         
         const bulkEvent = {
-          summary: `Drumadon ${type}-Minute Lesson (${remainingLessons}/${calculatedWeeks}) - ${name}`,
+          summary: `Drumadon ${type}-Minute Lesson (Lesson ${currentLessonNumber}/${calculatedWeeks}) - ${name}`,
           description: `
-            ${type}-Minute Lesson - Bulk Booking (${remainingLessons} of ${calculatedWeeks} lessons remaining)
+            ${type}-Minute Lesson - Bulk Booking (Lesson ${currentLessonNumber} of ${calculatedWeeks} - ${remainingLessons} remaining)
             Name: ${name}
             Email: ${email}
             Phone: ${phone}
