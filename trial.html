@@ -960,30 +960,22 @@
 
                     <!-- Lesson Pack Selection -->
                     <div class="form-group pack-form-group">
-                        <div class="toggle-container">
-                            <span class="toggle-label">10 Lesson Pack</span>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="bulkToggle" name="lessonPack" value="pack">
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
+                        <label>
+                            <input type="checkbox" id="bulkToggle" name="lessonPack" value="pack">
+                            10 Lesson Pack
+                        </label>
                     </div>
 
                     <!-- School Term Alignment (shown only when 10× Pack is selected) -->
                     <div class="school-term-section" id="schoolTermSection" style="display: none;">
-                        <div class="toggle-container">
-                            <span class="toggle-label">Sync With School Terms</span>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="alignWithTerm" name="alignWithTerm">
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                        <div class="term-info" id="termInfo">
-                            <div class="info-content">
-                                <p><strong>Current Term:</strong> <span id="currentTerm"></span></p>
-                                <p><strong>Lessons remaining:</strong> <span id="weeksRemaining"></span></p>
-                                <p><strong>Total cost:</strong> $<span id="calculatedCostDisplay"></span></p>
-                            </div>
+                        <label>
+                            <input type="checkbox" id="alignWithTerm" name="alignWithTerm">
+                            Sync With School Terms
+                        </label>
+                        <div class="term-info" id="termInfo" style="display: none;">
+                            <p><strong>Current Term:</strong> <span id="currentTerm"></span></p>
+                            <p><strong>Lessons remaining:</strong> <span id="weeksRemaining"></span></p>
+                            <p><strong>Total cost:</strong> $<span id="calculatedCostDisplay"></span></p>
                         </div>
                     </div>
 
@@ -1378,142 +1370,12 @@
         }
 
         // Calculate pricing for school term alignment
-        function calculateTermPricing() {
-            console.log('calculateTermPricing called');
-            const now = new Date();
-            console.log('Current date:', now);
-            const currentTerm = schoolTerms2026.find(term =>
-                now >= new Date(term.start) && now <= new Date(term.end)
-            );
-            console.log('Current term found:', currentTerm);
-
-            if (!currentTerm) {
-                console.log('No current term found, hiding termInfo');
-                termInfo.style.display = 'none';
-                return;
-            }
-
-            // Only show term info if sync is checked
-            const alignChecked = document.getElementById('alignWithTerm').checked;
-            console.log('alignWithTerm checked:', alignChecked);
-            if (!alignChecked) {
-                console.log('alignWithTerm not checked, hiding termInfo');
-                termInfo.style.display = 'none';
-                return;
-            }
-
-            const termEnd = new Date(currentTerm.end);
-            console.log('Term end:', termEnd);
-
-            // Get selected day value
-            const selectedDayValue = daySelect.value;
-            console.log('Selected day value:', selectedDayValue);
-
-            // Get selected day of the week (0-6, Sunday=0)
-            let selectedDayOfWeek = null;
-
-            if (selectedDayValue) {
-                const selectedDate = new Date(selectedDayValue);
-                selectedDayOfWeek = selectedDate.getDay();
-            } else {
-                // If no date selected, use current day of week
-                selectedDayOfWeek = now.getDay();
-            }
-            console.log('Selected day of week:', selectedDayOfWeek);
-
-            // Count occurrences of selected day in remaining term
-            let dayCount = 0;
-            let currentDate;
-            if (selectedDayValue) {
-                const selectedDate = new Date(selectedDayValue);
-                if (selectedDate >= now) {
-                    currentDate = new Date(selectedDate);
-                } else {
-                    currentDate = new Date(now);
-                    // Start from next occurrence of selected day
-                    while (currentDate.getDay() !== selectedDayOfWeek) {
-                        currentDate.setDate(currentDate.getDate() + 1);
-                    }
-                }
-            } else {
-                // Start from current date
-                currentDate = new Date(now);
-            }
-
-            console.log('Starting count from:', currentDate);
-            while (currentDate <= termEnd) {
-                if (currentDate >= now) {
-                    dayCount++;
-                }
-                currentDate.setDate(currentDate.getDate() + 7); // Next week
-            }
-            console.log('Day count:', dayCount);
-
-            // Get pricing based on lesson type
-            let singlePrice, packPrice;
-            if (lessonType === '20') {
-                singlePrice = 26;
-                packPrice = 250;
-            } else if (lessonType === '30') {
-                singlePrice = 39;
-                packPrice = 370;
-            } else if (lessonType === '45') {
-                singlePrice = 57;
-                packPrice = 540;
-            } else if (lessonType === '60') {
-                singlePrice = 74;
-                packPrice = 700;
-            } else {
-                // Default to 20min for trial
-                singlePrice = 26;
-                packPrice = 250;
-            }
-
-            console.log('Pricing - single:', singlePrice, 'pack:', packPrice);
-
-            // Calculate term-aligned pricing based on day count
-            const termCost = Math.round(packPrice * (dayCount / 10)); // Pro-rate based on days remaining
-            const individualCost = singlePrice * dayCount; // Cost of buying individual lessons
-            const termSavings = individualCost - termCost; // Savings compared to buying individual lessons
-
-            console.log('Calculated costs - term:', termCost, 'individual:', individualCost, 'savings:', termSavings);
-
-            // Update display
-            currentTermSpan.textContent = currentTerm.name;
-            weeksRemainingSpan.textContent = dayCount;
-            calculatedCostSpan.textContent = termCost;
-            if (savingsSpan) {
-                savingsSpan.textContent = termSavings;
-            }
-
-            // Show term info
-            console.log('Showing termInfo');
-            termInfo.style.display = 'block';
-
-            // Store calculated values in hidden fields
-            document.getElementById('calculatedWeeks').value = dayCount;
-            document.getElementById('calculatedCost').value = termCost;
-        }
-
         // Set lesson type and update UI
         const lessonType = getUrlParameter('type') || 'trial';
         document.getElementById('lessonType').value = lessonType;
 
-        // Elements
-        const daySelectionSection = document.getElementById('daySelectionSection');
-        const schoolTermSection = document.getElementById('schoolTermSection');
-        const termInfo = document.getElementById('termInfo');
-        const currentTermSpan = document.getElementById('currentTerm');
-        const weeksRemainingSpan = document.getElementById('weeksRemaining');
-        const calculatedCostSpan = document.getElementById('calculatedCostDisplay');
-        const savingsSpan = document.getElementById('savings');
-
-        const heroTitle = document.querySelector('.hero h1');
-        const submitBtn = document.querySelector('.submit-btn');
-        const successMessage = document.querySelector('#successMessage p strong');
-
-        let pageTitle, metaDesc, ogTitle, ogDesc;
-        let selectedPack = 'single'; // Default to single lesson
+        // Simple slider logic
+        let selectedPack = 'single';
 
         if (lessonType === 'trial') {
             pageTitle = 'Free Trial - Drumadon';
@@ -1549,49 +1411,74 @@
         document.querySelector('link[rel="canonical"]').setAttribute('href', canonicalUrl);
         document.querySelector('meta[property="og:url"]').setAttribute('content', canonicalUrl);
 
-        // Handle lesson pack toggle
-        const bulkToggle = document.getElementById('bulkToggle');
-        if (bulkToggle) {
-            bulkToggle.addEventListener('change', () => {
-                console.log('bulkToggle changed, checked:', bulkToggle.checked);
-                const currentScroll = window.pageYOffset;
-                if (bulkToggle.checked) {
-                    selectedPack = 'pack';
-                    schoolTermSection.style.display = 'block';
-                    calculateTermPricing();
-                } else {
-                    selectedPack = 'single';
-                    schoolTermSection.style.display = 'none';
-                    console.log('Unchecking alignWithTerm');
-                    document.getElementById('alignWithTerm').checked = false;
-                    termInfo.style.display = 'none';
-                }
-                document.getElementById('selectedPack').value = selectedPack;
-                window.scrollTo(0, currentScroll);
-            });
-            // Initial state
-            selectedPack = 'single';
-            schoolTermSection.style.display = 'none';
-            termInfo.style.display = 'none';
-        }
+        // Simple slider logic
+        let selectedPack = 'single';
 
-        // Handle school term alignment checkbox
-        const alignWithTermLabel = document.querySelector('#alignWithTerm').closest('label');
-        console.log('alignWithTermLabel element:', alignWithTermLabel);
-        if (alignWithTermLabel) {
-            console.log('Attaching click event listener to alignWithTermLabel');
-            alignWithTermLabel.addEventListener('click', () => {
-                // Use setTimeout to ensure the checkbox state has updated
-                setTimeout(() => {
-                    const checkbox = document.getElementById('alignWithTerm');
-                    console.log('alignWithTerm label clicked, checkbox checked:', checkbox.checked);
-                    const currentScroll = window.pageYOffset;
-                    calculateTermPricing();
-                    window.scrollTo(0, currentScroll);
-                }, 0);
-            });
-        } else {
-            console.log('alignWithTermLabel not found');
+        // 10-pack checkbox handler
+        document.getElementById('bulkToggle').addEventListener('change', function() {
+            const schoolSection = document.getElementById('schoolTermSection');
+            const syncCheckbox = document.getElementById('alignWithTerm');
+
+            if (this.checked) {
+                selectedPack = 'pack';
+                schoolSection.style.display = 'block';
+                updateTermInfo();
+            } else {
+                selectedPack = 'single';
+                schoolSection.style.display = 'none';
+                syncCheckbox.checked = false;
+                document.getElementById('termInfo').style.display = 'none';
+            }
+
+            document.getElementById('selectedPack').value = selectedPack;
+        });
+
+        // Sync checkbox handler
+        document.getElementById('alignWithTerm').addEventListener('change', function() {
+            updateTermInfo();
+        });
+
+        // Update term info display
+        function updateTermInfo() {
+            const syncChecked = document.getElementById('alignWithTerm').checked;
+            const termInfo = document.getElementById('termInfo');
+
+            if (!syncChecked) {
+                termInfo.style.display = 'none';
+                return;
+            }
+
+            // Simple term calculation
+            const now = new Date();
+            const currentTerm = schoolTerms2026.find(term =>
+                now >= new Date(term.start) && now <= new Date(term.end)
+            );
+
+            if (!currentTerm) {
+                termInfo.style.display = 'none';
+                return;
+            }
+
+            // Count remaining weeks in term
+            const termEnd = new Date(currentTerm.end);
+            const daysLeft = Math.ceil((termEnd - now) / (1000 * 60 * 60 * 24));
+            const weeksLeft = Math.ceil(daysLeft / 7);
+
+            // Simple pricing
+            const lessonType = getUrlParameter('type') || 'trial';
+            const packPrice = lessonType === '20' || lessonType === 'trial' ? 250 : 370;
+            const termCost = Math.round(packPrice * (weeksLeft / 10));
+
+            // Update display
+            document.getElementById('currentTerm').textContent = currentTerm.name;
+            document.getElementById('weeksRemaining').textContent = weeksLeft;
+            document.getElementById('calculatedCostDisplay').textContent = termCost;
+
+            // Store values
+            document.getElementById('calculatedWeeks').value = weeksLeft;
+            document.getElementById('calculatedCost').value = termCost;
+
+            termInfo.style.display = 'block';
         }
 
         // Mobile menu toggle
