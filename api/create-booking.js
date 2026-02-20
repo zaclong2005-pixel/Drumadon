@@ -203,7 +203,7 @@ async function sendAdminEmail({ name, email, phone, age, message, selectedTime, 
         <p><strong>Type:</strong> ${type === 'trial' ? 'Free Trial' : type + '-Minute Lesson'}</p>
         <p><strong>Date:</strong> ${formattedDate}</p>
         <p><strong>Time:</strong> ${selectedTime} (${pricing.duration} minutes)</p>
-        ${selectedPack === 'pack' ? `<p><strong>10x Bulk Lessons:</strong> Yes${alignWithTerm === 'true' ? ` (Term Aligned - ${calculatedWeeks} lessons remaining, $${calculatedCost})` : ''}</p>` : `<p><strong>10x Bulk Lessons:</strong> No</p>`}
+        ${selectedPack === 'pack' ? `<p><strong>Bulk Booking:</strong> ${alignWithTerm === 'true' ? `Term Aligned (${calculatedWeeks} lessons, $${calculatedCost})` : `Standard 10-Pack ($${pricing.pack})`}</p>` : `<p><strong>Bulk Booking:</strong> No</p>`}
         ${type !== 'trial' ? `<p><strong>Pricing:</strong> ${selectedPack === 'pack' ? (alignWithTerm === 'true' ? `$${calculatedCost} (${calculatedWeeks}× Pack - Term Aligned)` : `$${pricing.pack} (10× Pack)`) : `$${pricing.single} (Single Lesson)`}</p>` : ''}
         <p><strong>Message:</strong> ${message || 'No additional information'}</p>
         
@@ -329,38 +329,39 @@ export default async function handler(req, res) {
 
     // Create calendar event(s)
     let calendarResponse;
-    
-    // Handle bulk bookings with term alignment - create multiple events
-    if (selectedPack === 'pack' && alignWithTerm === 'true' && calculatedWeeks > 0) {
-      console.log(`Creating ${calculatedWeeks} calendar events for term-aligned bulk booking`);
-      
+
+    // Handle bulk bookings - create multiple events for both term-aligned and regular 10-packs
+    if (selectedPack === 'pack') {
+      const totalLessons = alignWithTerm === 'true' ? calculatedWeeks : 10;
+      console.log(`Creating ${totalLessons} calendar events for ${alignWithTerm === 'true' ? 'term-aligned' : 'regular 10-pack'} bulk booking`);
+
       const events = [];
       const startDate = new Date(preferredDay);
-      const selectedDayOfWeek = startDate.getDay(); // 0=Sunday, 1=Monday, etc.
-      
-      // Create events for each remaining lesson in the term
-      for (let i = 0; i < calculatedWeeks; i++) {
+
+      // Create events for each lesson in the pack
+      for (let i = 0; i < totalLessons; i++) {
         const lessonDate = new Date(startDate);
         lessonDate.setDate(startDate.getDate() + (i * 7)); // Add weeks
-        
+
         // Format the date for this lesson
         const lessonDateString = lessonDate.toISOString().split('T')[0]; // YYYY-MM-DD
         const lessonStartString = `${lessonDateString}T${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00${offsetString}`;
         const lessonEndString = `${lessonDateString}T${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}:00+08:00`;
-        
-        const remainingLessons = calculatedWeeks - i;
+
+        const remainingLessons = totalLessons - i;
         const currentLessonNumber = i + 1;
-        
+        const packDescription = alignWithTerm === 'true' ? 'Term Aligned' : '10-Pack';
+
         const bulkEvent = {
-          summary: `Drumadon ${type}-Minute Lesson (Lesson ${currentLessonNumber}/${calculatedWeeks}) - ${name}`,
+          summary: `Drumadon ${type}-Minute Lesson (Lesson ${currentLessonNumber}/${totalLessons}) - ${name}`,
           description: `
-            ${type}-Minute Lesson - Bulk Booking (Lesson ${currentLessonNumber} of ${calculatedWeeks} - ${remainingLessons} remaining)
+            ${type}-Minute Lesson - ${packDescription} (Lesson ${currentLessonNumber} of ${totalLessons} - ${remainingLessons} remaining)
             Name: ${name}
             Email: ${email}
             Phone: ${phone}
             Age: ${age}
             Message: ${message || 'No additional information'}
-            Total Cost: $${calculatedCost}
+            Total Cost: $${alignWithTerm === 'true' ? calculatedCost : pricing.pack}
           `,
           start: {
             dateTime: lessonStartString,
@@ -372,19 +373,19 @@ export default async function handler(req, res) {
           },
           colorId: '11', // Red for bulk lessons
         };
-        
+
         const eventResponse = await calendar.events.insert({
           calendarId: process.env.GOOGLE_CALENDAR_ID,
           resource: bulkEvent,
         });
-        
+
         events.push(eventResponse.data);
-        console.log(`Bulk event ${i + 1}/${calculatedWeeks} created:`, eventResponse.data.id);
+        console.log(`Bulk event ${i + 1}/${totalLessons} created:`, eventResponse.data.id);
       }
-      
+
       calendarResponse = { data: { id: events.map(e => e.id).join(',') } };
-      console.log(`All ${calculatedWeeks} bulk calendar events created`);
-      
+      console.log(`All ${totalLessons} bulk calendar events created`);
+
     } else {
       // Single event for trial or non-bulk bookings
       const event = {
@@ -396,7 +397,6 @@ export default async function handler(req, res) {
           Phone: ${phone}
           Age: ${age}
           Message: ${message || 'No additional information'}
-          ${selectedPack === 'pack' ? `Bulk Booking: ${alignWithTerm === 'true' ? `${calculatedWeeks} lessons (Term Aligned)` : '10-Pack'}` : ''}
         `,
         start: {
           dateTime: isoString,
@@ -413,7 +413,7 @@ export default async function handler(req, res) {
         calendarId: process.env.GOOGLE_CALENDAR_ID,
         resource: event,
       });
-      
+
       console.log('Single calendar event created:', calendarResponse.data.id);
     }
 
