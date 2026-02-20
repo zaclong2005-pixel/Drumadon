@@ -1518,9 +1518,13 @@
                 const packPrice = getPackPrice(lessonType);
                 const termCost = Math.round(packPrice * (lessonsLeft / 10));
 
+                // Get day name for display
+                const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                const currentDayName = dayNames[currentDayOfWeek];
+
                 // Update display
                 document.getElementById('currentTerm').textContent = currentTerm.name;
-                document.getElementById('weeksRemaining').textContent = lessonsLeft;
+                document.getElementById('weeksRemaining').textContent = `${lessonsLeft} (${currentDayName}s)`;
                 document.getElementById('calculatedCostDisplay').textContent = termCost;
 
                 // Store values
