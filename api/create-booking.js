@@ -218,9 +218,21 @@ export default async function handler(req, res) {
 
     console.log('Processing booking request:', { name, email, phone, selectedTime, preferredDay, type, selectedPack, alignWithTerm });
 
-    // Generate invoice number (6-hour blocks since 2026-02-20 00:00 Perth, 1-based)
-    const referenceMs = new Date('2026-02-19T16:00:00.000Z').getTime();
-    const invoiceNum = String(Math.max(1, Math.floor((Date.now() - referenceMs) / (1000 * 60 * 60 * 6)) + 1)).padStart(4, '0');
+    // Generate invoice number: base-36, one new slot per hour, 6am–midnight Perth only
+    // 6am=0001, 7am=0002, …, 3pm=000a, …, 11pm=000i, then next day 6am=000j, etc.
+    const perthOffsetMs = 8 * 60 * 60 * 1000;
+    const DAY_MS = 24 * 60 * 60 * 1000;
+    const nowPerthMs = Date.now() + perthOffsetMs;
+    const perthHour = new Date(nowPerthMs).getUTCHours(); // Perth local hour 0–23
+    // Ref: midnight starting Feb 20 2026 Perth (UTC+8)
+    const refMidnightPerthMs = new Date('2026-02-19T16:00:00.000Z').getTime() + perthOffsetMs;
+    const fullDaysElapsed = Math.floor((nowPerthMs - refMidnightPerthMs) / DAY_MS);
+    // Active slot within the day: 6am→1, 7am→2, …, 11pm→18; before 6am→0 (still in prev day's last slot)
+    const activeHourInDay = perthHour < 6 ? 0 : perthHour - 5;
+    const invoiceSlot = activeHourInDay === 0
+      ? Math.max(1, fullDaysElapsed * 18)        // before 6am: hold at end of previous day
+      : fullDaysElapsed * 18 + activeHourInDay;  // 6am–11pm: advance normally
+    const invoiceNum = Math.max(1, invoiceSlot).toString(36).padStart(4, '0');
     const invoiceToken = Buffer.from(JSON.stringify({
       inv: invoiceNum, name, email, phone, age, type,
       selectedTime, preferredDay, selectedPack,
