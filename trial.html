@@ -695,6 +695,30 @@
             font-family: 'Candara';
         }
 
+        .day-selector {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .day-selector p {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.1rem;
+            color: #000000;
+            font-family: 'Candara';
+        }
+
+        .day-selector select {
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: 'Candara';
+            font-size: 1rem;
+            background: white;
+        }
+
         .success-message {
             display: none;
             text-align: center;
@@ -979,6 +1003,18 @@
                                 <input type="checkbox" id="alignWithTerm" name="alignWithTerm">
                                 <span class="toggle-slider"></span>
                             </label>
+                        </div>
+                        <div class="day-selector" id="daySelector" style="display: none;">
+                            <p><strong>Preferred lesson day:</strong></p>
+                            <select id="preferredDay">
+                                <option value="1">Monday</option>
+                                <option value="2">Tuesday</option>
+                                <option value="3">Wednesday</option>
+                                <option value="4">Thursday</option>
+                                <option value="5">Friday</option>
+                                <option value="6">Saturday</option>
+                                <option value="0">Sunday</option>
+                            </select>
                         </div>
                         <div class="term-info" id="termInfo" style="display: none;">
                             <div class="info-content">
@@ -1462,7 +1498,25 @@
             const alignWithTerm = document.getElementById('alignWithTerm');
             if (alignWithTerm) {
                 alignWithTerm.addEventListener('change', function() {
-                    document.getElementById('alignWithTermHidden').value = alignWithTerm.checked ? 'true' : 'false';
+                    const daySelector = document.getElementById('daySelector');
+                    const termInfo = document.getElementById('termInfo');
+                    
+                    if (alignWithTerm.checked) {
+                        if (daySelector) daySelector.style.display = 'block';
+                        document.getElementById('alignWithTermHidden').value = 'true';
+                        if (typeof updateTermInfo === 'function') updateTermInfo();
+                    } else {
+                        if (daySelector) daySelector.style.display = 'none';
+                        if (termInfo) termInfo.style.display = 'none';
+                        document.getElementById('alignWithTermHidden').value = 'false';
+                    }
+                });
+            }
+
+            // Day selector handler
+            const preferredDay = document.getElementById('preferredDay');
+            if (preferredDay) {
+                preferredDay.addEventListener('change', function() {
                     if (typeof updateTermInfo === 'function') updateTermInfo();
                 });
             }
@@ -1490,15 +1544,15 @@
                     return;
                 }
 
-                // Count remaining instances of current day of week in term
+                // Count remaining instances of selected day of week in term
                 const termEnd = new Date(currentTerm.end);
-                const currentDayOfWeek = now.getDay(); // 0=Sunday, 1=Monday, ..., 6=Saturday
+                const selectedDay = parseInt(document.getElementById('preferredDay').value);
                 let lessonsLeft = 0;
                 const countDate = new Date(now);
                 
                 // Count from today (inclusive) until term end
                 while (countDate <= termEnd) {
-                    if (countDate.getDay() === currentDayOfWeek) {
+                    if (countDate.getDay() === selectedDay) {
                         lessonsLeft++;
                     }
                     countDate.setDate(countDate.getDate() + 1);
@@ -1520,11 +1574,11 @@
 
                 // Get day name for display
                 const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-                const currentDayName = dayNames[currentDayOfWeek];
+                const selectedDayName = dayNames[selectedDay];
 
                 // Update display
                 document.getElementById('currentTerm').textContent = currentTerm.name;
-                document.getElementById('weeksRemaining').textContent = `${lessonsLeft} (${currentDayName}s)`;
+                document.getElementById('weeksRemaining').textContent = `${lessonsLeft} (${selectedDayName}s)`;
                 document.getElementById('calculatedCostDisplay').textContent = termCost;
 
                 // Store values
