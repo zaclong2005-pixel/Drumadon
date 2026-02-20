@@ -1,7 +1,7 @@
 import { google } from 'googleapis';
 
 // Email sending function for user confirmation
-async function sendUserConfirmationEmail({ name, email, phone, age, message, selectedTime, preferredDay, type }) {
+async function sendUserConfirmationEmail({ name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost }) {
   // Validate Mailgun environment variables
   if (!process.env.MAILGUN_API_KEY || !process.env.MAILGUN_DOMAIN) {
     throw new Error('Email service not configured');
@@ -113,7 +113,7 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
                 ${type !== 'trial' ? `
                 <div class="details-row">
                   <div class="details-cell details-label">💰 Price:</div>
-                  <div class="details-cell details-value">$${pricing.single} (Single) / $${pricing.pack} (10× Pack)</div>
+                  <div class="details-cell details-value">${selectedPack === 'pack' ? (alignWithTerm === 'true' ? `$${calculatedCost} (10× Pack - Term Aligned, ${calculatedWeeks} weeks)` : `$${pricing.pack} (10× Pack)`) : `$${pricing.single} (Single Lesson)`}</div>
                 </div>
                 ` : ''}
               </div>
@@ -141,7 +141,7 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
 }
 
 // Email sending function for admin notification
-async function sendAdminEmail({ name, email, phone, age, message, selectedTime, preferredDay, eventId, type }) {
+async function sendAdminEmail({ name, email, phone, age, message, selectedTime, preferredDay, eventId, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost }) {
   // Validate Mailgun environment variables
   if (!process.env.MAILGUN_API_KEY || !process.env.MAILGUN_DOMAIN) {
     throw new Error('Email service not configured');
@@ -203,7 +203,7 @@ async function sendAdminEmail({ name, email, phone, age, message, selectedTime, 
         <p><strong>Type:</strong> ${type === 'trial' ? 'Free Trial' : type + '-Minute Lesson'}</p>
         <p><strong>Date:</strong> ${formattedDate}</p>
         <p><strong>Time:</strong> ${selectedTime} (${pricing.duration} minutes)</p>
-        ${type !== 'trial' ? `<p><strong>Pricing:</strong> $${pricing.single} (Single) / $${pricing.pack} (10× Pack)</p>` : ''}
+        ${type !== 'trial' ? `<p><strong>Pricing:</strong> ${selectedPack === 'pack' ? (alignWithTerm === 'true' ? `$${calculatedCost} (10× Pack - Term Aligned, ${calculatedWeeks} weeks)` : `$${pricing.pack} (10× Pack)`) : `$${pricing.single} (Single Lesson)`}</p>` : ''}
         <p><strong>Message:</strong> ${message || 'No additional information'}</p>
         
 
@@ -254,7 +254,7 @@ export default async function handler(req, res) {
       data[key] = value;
     }
 
-    const { name, email, phone, age, message, selectedTime, preferredDay, type } = data;
+    const { name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost } = data;
 
     // Validate required fields
     if (!name || !email || !phone || !selectedTime || !preferredDay) {
@@ -273,7 +273,7 @@ export default async function handler(req, res) {
       });
     }
 
-    console.log('Processing booking request:', { name, email, phone, selectedTime, preferredDay });
+    console.log('Processing booking request:', { name, email, phone, selectedTime, preferredDay, type, selectedPack, alignWithTerm });
 
     // CRITICAL: Step 1 - Send user confirmation email FIRST
     // This is the ONLY step that must succeed before proceeding

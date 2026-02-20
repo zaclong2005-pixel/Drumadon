@@ -122,6 +122,8 @@
             padding: 0;
             background-color: transparent;
             color: var(--text-color);
+            font-size: 1.1em;
+            font-weight: 600;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -409,6 +411,17 @@
             content: ' *';
             color: #ff0000;
             font-weight: bold;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .form-group.has-value label::after {
+            display: none;
+        }
+
+        .form-group.error label::after {
+            opacity: 1;
+            color: #ff0000;
         }
 
         .form-group label[for="message"]::after {
@@ -465,20 +478,234 @@
         }
 
         .submit-btn {
-            background: var(--btn-bg);
+            background-color: var(--btn-bg);
             color: var(--btn-text);
-            border: none;
             padding: 0.75rem 1.5rem;
+            border: none;
             border-radius: 10px;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 1.2rem;
+            font-weight: bold;
             transition: transform 0.3s, background-color 0.3s ease;
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            font-family: Candara, sans-serif;
         }
 
         .submit-btn:hover {
-            background: var(--btn-hover);
+            background-color: var(--btn-hover);
             transform: scale(1.05);
+        }
+
+        .lesson-pack-section {
+            margin-bottom: 2rem;
+        }
+
+        .continue-btn {
+            display: block;
+            margin: 0 auto;
+        }
+
+        .school-term-section {
+            margin-bottom: 1.5rem;
+            width: 50%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .term-alignment-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .term-checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .term-checkbox-label input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            left: 8px;
+            top: 0;
+            width: 20px;
+            height: 20px;
+        }
+
+        .term-checkbox-label input[type="checkbox"] + .term-checkbox-text::before {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #000000;
+            border-radius: 4px;
+            background: rgba(211, 211, 211, 0.95);
+            transition: all 0.3s ease;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        .term-checkbox-label input[type="checkbox"]:checked + .term-checkbox-text::before {
+            background: #000000;
+        }
+
+        .term-checkbox-label input[type="checkbox"]:checked + .term-checkbox-text::after {
+            content: '✓';
+            position: absolute;
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: bold;
+            left: 8px;
+            top: 0;
+            pointer-events: none;
+        }
+
+        .term-checkbox-text {
+            position: relative;
+            color: #000000;
+            font-family: 'Candara';
+        }
+
+        .info-btn {
+            background: #000000;
+            border: 2px solid #000000;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #ffffff;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .info-btn:hover {
+            background: #555555;
+            border-color: #555555;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .card-container {
+            background: rgba(211, 211, 211, 0.95);
+            border: 2px solid #333333;
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .card-container:hover {
+            background: rgba(211, 211, 211, 1);
+            border-color: #000000;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .pack-container {
+            width: 48%;
+            margin: 0 auto;
+        }
+
+        .term-container {
+            width: 54%;
+            margin: 0 auto;
+        }
+
+        .lesson-pack-selection {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .pack-checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            flex: 1;
+            padding: 0.5rem 0.75rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .pack-checkbox-label:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .pack-checkbox-label input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            left: 8px;
+            top: 0;
+            width: 20px;
+            height: 20px;
+        }
+
+        .pack-checkbox-label input[type="checkbox"] + .pack-checkbox-text::before {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #000000;
+            border-radius: 4px;
+            background: rgba(211, 211, 211, 0.95);
+            transition: all 0.3s ease;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        .pack-checkbox-label input[type="checkbox"]:checked + .pack-checkbox-text::before {
+            background: #000000;
+        }
+
+        .pack-checkbox-label input[type="checkbox"]:checked + .pack-checkbox-text::after {
+            content: '✓';
+            position: absolute;
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: bold;
+            left: 8px;
+            top: 0;
+            pointer-events: none;
+        }
+
+        .pack-checkbox-label input[type="checkbox"]:checked {
+            background: #000000;
+            color: #ffffff;
+        }
+
+        .pack-checkbox-label input[type="checkbox"]:checked + .pack-checkbox-text {
+            color: #000000;
+        }
+
+        .pack-checkbox-text {
+            position: relative;
+            color: #000000;
+            font-family: 'Candara';
+        }
+
+        .term-info {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .term-info p {
+            margin: 0.5rem 0;
+            font-size: 1rem;
         }
 
         .success-message {
@@ -630,6 +857,16 @@
             .success-message p {
                 font-size: 1.2rem;
             }
+
+            .lesson-pack-selection {
+                flex-direction: row !important;
+                gap: 0 !important;
+            }
+
+            .pack-option {
+                flex: 1 !important;
+                min-width: 0 !important;
+            }
         }
 
         /* Desktop styles */
@@ -685,7 +922,7 @@
 
     <section class="trial-booking-banner">
         <div class="trial-card">
-            <div class="day-selection-section">
+            <div class="day-selection-section" id="daySelectionSection">
                 <h3>Select Date</h3>
                 <div class="custom-select">
                     <div class="select-selected">Select a day</div>
@@ -708,6 +945,10 @@
                     <input type="hidden" id="selectedTime" name="selectedTime">
                     <input type="hidden" id="preferredDay" name="preferredDay">
                     <input type="hidden" id="lessonType" name="type">
+                    <input type="hidden" id="selectedPack" name="selectedPack" value="single">
+                    <input type="hidden" id="alignWithTerm" name="alignWithTerm" value="false">
+                    <input type="hidden" id="calculatedWeeks" name="calculatedWeeks">
+                    <input type="hidden" id="calculatedCost" name="calculatedCost">
                     <div class="form-group">
                         <label for="name">Name</label>
                         <input type="text" id="name" name="name" placeholder="Enter your name" required>
@@ -731,6 +972,37 @@
                         <label for="message">Additional Information</label>
                         <textarea id="message" name="message" placeholder="Tell us about your experience and goals"></textarea>
                     </div>
+
+                    <!-- Lesson Pack Selection -->
+                    <div class="form-group pack-form-group">
+                        <div class="card-container pack-container">
+                            <div class="lesson-pack-selection">
+                                <label class="pack-checkbox-label">
+                                    <input type="checkbox" name="lessonPack" value="pack">
+                                    <span class="pack-checkbox-text">10 lesson Bulk</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- School Term Alignment (shown only when 10× Pack is selected) -->
+                    <div class="school-term-section" id="schoolTermSection" style="display: none;">
+                        <div class="card-container term-container">
+                            <div class="term-alignment-row">
+                                <label class="term-checkbox-label">
+                                    <input type="checkbox" id="alignWithTerm" name="alignWithTerm">
+                                    <span class="term-checkbox-text">Align with school term</span>
+                                </label>
+                                <button type="button" class="info-btn" id="termInfoBtn">i</button>
+                            </div>
+                        </div>
+                        <div class="term-info" id="termInfo" style="display: none;">
+                            <p><strong>Current Term:</strong> <span id="currentTerm"></span></p>
+                            <p><strong>Weeks remaining:</strong> <span id="weeksRemaining"></span></p>
+                            <p><strong>Calculated cost:</strong> $<span id="calculatedCostDisplay"></span> (Save $<span id="savings"></span>)</p>
+                        </div>
+                    </div>
+
                     <button type="submit" class="submit-btn" id="submitBtn">Book My Free Trial</button>
                 </form>
             </div>
@@ -773,12 +1045,9 @@
         </div>
     </footer>
 
-    </style><script>
-        // Configuration
+    <script>
+        // Config object for trial page
         const config = {
-            advanceBookingHours: 48,
-            timeSlotDuration: 30,
-            defaultWorkingHours: { start: '09:00', end: '17:00' },
             daysOfWeek: ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
         };
 
@@ -925,6 +1194,11 @@
 
                     timeSelection.style.display = 'block';
                     bookingForm.style.display = 'none';
+
+                    // Update term pricing if school term alignment is selected
+                    if (document.getElementById('alignWithTerm').checked) {
+                        calculateTermPricing();
+                    }
                 } catch (error) {
                     console.error('Error fetching times:', error);
                     alert('Sorry, there was an error loading available times. Please try again.');
@@ -1005,6 +1279,7 @@
                 return;
             }
 
+            // Prevent default form submission
             e.preventDefault();
 
             const form = e.target;
@@ -1083,21 +1358,33 @@
             }, 3000);
         });
 
-        // Clear error messages when user starts typing
-        document.getElementById('name').addEventListener('input', () => {
+        // Clear error messages when user starts typing and update asterisk visibility
+        document.getElementById('name').addEventListener('input', (e) => {
             document.getElementById('name').parentElement.classList.remove('error');
+            document.getElementById('name').parentElement.classList.toggle('has-value', e.target.value.trim() !== '');
         });
-        document.getElementById('email').addEventListener('input', () => {
+        document.getElementById('email').addEventListener('input', (e) => {
             document.getElementById('email').parentElement.classList.remove('error');
+            document.getElementById('email').parentElement.classList.toggle('has-value', e.target.value.trim() !== '');
         });
-        document.getElementById('phone').addEventListener('input', () => {
+        document.getElementById('phone').addEventListener('input', (e) => {
             document.getElementById('phone').parentElement.classList.remove('error');
+            document.getElementById('phone').parentElement.classList.toggle('has-value', e.target.value.trim() !== '');
         });
-        document.getElementById('age').addEventListener('input', () => {
+        document.getElementById('age').addEventListener('input', (e) => {
             document.getElementById('age').parentElement.classList.remove('error');
+            document.getElementById('age').parentElement.classList.toggle('has-value', e.target.value.trim() !== '');
         });
     </script>
     <script>
+        // School term data for 2026
+        const schoolTerms2026 = [
+            { name: 'Term 1', start: '2026-02-02', end: '2026-04-13' },
+            { name: 'Term 2', start: '2026-04-20', end: '2026-07-03' },
+            { name: 'Term 3', start: '2026-07-20', end: '2026-09-25' },
+            { name: 'Term 4', start: '2026-10-12', end: '2026-12-17' }
+        ];
+
         // Get URL parameter
         function getUrlParameter(name) {
             name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
@@ -1106,23 +1393,117 @@
             return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
         }
 
+        // Calculate pricing for school term alignment
+        function calculateTermPricing() {
+            const now = new Date();
+            const currentTerm = schoolTerms2026.find(term =>
+                now >= new Date(term.start) && now <= new Date(term.end)
+            );
+
+            if (!currentTerm) {
+                termInfo.style.display = 'none';
+                return;
+            }
+
+            const termEnd = new Date(currentTerm.end);
+
+            // Get selected day of the week (0-6, Sunday=0)
+            const selectedDayValue = daySelect.value;
+            let selectedDayOfWeek = null;
+
+            if (selectedDayValue) {
+                const selectedDate = new Date(selectedDayValue);
+                selectedDayOfWeek = selectedDate.getDay();
+            }
+
+            // Count occurrences of selected day in remaining term
+            let dayCount = 0;
+            if (selectedDayOfWeek !== null) {
+                let currentDate = new Date(now);
+                // Start from next occurrence of selected day
+                while (currentDate.getDay() !== selectedDayOfWeek) {
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+
+                while (currentDate <= termEnd) {
+                    if (currentDate >= now) {
+                        dayCount++;
+                    }
+                    currentDate.setDate(currentDate.getDate() + 7); // Next week
+                }
+            } else {
+                // Fallback to weeks calculation if no day selected
+                const daysRemaining = (termEnd - now) / (24 * 60 * 60 * 1000);
+                dayCount = Math.ceil((daysRemaining + 3) / 7);
+            }
+
+            // Get pricing based on lesson type
+            let singlePrice, packPrice;
+            if (lessonType === '20') {
+                singlePrice = 26;
+                packPrice = 250;
+            } else if (lessonType === '30') {
+                singlePrice = 39;
+                packPrice = 370;
+            } else if (lessonType === '45') {
+                singlePrice = 57;
+                packPrice = 540;
+            } else if (lessonType === '60') {
+                singlePrice = 74;
+                packPrice = 700;
+            } else {
+                // Default to 20min for trial
+                singlePrice = 26;
+                packPrice = 250;
+            }
+
+            // Calculate term-aligned pricing based on day count
+            const termCost = Math.round(packPrice * (dayCount / 10)); // Pro-rate based on days remaining
+            const individualCost = singlePrice * dayCount; // Cost of buying individual lessons
+            const termSavings = individualCost - termCost; // Savings compared to buying individual lessons
+
+            // Update display
+            currentTermSpan.textContent = currentTerm.name;
+            weeksRemainingSpan.textContent = dayCount;
+            calculatedCostSpan.textContent = termCost;
+            savingsSpan.textContent = termSavings;
+
+            // Store calculated values in hidden fields
+            document.getElementById('calculatedWeeks').value = weeksRemaining;
+            document.getElementById('calculatedCost').value = termCost;
+        }
+
         // Set lesson type and update UI
         const lessonType = getUrlParameter('type') || 'trial';
         document.getElementById('lessonType').value = lessonType;
+
+        // Elements
+        const daySelectionSection = document.getElementById('daySelectionSection');
+        const schoolTermSection = document.getElementById('schoolTermSection');
+        const termInfo = document.getElementById('termInfo');
+        const currentTermSpan = document.getElementById('currentTerm');
+        const weeksRemainingSpan = document.getElementById('weeksRemaining');
+        const calculatedCostSpan = document.getElementById('calculatedCostDisplay');
+        const savingsSpan = document.getElementById('savings');
 
         const heroTitle = document.querySelector('.hero h1');
         const submitBtn = document.querySelector('.submit-btn');
         const successMessage = document.querySelector('#successMessage p strong');
 
         let pageTitle, metaDesc, ogTitle, ogDesc;
+        let selectedPack = 'single'; // Default to single lesson
+
         if (lessonType === 'trial') {
             pageTitle = 'Free Trial - Drumadon';
-            metaDesc = 'Sign up for a free 30-minute drum lesson trial in Lesmurdie. No drum kit required. Book now with Drumadon.';
+            metaDesc = 'Sign up for a free 20-minute drum lesson trial in Lesmurdie. No drum kit required. Book now with Drumadon.';
             ogTitle = 'Free Trial - Drumadon';
-            ogDesc = 'Sign up for a free 30-minute drum lesson trial in Lesmurdie. No drum kit required.';
+            ogDesc = 'Sign up for a free 20-minute drum lesson trial in Lesmurdie. No drum kit required.';
             heroTitle.textContent = 'Free Trial Lesson';
             submitBtn.textContent = 'Book My Free Trial';
             successMessage.textContent = 'Your free trial lesson has been successfully booked!';
+            // Hide lesson pack container for trials
+            const packFormGroup = document.querySelector('.pack-form-group');
+            if (packFormGroup) packFormGroup.style.display = 'none';
         } else {
             pageTitle = lessonType + '-Minute Lesson - Drumadon';
             metaDesc = 'Book a ' + lessonType + '-minute drum lesson in Lesmurdie. Professional instruction for all skill levels.';
@@ -1131,6 +1512,9 @@
             heroTitle.textContent = lessonType + '-Minute Lesson Booking';
             submitBtn.textContent = 'Book My Lesson';
             successMessage.textContent = 'Your lesson has been successfully booked!';
+            // Show lesson pack container for actual lessons
+            const packFormGroup = document.querySelector('.pack-form-group');
+            if (packFormGroup) packFormGroup.style.display = 'block';
         }
 
         document.title = pageTitle;
@@ -1142,7 +1526,58 @@
         const canonicalUrl = lessonType === 'trial' ? 'https://www.drumadon.com.au/trial.html' : `https://www.drumadon.com.au/trial.html?type=${lessonType}`;
         document.querySelector('link[rel="canonical"]').setAttribute('href', canonicalUrl);
         document.querySelector('meta[property="og:url"]').setAttribute('content', canonicalUrl);
-        
+
+        // Handle lesson pack checkbox and school term
+        if (lessonType === 'trial') {
+            selectedPack = 'single';
+            document.getElementById('selectedPack').value = selectedPack;
+            schoolTermSection.style.display = 'none';
+        } else {
+            // Handle lesson pack checkbox (optional now)
+            const packCheckbox = document.querySelector('input[name="lessonPack"]');
+            if (packCheckbox) {
+                packCheckbox.addEventListener('change', () => {
+                    if (packCheckbox.checked) {
+                        selectedPack = 'pack';
+                        schoolTermSection.style.display = 'block';
+                        calculateTermPricing();
+                    } else {
+                        selectedPack = 'single';
+                        schoolTermSection.style.display = 'none';
+                    }
+                    document.getElementById('selectedPack').value = selectedPack;
+                });
+                // Initial state - not checked by default
+                selectedPack = 'single';
+                schoolTermSection.style.display = 'none';
+            }
+        }
+
+        // Handle school term alignment checkbox
+        const alignWithTermCheckbox = document.getElementById('alignWithTerm');
+        if (alignWithTermCheckbox) {
+            alignWithTermCheckbox.addEventListener('change', () => {
+                if (alignWithTermCheckbox.checked) {
+                    calculateTermPricing();
+                    termInfo.style.display = 'block';
+                } else {
+                    termInfo.style.display = 'none';
+                }
+            });
+        }
+
+        // Handle info button to toggle term details
+        const termInfoBtn = document.getElementById('termInfoBtn');
+        if (termInfoBtn) {
+            termInfoBtn.addEventListener('click', () => {
+                if (termInfo.style.display === 'none') {
+                    termInfo.style.display = 'block';
+                } else {
+                    termInfo.style.display = 'none';
+                }
+            });
+        }
+
         // Mobile menu toggle
         document.getElementById('menu-btn').addEventListener('click', () => {
             document.querySelector('nav ul').classList.toggle('open');
