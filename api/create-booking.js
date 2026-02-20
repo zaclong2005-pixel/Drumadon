@@ -188,7 +188,10 @@ export default async function handler(req, res) {
 
     const auth = new google.auth.GoogleAuth({
       credentials: serviceAccountKey,
-      scopes: ['https://www.googleapis.com/auth/calendar'],
+      scopes: [
+        'https://www.googleapis.com/auth/calendar',
+        'https://www.googleapis.com/auth/spreadsheets',
+      ],
     });
 
     const calendar = google.calendar({ version: 'v3', auth });
@@ -218,21 +221,57 @@ export default async function handler(req, res) {
 
     console.log('Processing booking request:', { name, email, phone, selectedTime, preferredDay, type, selectedPack, alignWithTerm });
 
-    // Generate invoice number: base-36, one new slot per hour, 6am–midnight Perth only
-    // 6am=0001, 7am=0002, …, 3pm=000a, …, 11pm=000i, then next day 6am=000j, etc.
-    const perthOffsetMs = 8 * 60 * 60 * 1000;
-    const DAY_MS = 24 * 60 * 60 * 1000;
-    const nowPerthMs = Date.now() + perthOffsetMs;
-    const perthHour = new Date(nowPerthMs).getUTCHours(); // Perth local hour 0–23
-    // Ref: midnight starting Feb 20 2026 Perth (UTC+8)
-    const refMidnightPerthMs = new Date('2026-02-19T16:00:00.000Z').getTime() + perthOffsetMs;
-    const fullDaysElapsed = Math.floor((nowPerthMs - refMidnightPerthMs) / DAY_MS);
-    // Active slot within the day: 6am→1, 7am→2, …, 11pm→18; before 6am→0 (still in prev day's last slot)
-    const activeHourInDay = perthHour < 6 ? 0 : perthHour - 5;
-    const invoiceSlot = activeHourInDay === 0
-      ? Math.max(1, fullDaysElapsed * 18)        // before 6am: hold at end of previous day
-      : fullDaysElapsed * 18 + activeHourInDay;  // 6am–11pm: advance normally
-    const invoiceNum = Math.max(1, invoiceSlot).toString(36).padStart(4, '0');
+    // Compute pricing and date (needed for invoice and calendar)
+    const pricing = getPricing(type);
+    const bookingDate = new Date(preferredDay);
+    const formattedDate = `${bookingDate.getDate().toString().padStart(2, '0')}/${(bookingDate.getMonth() + 1).toString().padStart(2, '0')}/${bookingDate.getFullYear()}`;
+    const bookingAmount = type === 'trial' ? 0 : selectedPack === 'pack'
+      ? (alignWithTerm === 'true' ? Number(calculatedCost) : pricing.pack)
+      : pricing.single;
+
+    // Generate invoice number via Google Sheets (falls back to time-based if unavailable)
+    let invoiceNum;
+    try {
+      if (!process.env.GOOGLE_SHEET_ID) throw new Error('GOOGLE_SHEET_ID not configured');
+      const sheets = google.sheets({ version: 'v4', auth });
+
+      // Count existing rows (row 1 is header, so existingRows=1 → next invoice is 0001)
+      const getRes = await sheets.spreadsheets.values.get({
+        spreadsheetId: process.env.GOOGLE_SHEET_ID,
+        range: 'Sheet1!A:A',
+      });
+      const existingRows = getRes.data.values ? getRes.data.values.length : 1;
+      const nextNum = existingRows; // 1-based: header row + n data rows → next = n+1
+      invoiceNum = String(nextNum).padStart(4, '0');
+
+      // Append booking row to sheet
+      await sheets.spreadsheets.values.append({
+        spreadsheetId: process.env.GOOGLE_SHEET_ID,
+        range: 'Sheet1!A:I',
+        valueInputOption: 'USER_ENTERED',
+        requestBody: {
+          values: [[
+            `INV-${invoiceNum}`, name, email, phone, formattedDate, selectedTime,
+            type === 'trial' ? 'Free Trial' : `${type}-Minute Lesson`,
+            bookingAmount === 0 ? 'Free' : `$${bookingAmount}`,
+            new Date().toISOString(),
+          ]],
+        },
+      });
+    } catch (sheetErr) {
+      console.error('Sheet invoice numbering unavailable, using time-based fallback:', sheetErr.message);
+      const perthOffsetMs = 8 * 60 * 60 * 1000;
+      const DAY_MS = 24 * 60 * 60 * 1000;
+      const nowPerthMs = Date.now() + perthOffsetMs;
+      const perthHour = new Date(nowPerthMs).getUTCHours();
+      const refMidnightPerthMs = new Date('2026-02-19T16:00:00.000Z').getTime() + perthOffsetMs;
+      const fullDaysElapsed = Math.floor((nowPerthMs - refMidnightPerthMs) / DAY_MS);
+      const activeHourInDay = perthHour < 6 ? 0 : perthHour - 5;
+      const invoiceSlot = activeHourInDay === 0
+        ? Math.max(1, fullDaysElapsed * 18)
+        : fullDaysElapsed * 18 + activeHourInDay;
+      invoiceNum = Math.max(1, invoiceSlot).toString(36).padStart(4, '0');
+    }
     const invoiceToken = Buffer.from(JSON.stringify({
       inv: invoiceNum, name, email, phone, age, type,
       selectedTime, preferredDay, selectedPack,
@@ -253,7 +292,6 @@ export default async function handler(req, res) {
     }
 
     // Step 2: Create calendar event(s)
-    const pricing = getPricing(type);
     const perthOffset = 8;
     const offsetString = `+${perthOffset.toString().padStart(2, '0')}:00`;
 
