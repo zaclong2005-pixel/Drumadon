@@ -691,6 +691,8 @@
         .term-info p {
             margin: 0.5rem 0;
             font-size: 1rem;
+            color: #000000;
+            font-family: 'Candara';
         }
 
         .success-message {
@@ -960,22 +962,30 @@
 
                     <!-- Lesson Pack Selection -->
                     <div class="form-group pack-form-group">
-                        <label>
-                            <input type="checkbox" id="bulkToggle" name="lessonPack" value="pack">
-                            10 Lesson Pack
-                        </label>
+                        <div class="toggle-container">
+                            <span class="toggle-label">10 Lesson Pack</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="bulkToggle" name="lessonPack" value="pack">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
                     </div>
 
                     <!-- School Term Alignment (shown only when 10× Pack is selected) -->
                     <div class="school-term-section" id="schoolTermSection" style="display: none;">
-                        <label>
-                            <input type="checkbox" id="alignWithTerm" name="alignWithTerm">
-                            Sync With School Terms
-                        </label>
+                        <div class="toggle-container">
+                            <span class="toggle-label">Sync With School Terms</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="alignWithTerm" name="alignWithTerm">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
                         <div class="term-info" id="termInfo" style="display: none;">
-                            <p><strong>Current Term:</strong> <span id="currentTerm"></span></p>
-                            <p><strong>Lessons remaining:</strong> <span id="weeksRemaining"></span></p>
-                            <p><strong>Total cost:</strong> $<span id="calculatedCostDisplay"></span></p>
+                            <div class="info-content">
+                                <p><strong>Current Term:</strong> <span id="currentTerm"></span></p>
+                                <p><strong>Lessons remaining:</strong> <span id="weeksRemaining"></span></p>
+                                <p><strong>Total cost:</strong> $<span id="calculatedCostDisplay"></span></p>
+                            </div>
                         </div>
                     </div>
 
@@ -1415,30 +1425,36 @@
         let selectedPack = 'single';
 
         // 10-pack checkbox handler
-        document.getElementById('bulkToggle').addEventListener('change', function() {
-            const schoolSection = document.getElementById('schoolTermSection');
-            const syncCheckbox = document.getElementById('alignWithTerm');
+        document.querySelector('#bulkToggle').closest('label').addEventListener('click', function() {
+            setTimeout(() => {
+                const checkbox = document.getElementById('bulkToggle');
+                const schoolSection = document.getElementById('schoolTermSection');
+                const syncCheckbox = document.getElementById('alignWithTerm');
 
-            if (this.checked) {
-                selectedPack = 'pack';
-                schoolSection.style.display = 'block';
-                document.getElementById('alignWithTermHidden').value = syncCheckbox.checked ? 'true' : 'false';
-                updateTermInfo();
-            } else {
-                selectedPack = 'single';
-                schoolSection.style.display = 'none';
-                syncCheckbox.checked = false;
-                document.getElementById('alignWithTermHidden').value = 'false';
-                document.getElementById('termInfo').style.display = 'none';
-            }
+                if (checkbox.checked) {
+                    selectedPack = 'pack';
+                    schoolSection.style.display = 'block';
+                    document.getElementById('alignWithTermHidden').value = syncCheckbox.checked ? 'true' : 'false';
+                    updateTermInfo();
+                } else {
+                    selectedPack = 'single';
+                    schoolSection.style.display = 'none';
+                    syncCheckbox.checked = false;
+                    document.getElementById('alignWithTermHidden').value = 'false';
+                    document.getElementById('termInfo').style.display = 'none';
+                }
 
-            document.getElementById('selectedPack').value = selectedPack;
+                document.getElementById('selectedPack').value = selectedPack;
+            }, 0);
         });
 
         // Sync checkbox handler
-        document.getElementById('alignWithTerm').addEventListener('change', function() {
-            document.getElementById('alignWithTermHidden').value = this.checked ? 'true' : 'false';
-            updateTermInfo();
+        document.querySelector('#alignWithTerm').closest('label').addEventListener('click', function() {
+            setTimeout(() => {
+                const checkbox = document.getElementById('alignWithTerm');
+                document.getElementById('alignWithTermHidden').value = checkbox.checked ? 'true' : 'false';
+                updateTermInfo();
+            }, 0);
         });
 
         // Update term info display
