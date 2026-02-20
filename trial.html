@@ -1156,6 +1156,22 @@
         // Handle day selection
         daySelect.addEventListener('change', async () => {
             if (daySelect.value) {
+                // Reset toggles when day changes
+                const bulkToggle = document.getElementById('bulkToggle');
+                const alignWithTerm = document.getElementById('alignWithTerm');
+                const schoolSection = document.getElementById('schoolTermSection');
+                const termInfo = document.getElementById('termInfo');
+
+                if (bulkToggle) bulkToggle.checked = false;
+                if (alignWithTerm) alignWithTerm.checked = false;
+                document.getElementById('alignWithTermHidden').value = 'false';
+
+                if (schoolSection) schoolSection.style.display = 'none';
+                if (termInfo) termInfo.style.display = 'none';
+
+                // Reset pack selection
+                document.getElementById('selectedPack').value = 'single';
+
                 const selectedDate = daySelect.value;
 
                 try {
