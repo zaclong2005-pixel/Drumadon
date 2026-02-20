@@ -1490,27 +1490,33 @@
                     return;
                 }
 
-                // Count remaining Fridays in term (assuming lessons are on Fridays)
+                // Count remaining weeks in term (assuming weekly lessons)
                 const termEnd = new Date(currentTerm.end);
-                let fridaysLeft = 0;
-                const currentDate = new Date(now);
-                
-                // Count Fridays from now until term end
-                while (currentDate <= termEnd) {
-                    if (currentDate.getDay() === 5) { // 5 = Friday
-                        fridaysLeft++;
-                    }
-                    currentDate.setDate(currentDate.getDate() + 1);
-                }
+                const daysLeft = Math.floor((termEnd - now) / (1000 * 60 * 60 * 24));
+                const weeksLeft = Math.floor(daysLeft / 7);
+
+                // Simple pricing - match backend pricing
+                const getPackPrice = (type) => {
+                    const prices = {
+                        '20': 250,
+                        '30': 370,
+                        '45': 540,
+                        '60': 700,
+                        'trial': 250  // fallback, though trials don't show packs
+                    };
+                    return prices[type] || 370; // default to 370 for unknown types
+                };
+                const packPrice = getPackPrice(lessonType);
+                const termCost = Math.round(packPrice * (weeksLeft / 10));
 
                 // Update display
                 document.getElementById('currentTerm').textContent = currentTerm.name;
-                document.getElementById('weeksRemaining').textContent = fridaysLeft;
-                document.getElementById('calculatedCostDisplay').textContent = Math.round(packPrice * (fridaysLeft / 10));
+                document.getElementById('weeksRemaining').textContent = weeksLeft;
+                document.getElementById('calculatedCostDisplay').textContent = termCost;
 
                 // Store values
-                document.getElementById('calculatedWeeks').value = fridaysLeft;
-                document.getElementById('calculatedCost').value = Math.round(packPrice * (fridaysLeft / 10));
+                document.getElementById('calculatedWeeks').value = weeksLeft;
+                document.getElementById('calculatedCost').value = termCost;
 
                 termInfo.style.display = 'block';
             }
