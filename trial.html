@@ -1490,10 +1490,19 @@
                     return;
                 }
 
-                // Count remaining weeks in term (assuming weekly lessons)
+                // Count remaining instances of current day of week in term
                 const termEnd = new Date(currentTerm.end);
-                const daysLeft = Math.floor((termEnd - now) / (1000 * 60 * 60 * 24));
-                const weeksLeft = Math.floor(daysLeft / 7);
+                const currentDayOfWeek = now.getDay(); // 0=Sunday, 1=Monday, ..., 6=Saturday
+                let lessonsLeft = 0;
+                const countDate = new Date(now);
+                
+                // Count from today (inclusive) until term end
+                while (countDate <= termEnd) {
+                    if (countDate.getDay() === currentDayOfWeek) {
+                        lessonsLeft++;
+                    }
+                    countDate.setDate(countDate.getDate() + 1);
+                }
 
                 // Simple pricing - match backend pricing
                 const getPackPrice = (type) => {
@@ -1507,15 +1516,15 @@
                     return prices[type] || 370; // default to 370 for unknown types
                 };
                 const packPrice = getPackPrice(lessonType);
-                const termCost = Math.round(packPrice * (weeksLeft / 10));
+                const termCost = Math.round(packPrice * (lessonsLeft / 10));
 
                 // Update display
                 document.getElementById('currentTerm').textContent = currentTerm.name;
-                document.getElementById('weeksRemaining').textContent = weeksLeft;
+                document.getElementById('weeksRemaining').textContent = lessonsLeft;
                 document.getElementById('calculatedCostDisplay').textContent = termCost;
 
                 // Store values
-                document.getElementById('calculatedWeeks').value = weeksLeft;
+                document.getElementById('calculatedWeeks').value = lessonsLeft;
                 document.getElementById('calculatedCost').value = termCost;
 
                 termInfo.style.display = 'block';
