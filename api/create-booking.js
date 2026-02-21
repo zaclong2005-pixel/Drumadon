@@ -65,8 +65,8 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
           .details-table { width: 100%; border-collapse: separate; border-spacing: 0 6px; page-break-inside: avoid; }
           .details-row { display: table-row; page-break-inside: avoid; }
           .details-cell { display: table-cell; padding: 6px 0; vertical-align: top; page-break-inside: avoid; }
-          .details-label { font-weight: bold; color: #7b97ac; min-width: 100px; font-size: 14px; page-break-inside: avoid; }
-          .details-value { color: #111111; font-size: 14px; page-break-inside: avoid; }
+          .details-label { font-weight: bold; color: #000000; min-width: 100px; font-size: 14px; page-break-inside: avoid; }
+          .details-value { color: #000000; font-size: 14px; page-break-inside: avoid; }
           .contact-section { background: rgba(123, 151, 172, 0.5); border: 1px solid rgba(123, 151, 172, 0.2); border-radius: 8px; padding: 15px; margin: 15px 0; backdrop-filter: blur(3px); page-break-inside: avoid; page-break-before: avoid; page-break-after: avoid; }
           .contact-section h3 { margin: 0 0 10px 0; color: #000000; font-size: 16px; page-break-inside: avoid; }
           .contact-section p { margin: 0; color: #111111; font-size: 14px; page-break-inside: avoid; }
@@ -83,7 +83,7 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
           </div>
           <div class="content">
             <p class="welcome-text">Hi ${name},</p>
-            <p style="font-size: 14px; color: #666666; margin-bottom: 20px;">${type === 'trial' ? 'Your free trial has been booked!' : 'Your lesson has been booked!'} Here are the details:</p>
+            <p style="font-size: 14px; color: #111111; margin-bottom: 20px;">${type === 'trial' ? 'Your free trial has been booked!' : 'Your lesson has been booked!'} Here are the details:</p>
             <div class="booking-card">
               <h2>🎯 Your Booking Details</h2>
               <div class="details-table">
@@ -105,10 +105,12 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
                   <div class="details-cell details-value">${selectedPack === 'pack' ? (alignWithTerm === 'true' ? `$${calculatedCost} (${calculatedWeeks}× Pack - Term Aligned)` : `$${pricing.pack} (10× Pack)`) : `$${pricing.single} (Single Lesson)`}</div>
                 </div>
                 ` : ''}
+                ${invoiceUrl ? `
                 <div class="details-row">
                   <div class="details-cell details-label">🧾 Invoice:</div>
                   <div class="details-cell details-value"><a href="${invoiceUrl}" style="color:#7b97ac;font-weight:bold;">View Invoice INV-${invoiceNum}</a></div>
                 </div>
+                ` : ''}
               </div>
             </div>
             <div class="contact-section">
@@ -156,7 +158,7 @@ async function sendAdminEmail({ name, email, phone, age, message, selectedTime, 
         <p><strong>Date:</strong> ${formattedDate}</p>
         <p><strong>Time:</strong> ${selectedTime} (${pricing.duration} minutes)</p>
         ${type !== 'trial' ? `<p><strong>Pricing:</strong> ${selectedPack === 'pack' ? (alignWithTerm === 'true' ? `$${calculatedCost} (${calculatedWeeks}× lessons - Term Aligned)` : `$${pricing.pack} (10× Pack)`) : `$${pricing.single} (Single Lesson)`}</p>` : ''}
-        <p><strong>Invoice:</strong> <a href="${invoiceUrl}">INV-${invoiceNum}</a></p>
+        ${invoiceUrl ? `<p><strong>Invoice:</strong> <a href="${invoiceUrl}">INV-${invoiceNum}</a></p>` : ''}
         <p><strong>Message:</strong> ${message || 'No additional information'}</p>
       </body>
       </html>
@@ -229,55 +231,72 @@ export default async function handler(req, res) {
       ? (alignWithTerm === 'true' ? Number(calculatedCost) : pricing.pack)
       : pricing.single;
 
-    // Generate invoice number via Google Sheets (falls back to time-based if unavailable)
-    let invoiceNum;
-    try {
-      if (!process.env.GOOGLE_SHEET_ID) throw new Error('GOOGLE_SHEET_ID not configured');
-      const sheets = google.sheets({ version: 'v4', auth });
+    // Generate invoice number and URL (trials don't need invoices)
+    let invoiceNum, invoiceUrl;
+    if (type !== 'trial') {
+      try {
+        if (!process.env.GOOGLE_SHEET_ID) throw new Error('GOOGLE_SHEET_ID not configured');
+        const sheets = google.sheets({ version: 'v4', auth });
 
-      // Count existing rows (row 1 is header, so existingRows=1 → next invoice is 0001)
-      const getRes = await sheets.spreadsheets.values.get({
-        spreadsheetId: process.env.GOOGLE_SHEET_ID,
-        range: 'Sheet1!A:A',
-      });
-      const existingRows = getRes.data.values ? getRes.data.values.length : 1;
-      const nextNum = existingRows; // 1-based: header row + n data rows → next = n+1
-      invoiceNum = String(nextNum).padStart(4, '0');
+        // Count existing rows (row 1 is header, so existingRows=1 → next invoice is 0001)
+        const getRes = await sheets.spreadsheets.values.get({
+          spreadsheetId: process.env.GOOGLE_SHEET_ID,
+          range: 'Sheet1!A:A',
+        });
+        const existingRows = getRes.data.values ? getRes.data.values.length : 1;
+        const nextNum = existingRows; // 1-based: header row + n data rows → next = n+1
+        invoiceNum = String(nextNum).padStart(4, '0');
 
-      // Append booking row to sheet
-      await sheets.spreadsheets.values.append({
-        spreadsheetId: process.env.GOOGLE_SHEET_ID,
-        range: 'Sheet1!A:I',
-        valueInputOption: 'USER_ENTERED',
-        requestBody: {
-          values: [[
-            `INV-${invoiceNum}`, name, email, phone, formattedDate, selectedTime,
-            type === 'trial' ? 'Free Trial' : `${type}-Minute Lesson`,
-            bookingAmount === 0 ? 'Free' : `$${bookingAmount}`,
-            new Date().toISOString(),
-          ]],
-        },
-      });
-    } catch (sheetErr) {
-      console.error('Sheet invoice numbering unavailable, using time-based fallback:', sheetErr.message);
-      const perthOffsetMs = 8 * 60 * 60 * 1000;
-      const DAY_MS = 24 * 60 * 60 * 1000;
-      const nowPerthMs = Date.now() + perthOffsetMs;
-      const perthHour = new Date(nowPerthMs).getUTCHours();
-      const refMidnightPerthMs = new Date('2026-02-19T16:00:00.000Z').getTime() + perthOffsetMs;
-      const fullDaysElapsed = Math.floor((nowPerthMs - refMidnightPerthMs) / DAY_MS);
-      const activeHourInDay = perthHour < 6 ? 0 : perthHour - 5;
-      const invoiceSlot = activeHourInDay === 0
-        ? Math.max(1, fullDaysElapsed * 18)
-        : fullDaysElapsed * 18 + activeHourInDay;
-      invoiceNum = Math.max(1, invoiceSlot).toString(36).padStart(4, '0');
+        // Append booking row to sheet
+        await sheets.spreadsheets.values.append({
+          spreadsheetId: process.env.GOOGLE_SHEET_ID,
+          range: 'Sheet1!A:H',
+          valueInputOption: 'USER_ENTERED',
+          requestBody: {
+            values: [[
+              `INV-${invoiceNum}`, name, email, phone,
+              type === 'trial' ? 'Free Trial' : `${type}-Minute Lesson`,
+              bookingAmount === 0 ? 'Free' : `$${bookingAmount}`,
+              new Date().toLocaleDateString('en-AU', { timeZone: 'Australia/Perth' }),
+              'Unpaid',
+            ]],
+          },
+        });
+
+        // Set dropdown validation on the entire Status column (H) so all rows show Paid/Unpaid/Canceled options
+        await sheets.spreadsheets.batchUpdate({
+          spreadsheetId: process.env.GOOGLE_SHEET_ID,
+          requestBody: {
+            requests: [{
+              setDataValidation: {
+                range: { sheetId: 0, startRowIndex: 1, startColumnIndex: 7, endColumnIndex: 8 },
+                rule: {
+                  condition: {
+                    type: 'ONE_OF_LIST',
+                    values: [
+                      { userEnteredValue: 'Unpaid' },
+                      { userEnteredValue: 'Paid' },
+                      { userEnteredValue: 'Canceled' },
+                    ],
+                  },
+                  showCustomUi: true,
+                  strict: true,
+                },
+              },
+            }],
+          },
+        });
+      } catch (sheetErr) {
+        console.error('Sheet invoice numbering unavailable, using random fallback:', sheetErr.message);
+        invoiceNum = String(Math.floor(1000 + Math.random() * 9000));
+      }
+      const invoiceToken = Buffer.from(JSON.stringify({
+        inv: invoiceNum, name, email, phone, age, type,
+        selectedTime, preferredDay, selectedPack,
+        alignWithTerm, calculatedWeeks, calculatedCost,
+      })).toString('base64url');
+      invoiceUrl = `https://www.drumadon.com.au/api/invoice?d=${invoiceToken}`;
     }
-    const invoiceToken = Buffer.from(JSON.stringify({
-      inv: invoiceNum, name, email, phone, age, type,
-      selectedTime, preferredDay, selectedPack,
-      alignWithTerm, calculatedWeeks, calculatedCost,
-    })).toString('base64url');
-    const invoiceUrl = `https://www.drumadon.com.au/api/invoice?d=${invoiceToken}`;
 
     // Step 1: Send user confirmation email — must succeed before proceeding
     try {

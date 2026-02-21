@@ -65,120 +65,183 @@ export default function handler(req, res) {
   <title>Invoice INV-${inv} - Drumadon</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: Arial, sans-serif; font-size: 14px; color: #111; background: #f0f0f0; padding: 30px 20px; }
-    .invoice { background: #fff; max-width: 700px; margin: 0 auto; padding: 50px; border-radius: 8px; box-shadow: 0 2px 16px rgba(0,0,0,0.12); }
-    .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 24px; border-bottom: 3px solid #000; margin-bottom: 30px; }
-    .from-block p { margin: 3px 0; color: #444; font-size: 13px; }
-    .from-block .brand { font-size: 26px; font-weight: bold; color: #000; margin-bottom: 6px; }
-    .invoice-meta { text-align: right; }
-    .invoice-meta h1 { font-size: 22px; font-weight: bold; letter-spacing: 2px; color: #000; }
-    .invoice-meta .inv-num { font-size: 15px; color: #555; margin-top: 4px; }
-    .invoice-meta .dates { margin-top: 12px; font-size: 13px; color: #444; }
-    .invoice-meta .dates p { margin: 3px 0; }
-    .bill-section { display: flex; justify-content: space-between; margin-bottom: 30px; }
-    .bill-block h3 { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: #888; margin-bottom: 8px; }
-    .bill-block p { margin: 2px 0; font-size: 13px; }
-    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-    thead tr { background: #000; color: #fff; }
-    thead th { padding: 10px 14px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; font-weight: bold; }
-    thead th:last-child { text-align: right; }
-    tbody td { padding: 14px; border-bottom: 1px solid #eee; font-size: 13px; }
-    tbody td:last-child { text-align: right; }
-    .totals { display: flex; justify-content: flex-end; margin-bottom: 30px; }
-    .totals-inner { width: 260px; }
-    .totals-inner tr td { padding: 6px 14px; font-size: 13px; }
-    .totals-inner tr td:last-child { text-align: right; }
-    .totals-inner .total-row td { padding-top: 10px; font-size: 15px; font-weight: bold; border-top: 2px solid #000; }
-    .payment-box { background: #f7f7f7; border: 1px solid #ddd; border-radius: 6px; padding: 18px 20px; margin-bottom: 28px; }
-    .payment-box h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #555; margin-bottom: 10px; }
-    .payment-box p { margin: 4px 0; font-size: 13px; }
-    .footer-note { text-align: center; color: #999; font-size: 12px; padding-top: 20px; border-top: 1px solid #eee; }
-    .print-btn { display: block; width: 200px; margin: 24px auto 0; padding: 11px 0; background: #000; color: #fff; border: none; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; text-align: center; letter-spacing: 0.5px; }
-    .print-btn:hover { background: #333; }
+    body { font-family: Candara, 'Segoe UI', Arial, sans-serif; font-size: 15px; line-height: 1.65; color: #111111; background: #e0e0e0; padding: 36px 20px; }
+    .invoice { background: #fff; max-width: 720px; margin: 0 auto; border-radius: 12px; box-shadow: 0 6px 32px rgba(0,0,0,0.15); overflow: hidden; }
+
+    /* ── Header ── */
+    .header-band { background: #000000; padding: 28px 44px; display: flex; justify-content: space-between; align-items: center; }
+    .header-band img { height: 50px; display: block; }
+    .invoice-title-block { text-align: right; }
+    .invoice-title-block .word { font-size: 28px; font-weight: bold; letter-spacing: 5px; color: #fff; }
+    .invoice-title-block .inv-num { font-size: 14px; color: #7b97ac; margin-top: 3px; letter-spacing: 1px; }
+
+    /* ── Accent strip ── */
+    .accent-strip { height: 3px; background: linear-gradient(90deg, #7b97ac, #8fc4da); }
+
+    /* ── Body ── */
+    .body-content { padding: 40px 44px; }
+
+    /* ── From block ── */
+    .meta-row { margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid #e8e8e8; }
+    .from-block .company { font-size: 17px; font-weight: bold; color: #111111; margin-bottom: 6px; }
+    .from-block p { margin: 2px 0; color: #444; font-size: 14px; }
+    .from-block .abn { font-size: 13px; color: #888; margin-top: 8px; }
+
+    /* ── Info cards ── */
+    .info-section { display: flex; gap: 16px; margin-bottom: 32px; }
+    .info-card { flex: 1; background: #f4f7fa; border-radius: 8px; padding: 18px 20px; border-top: 3px solid #7b97ac; }
+    .info-card h3 { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #7b97ac; margin-bottom: 10px; font-weight: bold; }
+    .info-card p { margin: 3px 0; font-size: 15px; color: #333; }
+    .info-card p strong { color: #111111; font-size: 15px; }
+
+    /* ── Line items table ── */
+    table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+    thead tr { background: #000000; }
+    thead th { padding: 12px 16px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: bold; color: #fff; }
+    thead th:last-child { text-align: right; white-space: nowrap; }
+    tbody td { padding: 18px 16px; border-bottom: 1px solid #f0f0f0; font-size: 15px; color: #222; vertical-align: top; }
+    tbody td:last-child { text-align: right; font-weight: bold; color: #111111; white-space: nowrap; }
+    .desc-meta { font-size: 13px; color: #7b97ac; margin-top: 5px; font-weight: normal; letter-spacing: 0.2px; }
+
+    /* ── Totals ── */
+    .totals { display: flex; justify-content: flex-end; margin-bottom: 32px; }
+    .totals-inner { width: 300px; border: 1px solid #e4e4e4; border-radius: 8px; overflow: hidden; }
+    .totals-inner table { margin-bottom: 0; }
+    .totals-inner tbody td { padding: 10px 18px; font-size: 14px; border-bottom: 1px solid #f0f0f0; color: #444; }
+    .totals-inner tbody td:last-child { text-align: right; color: #333; font-weight: normal; }
+    .totals-inner tbody .gst-row td { font-size: 12px; color: #999; font-style: italic; }
+    .totals-inner tbody .gst-row td:last-child { color: #999; font-weight: normal; }
+    .totals-inner tfoot td { padding: 13px 18px; font-size: 16px; font-weight: bold; background: #000000; color: #fff; }
+    .totals-inner tfoot td:last-child { text-align: right; color: #8fc4da; }
+
+    /* ── Payment box ── */
+    .payment-box { background: #f4f7fa; border-left: 4px solid #7b97ac; border-radius: 8px; padding: 20px 24px; margin-bottom: 32px; }
+    .payment-box h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 1.8px; color: #7b97ac; margin-bottom: 14px; font-weight: bold; }
+    .payment-grid { display: grid; grid-template-columns: 95px 1fr; gap: 9px 0; font-size: 14.5px; }
+    .payment-grid .label { color: #666; }
+    .payment-grid .value { color: #111111; font-weight: bold; }
+
+    /* ── Footer ── */
+    .footer { background: #000000; padding: 22px 44px; text-align: center; }
+    .footer span { color: #fff; font-size: 14px; font-weight: bold; }
+
+    /* ── Print button ── */
+    .print-btn { display: block; width: 220px; margin: 28px auto 0; padding: 12px 0; background: #000000; color: #fff; border: none; border-radius: 8px; font-size: 15px; font-family: Candara, sans-serif; font-weight: bold; cursor: pointer; letter-spacing: 0.5px; transition: background 0.2s; }
+    .print-btn:hover { background: #7b97ac; }
+
     @media print {
       body { background: #fff; padding: 0; }
-      .invoice { box-shadow: none; border-radius: 0; padding: 30px; }
+      .invoice { box-shadow: none; border-radius: 0; }
       .print-btn { display: none; }
+    }
+    @media (max-width: 560px) {
+      .header-band, .body-content, .footer { padding-left: 22px; padding-right: 22px; }
+      .info-section { flex-direction: column; }
     }
   </style>
 </head>
 <body>
   <div class="invoice">
-    <div class="header">
-      <div class="from-block">
-        <div class="brand">Drumadon</div>
-        <p>5 Arthur Rd, Lesmurdie WA 6076</p>
-        <p>info@drumadon.com.au</p>
-        <p>ABN 28 472 806 002</p>
-      </div>
-      <div class="invoice-meta">
-        <h1>TAX INVOICE</h1>
+
+    <!-- Header -->
+    <div class="header-band">
+      <img src="https://www.drumadon.com.au/logo_white.png" alt="Drumadon" />
+      <div class="invoice-title-block">
+        <div class="word">INVOICE</div>
         <div class="inv-num">INV-${inv}</div>
-        <div class="dates">
-          <p><strong>Invoice Date:</strong> ${invoiceDate}</p>
-          <p><strong>Due Date:</strong> ${formattedDate}</p>
+      </div>
+    </div>
+    <div class="accent-strip"></div>
+
+    <div class="body-content">
+
+      <!-- Drumadon info -->
+      <div class="meta-row">
+        <div class="from-block">
+          <div class="company">Drumadon</div>
+          <p>5 Arthur Rd, Lesmurdie WA 6076</p>
+          <p>info@drumadon.com.au</p>
+          <p class="abn">ABN 28 472 806 002</p>
         </div>
       </div>
-    </div>
 
-    <div class="bill-section">
-      <div class="bill-block">
-        <h3>Bill To</h3>
-        <p><strong>${name}</strong></p>
-        <p>${email}</p>
-        <p>${phone}</p>
-        ${age ? `<p>Age: ${age}</p>` : ''}
+      <!-- Bill To + Invoice ref cards -->
+      <div class="info-section">
+        <div class="info-card">
+          <h3>Bill To</h3>
+          <p><strong>${name}</strong></p>
+          <p>${email}</p>
+          <p>${phone}</p>
+        </div>
+        <div class="info-card">
+          <h3>Invoice</h3>
+          <p>Issued ${invoiceDate}</p>
+          <p>Due ${formattedDate}</p>
+        </div>
       </div>
-      <div class="bill-block" style="text-align:right;">
-        <h3>Lesson Details</h3>
-        <p><strong>${type === 'trial' ? 'Free Trial' : type + '-Minute Lesson'}</strong></p>
-        <p>${formattedDate} at ${selectedTime}</p>
-        <p>5 Arthur Rd, Lesmurdie WA 6076</p>
-      </div>
-    </div>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Description</th>
-          <th>Amount</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>${description}</td>
-          <td>${amountDisplay}</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div class="totals">
-      <table class="totals-inner">
-        <tr>
-          <td>GST</td>
-          <td>N/A</td>
-        </tr>
-        <tr class="total-row">
-          <td>Total Due</td>
-          <td>${amountDisplay}</td>
-        </tr>
+      <!-- Line items -->
+      <table>
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              ${description}
+              <div class="desc-meta">${formattedDate} &middot; ${selectedTime}</div>
+            </td>
+            <td>${amountDisplay}</td>
+          </tr>
+        </tbody>
       </table>
+
+      <!-- Totals -->
+      <div class="totals">
+        <table class="totals-inner">
+          <tbody>
+            <tr>
+              <td>Subtotal</td>
+              <td>${amountDisplay}</td>
+            </tr>
+            <tr class="gst-row">
+              <td>GST</td>
+              <td>Not applicable &mdash; not registered for GST</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td>Total Due</td>
+              <td>${amountDisplay}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      ${amount > 0 ? `
+      <!-- Payment details -->
+      <div class="payment-box">
+        <h3>Payment Details</h3>
+        <div class="payment-grid">
+          <span class="label">Bank</span><span class="value">Westpac</span>
+          <span class="label">BSB</span><span class="value">036-062</span>
+          <span class="label">Account</span><span class="value">327003</span>
+          <span class="label">Reference</span><span class="value">INV-${inv} / ${name}</span>
+        </div>
+      </div>
+      ` : ''}
+
+    </div><!-- /body-content -->
+
+    <!-- Footer -->
+    <div class="footer">
+      <span>Thank you for booking with Drumadon!</span>
     </div>
 
-    ${amount > 0 ? `
-    <div class="payment-box">
-      <h3>Payment Details</h3>
-      <p><strong>Bank:</strong> ANZ</p>
-      <p><strong>BSB:</strong> 036-062</p>
-      <p><strong>Account:</strong> 327003</p>
-      <p><strong>Reference:</strong> INV-${inv} / ${name}</p>
-    </div>
-    ` : ''}
-
-    <div class="footer-note">
-      <p>Thank you for booking with Drumadon!</p>
-    </div>
-  </div>
+  </div><!-- /invoice -->
   <button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
 </body>
 </html>`;
