@@ -257,20 +257,33 @@ export default async function handler(req, res) {
           spreadsheetId: process.env.GOOGLE_SHEET_ID,
           range: 'Sheet1!A:A',
         });
-        const existingRows = getRes.data.values ? getRes.data.values.length : 1;
-        const nextNum = existingRows; // 1-based: header row + n data rows → next = n+1
-        invoiceNum = String(nextNum).padStart(4, '0');
-        console.log('Existing rows in sheet:', existingRows, 'Next invoice number:', invoiceNum);
+        const values = getRes.data.values || [];
+        console.log('Sheet values in column A:', values.length, 'rows');
 
-        // Append booking row to sheet
-        await sheets.spreadsheets.values.append({
+        // Find the first empty row (top-left most free box in column A)
+        let targetRow = 1; // 1-based
+        for (let i = 0; i < values.length; i++) {
+          if (!values[i] || values[i][0] === '' || values[i][0] === undefined) {
+            targetRow = i + 1;
+            break;
+          }
+        }
+        if (targetRow === 1 && values.length > 0 && values[0] && values[0][0]) {
+          // All rows filled, use next row
+          targetRow = values.length + 1;
+        }
+        invoiceNum = String(targetRow).padStart(4, '0');
+        console.log('Target row for booking:', targetRow, 'Invoice number:', invoiceNum);
+
+        // Update the target row with booking details
+        await sheets.spreadsheets.values.update({
           spreadsheetId: process.env.GOOGLE_SHEET_ID,
-          range: 'Sheet1!A:H',
+          range: `Sheet1!A${targetRow}:H${targetRow}`,
           valueInputOption: 'USER_ENTERED',
           requestBody: {
             values: [[
               `INV-${invoiceNum}`, name, email, phone,
-              type === 'trial' ? 'Free Trial' : `${type}-Minute Lesson (${lessonAmount || 1} lessons${selectedPack === 'pack' ? ' - Pack Rate' : ''})`,
+              type === 'trial' ? 'Free Trial' : `${type}-Minute Lesson (${lessonAmount || 1} lessons${selectedPack === 'pack' ? ' - Bulk Rate' : ''})`,
               bookingAmount === 0 ? 'Free' : `$${bookingAmount}`,
               new Date().toLocaleDateString('en-AU', { timeZone: 'Australia/Perth' }),
               'Unpaid',
@@ -278,7 +291,7 @@ export default async function handler(req, res) {
           },
         });
 
-        console.log('Successfully appended booking to Google Sheet with invoice number:', invoiceNum);
+        console.log('Successfully updated Google Sheet with booking at row', targetRow, 'invoice number:', invoiceNum);
         await sheets.spreadsheets.batchUpdate({
           spreadsheetId: process.env.GOOGLE_SHEET_ID,
           requestBody: {
