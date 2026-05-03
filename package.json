@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "type": "module",
   "engines": {
-    "node": "24.x"
-  },
-  "dependencies": {
-    "googleapis": "^171.4.0"
+    "deno": ">=1.0.0"
   }
 }
