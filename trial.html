@@ -872,7 +872,7 @@
             <div class="booking-for-section" id="bookingForSection" style="display: none;">
                 <h3>Who is this lesson for?</h3>
                 <div class="time-bubbles" id="bookingForBubbles">
-                    <div class="time-bubble" data-for="adult">Adult</div>
+                    <div class="time-bubble" data-for="me">Me</div>
                     <div class="time-bubble" data-for="child">My Child</div>
                 </div>
             </div>
@@ -884,8 +884,11 @@
                     <input type="hidden" id="selectedTime" name="selectedTime">
                     <input type="hidden" id="preferredDay" name="preferredDay">
                     <input type="hidden" id="lessonType" name="type">
-                    <input type="hidden" id="selectedPack" name="selectedPack" value="custom">
-                    <input type="hidden" id="bookingFor" name="bookingFor" value="adult">
+                    <input type="hidden" id="selectedPack" name="selectedPack" value="single">
+                    <input type="hidden" id="alignWithTermHidden" name="alignWithTerm" value="false">
+                    <input type="hidden" id="calculatedWeeks" name="calculatedWeeks">
+                    <input type="hidden" id="calculatedCost" name="calculatedCost">
+                    <input type="hidden" id="bookingFor" name="bookingFor" value="me">
                     <div class="form-group">
                         <label for="name" id="nameLabel">Full Name</label>
                         <input type="text" id="name" name="name" placeholder="Enter your name" required>
@@ -915,20 +918,33 @@
                         <textarea id="message" name="message" placeholder="Tell us about your experience and goals"></textarea>
                     </div>
 
-                    <!-- Lesson Options -->
+                    <!-- Lesson Pack Selection -->
                     <div class="form-group pack-form-group" style="display: block;">
                         <div class="toggle-container">
-                            <span class="toggle-label">Pack Pricing</span>
+                            <span class="toggle-label">10 Lesson Pack</span>
                             <label class="toggle-switch">
-                                <input type="checkbox" id="packToggle" name="usePackPricing" value="true">
+                                <input type="checkbox" id="bulkToggle" name="lessonPack" value="pack">
                                 <span class="toggle-slider"></span>
                             </label>
                         </div>
                     </div>
 
-                    <div class="form-group pack-form-group" style="display: block;">
-                        <label for="lessonAmount">Lesson Amount</label>
-                        <input type="number" id="lessonAmount" name="lessonAmount" placeholder="Enter number of lessons" min="1" value="1">
+                    <!-- School Term Alignment (shown only when 10× Pack is selected) -->
+                    <div class="school-term-section" id="schoolTermSection" style="display: none;">
+                        <div class="toggle-container">
+                            <span class="toggle-label">Sync With School Terms</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="alignWithTerm">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="term-info" id="termInfo" style="display: none;">
+                            <div class="info-content">
+                                <p><strong>Current Term:</strong> <span id="currentTerm"></span></p>
+                                <p><strong>Lessons remaining:</strong> <span id="weeksRemaining"></span></p>
+                                <p><strong>Total cost:</strong> $<span id="calculatedCostDisplay"></span></p>
+                            </div>
+                        </div>
                     </div>
 
                     <button type="submit" class="submit-btn" id="submitBtn">Book My Free Trial</button>
@@ -1129,6 +1145,22 @@
         // Handle day selection
         daySelect.addEventListener('change', async () => {
             if (daySelect.value) {
+                // Reset toggles when day changes
+                const bulkToggle = document.getElementById('bulkToggle');
+                const alignWithTerm = document.getElementById('alignWithTerm');
+                const schoolSection = document.getElementById('schoolTermSection');
+                const termInfo = document.getElementById('termInfo');
+
+                if (bulkToggle) bulkToggle.checked = false;
+                if (alignWithTerm) alignWithTerm.checked = false;
+                document.getElementById('alignWithTermHidden').value = 'false';
+
+                if (schoolSection) schoolSection.style.display = 'none';
+                if (termInfo) termInfo.style.display = 'none';
+
+                // Reset pack selection
+                document.getElementById('selectedPack').value = 'single';
+
                 const selectedDate = daySelect.value;
 
                 // Show loading state immediately
@@ -1210,6 +1242,11 @@
                         });
                         timeBubbles.appendChild(bubble);
                     });
+
+                    // Update term pricing if school term alignment is selected
+                    if (document.getElementById('alignWithTerm') && document.getElementById('alignWithTerm').checked) {
+                        if (typeof updateTermInfo === 'function') updateTermInfo();
+                    }
                 }
             } else {
                 timeSelection.style.display = 'none';
@@ -1427,6 +1464,14 @@
         });
     </script>
     <script>
+        // School term data for 2026
+        const schoolTerms2026 = [
+            { name: 'Term 1', start: '2026-02-02', end: '2026-04-02' },
+            { name: 'Term 2', start: '2026-04-20', end: '2026-07-03' },
+            { name: 'Term 3', start: '2026-07-20', end: '2026-09-25' },
+            { name: 'Term 4', start: '2026-10-12', end: '2026-12-17' }
+        ];
+
         // Get URL parameter
         function getUrlParameter(name) {
             name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
@@ -1435,6 +1480,7 @@
             return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
         }
 
+        // Calculate pricing for school term alignment
         // Set lesson type and update UI
         lessonType = getUrlParameter('type') || 'trial';
         document.getElementById('lessonType').value = lessonType;
@@ -1455,9 +1501,11 @@
             heroTitle.textContent = 'Free Trial Lesson';
             submitBtn.textContent = 'Book My Free Trial';
             successMessage.innerHTML = '<h2>Booking Confirmed!</h2><p><strong>Your free trial lesson has been successfully booked!</strong></p><p>You should receive a confirmation email shortly with all the details.</p>';
-            // Completely remove lesson amount input for trials
+            // Completely remove toggle sections for trials
             const packFormGroup = document.querySelector('.pack-form-group');
+            const schoolTermSection = document.getElementById('schoolTermSection');
             if (packFormGroup) packFormGroup.remove();
+            if (schoolTermSection) schoolTermSection.remove();
         } else {
             pageTitle = lessonType + '-Minute Lesson - Drumadon';
             metaDesc = 'Book a ' + lessonType + '-minute drum lesson in Lesmurdie. Professional instruction for all skill levels.';
@@ -1466,7 +1514,7 @@
             heroTitle.textContent = lessonType + '-Minute Lesson Booking';
             submitBtn.textContent = 'Book My Lesson';
             successMessage.innerHTML = '<h2>Booking Confirmed!</h2><p><strong>Your lesson has been successfully booked!</strong></p><p>You should receive a confirmation email shortly with all the details, including your invoice.</p>';
-            // Show lesson amount input for actual lessons
+            // Show lesson pack container for actual lessons
             const packFormGroup = document.querySelector('.pack-form-group');
             if (packFormGroup) packFormGroup.style.display = 'block';
         }
@@ -1481,14 +1529,113 @@
         document.querySelector('link[rel="canonical"]').setAttribute('href', canonicalUrl);
         document.querySelector('meta[property="og:url"]').setAttribute('content', canonicalUrl);
 
-        // Pack pricing toggle logic
+        // Simple slider logic
+        let selectedPack = 'single';
+
+        // Only add toggle event listeners for non-trial lessons
         if (lessonType !== 'trial') {
-            const packToggle = document.getElementById('packToggle');
-            if (packToggle) {
-                packToggle.addEventListener('change', function() {
-                    // Update hidden field for form submission
-                    document.getElementById('selectedPack').value = packToggle.checked ? 'pack' : 'single';
+            // 10-pack checkbox handler - listen for change event on checkbox
+            const bulkToggle = document.getElementById('bulkToggle');
+            if (bulkToggle) {
+                bulkToggle.addEventListener('change', function() {
+                    const schoolSection = document.getElementById('schoolTermSection');
+                    const syncCheckbox = document.getElementById('alignWithTerm');
+
+                    if (bulkToggle.checked) {
+                        selectedPack = 'pack';
+                        if (schoolSection) schoolSection.style.display = 'block';
+                        document.getElementById('alignWithTermHidden').value = syncCheckbox ? (syncCheckbox.checked ? 'true' : 'false') : 'false';
+                        if (typeof updateTermInfo === 'function') updateTermInfo();
+                    } else {
+                        selectedPack = 'single';
+                        if (schoolSection) schoolSection.style.display = 'none';
+                        if (syncCheckbox) syncCheckbox.checked = false;
+                        document.getElementById('alignWithTermHidden').value = 'false';
+                        const termInfo = document.getElementById('termInfo');
+                        if (termInfo) termInfo.style.display = 'none';
+                    }
+
+                    document.getElementById('selectedPack').value = selectedPack;
                 });
+            }
+
+            // Sync checkbox handler - listen for change event
+            const alignWithTerm = document.getElementById('alignWithTerm');
+            if (alignWithTerm) {
+                alignWithTerm.addEventListener('change', function() {
+                    document.getElementById('alignWithTermHidden').value = alignWithTerm.checked ? 'true' : 'false';
+                    if (typeof updateTermInfo === 'function') updateTermInfo();
+                });
+            }
+        }
+
+        // Update term info display (only for non-trial lessons)
+        if (lessonType !== 'trial') {
+            function updateTermInfo() {
+                const syncChecked = document.getElementById('alignWithTerm').checked;
+                const termInfo = document.getElementById('termInfo');
+
+                if (!syncChecked) {
+                    termInfo.style.display = 'none';
+                    return;
+                }
+
+                // Get selected day as starting point
+                const selectedDayValue = document.getElementById('preferredDay').value;
+                if (!selectedDayValue) {
+                    termInfo.style.display = 'none';
+                    return;
+                }
+
+                const selectedDate = new Date(selectedDayValue);
+                const currentTerm = schoolTerms2026.find(term =>
+                    selectedDate >= new Date(term.start) && selectedDate <= new Date(term.end)
+                );
+
+                if (!currentTerm) {
+                    termInfo.style.display = 'none';
+                    return;
+                }
+
+                // Count weekly lessons from selected day until term end
+                const termEnd = new Date(currentTerm.end);
+                const selectedDayOfWeek = selectedDate.getDay(); // 0=Sunday, 1=Monday, ..., 6=Saturday
+
+                // Calculate how many weeks fit from selected date
+                let lessonCount = 0;
+                let currentLessonDate = new Date(selectedDate);
+
+                // Count lessons (inclusive of selected date)
+                while (currentLessonDate <= termEnd) {
+                    lessonCount++;
+                    // Move to next week (same day)
+                    currentLessonDate.setDate(currentLessonDate.getDate() + 7);
+                }
+
+                // Simple pricing - match backend pricing
+                const getPackPrice = (type) => {
+                    const prices = {
+                        '20': 250,
+                        '30': 370,
+                        '45': 540,
+                        '60': 700,
+                        'trial': 250  // fallback, though trials don't show packs
+                    };
+                    return prices[type] || 370; // default to 370 for unknown types
+                };
+                const packPrice = getPackPrice(lessonType);
+                const termCost = Math.round(packPrice * (lessonCount / 10));
+
+                // Update display
+                document.getElementById('currentTerm').textContent = currentTerm.name;
+                document.getElementById('weeksRemaining').textContent = lessonCount;
+                document.getElementById('calculatedCostDisplay').textContent = termCost;
+
+                // Store values
+                document.getElementById('calculatedWeeks').value = lessonCount;
+                document.getElementById('calculatedCost').value = termCost;
+
+                termInfo.style.display = 'block';
             }
         }
 
