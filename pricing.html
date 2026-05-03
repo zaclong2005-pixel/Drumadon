@@ -588,22 +588,18 @@
             bgContainer.style.transform = `translate3d(0, ${scrolled * 0.1}px, 0)`;
         }, { passive: true });
 
-        // Admin mode - tap logo 5 times to toggle
-        let logoTaps = 0;
-        let logoTapTimeout;
+        // Admin mode - double-click logo to toggle
+        let lastLogoClick = 0;
         const brand = document.getElementById('brand');
         brand.addEventListener('click', (e) => {
-            e.preventDefault();
-            logoTaps++;
-            clearTimeout(logoTapTimeout);
-            logoTapTimeout = setTimeout(() => { logoTaps = 0; }, 1000);
-            
-            if (logoTaps === 5) {
-                logoTaps = 0;
+            const now = Date.now();
+            if (now - lastLogoClick < 300) {
+                e.preventDefault();
                 document.body.classList.toggle('admin-mode');
                 const isAdminMode = document.body.classList.contains('admin-mode');
                 console.log(isAdminMode ? '✅ Admin mode ON' : '❌ Admin mode OFF');
             }
+            lastLogoClick = now;
         });
     </script>
 </body>
