@@ -7,6 +7,7 @@
     <meta name="description" content="Sign up for a free 20-minute drum lesson trial in Lesmurdie, Perth. No drum kit required — book instantly online. Available for all ages and skill levels.">
     <meta name="keywords" content="free drum trial, drum lessons Lesmurdie, drum teacher Perth, music trial lesson">
     <meta name="author" content="Drumadon">
+    <meta name="robots" content="index, follow">
     <link rel="icon" type="image/png" sizes="32x32" href="Drumadon_Email.png">
     <link rel="icon" type="image/png" sizes="16x16" href="Drumadon_Email.png">
     <link rel="apple-touch-icon" sizes="180x180" href="Drumadon_Email.png">
@@ -1555,6 +1556,11 @@
         const canonicalUrl = lessonType === 'trial' ? 'https://www.drumadon.com.au/trial.html' : `https://www.drumadon.com.au/trial.html?type=${lessonType}`;
         document.querySelector('link[rel="canonical"]').setAttribute('href', canonicalUrl);
         document.querySelector('meta[property="og:url"]').setAttribute('content', canonicalUrl);
+
+        const robotsMeta = document.querySelector('meta[name="robots"]');
+        if (robotsMeta) {
+            robotsMeta.setAttribute('content', lessonType === 'trial' ? 'index, follow' : 'noindex, nofollow');
+        }
 
         if (lessonType !== 'trial') {
             const bulkToggle = document.getElementById('bulkToggle');

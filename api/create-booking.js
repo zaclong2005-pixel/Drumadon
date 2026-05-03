@@ -116,6 +116,12 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
                   <div class="details-cell details-value">${type !== 'trial' ? `$${!isNaN(Number(grandTotal)) && Number(grandTotal) >= 0 ? Number(grandTotal) : (selectedPack === 'pack' ? Math.round(pricing.pack / 10 * Number(lessonAmount || 1)) : pricing.single * Number(lessonAmount || 1))} (${lessonAmount || 1} Lessons)` : 'Free'}</div>
                 </div>
                 ` : ''}
+                ${message ? `
+                <div class="details-row">
+                  <div class="details-cell details-label">📝 Notes:</div>
+                  <div class="details-cell details-value">${message}</div>
+                </div>
+                ` : ''}
                 ${invoiceUrl ? `
                 <div class="details-row">
                   <div class="details-cell details-label">🧾 Invoice:</div>
