@@ -1007,6 +1007,13 @@
         }
 
         let lessonType = getUrlParameter('type') || 'trial';
+        console.log('trial.html init:', { lessonType, locationSearch: location.search });
+        const lessonTypeField = document.getElementById('lessonType');
+        if (lessonTypeField) {
+            lessonTypeField.value = lessonType;
+        } else {
+            console.warn('Hidden lessonType input not found');
+        }
 
         // Load available days
         async function loadAvailableDays() {
@@ -1015,13 +1022,32 @@
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
 
-                const response = await fetch(`/api/get-availability?type=${lessonType}`, {
+                const availabilityUrl = `/api/get-availability?type=${lessonType}`;
+                console.log('loadAvailableDays fetching availability:', { availabilityUrl, lessonType });
+                const response = await fetch(availabilityUrl, {
                     signal: controller.signal
                 });
                 clearTimeout(timeoutId);
 
-                const data = await response.json();
+                console.log('loadAvailableDays response', {
+                    status: response.status,
+                    ok: response.ok,
+                    redirected: response.redirected,
+                    url: response.url
+                });
 
+                const responseText = await response.text();
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                } catch (parseError) {
+                    throw new Error(`Failed to parse availability JSON: ${parseError.message}. Response text: ${responseText}`);
+                }
+                console.log('loadAvailableDays parsed response', data);
+
+                if (!response.ok) {
+                    throw new Error(`Availability request failed with status ${response.status}: ${data.message || responseText}`);
+                }
                 if (!data.success) {
                     throw new Error(data.message || 'Failed to fetch availability');
                 }
@@ -1146,19 +1172,52 @@
                 document.querySelectorAll('#bookingForBubbles .time-bubble').forEach(b => b.classList.remove('selected'));
 
                 let data = null;
+                const dateUrl = `/api/get-availability?date=${encodeURIComponent(selectedDate)}&type=${lessonType}`;
+                console.log('daySelect change values:', { selectedDate, lessonType, dateUrl });
                 for (let attempt = 0; attempt < 4; attempt++) {
                     try {
-                        if (attempt > 0) await new Promise(r => setTimeout(r, 2000));
+                        if (attempt > 0) {
+                            console.log(`Retry attempt ${attempt} for availability times`);
+                            await new Promise(r => setTimeout(r, 2000));
+                        }
                         const controller = new AbortController();
                         const timeoutId = setTimeout(() => controller.abort(), 10000);
-                        const response = await fetch(`/api/get-availability?date=${selectedDate}&type=${lessonType}`, {
+                        console.log('daySelect fetching availability times:', { attempt, dateUrl });
+                        const response = await fetch(dateUrl, {
                             signal: controller.signal
                         });
                         clearTimeout(timeoutId);
-                        const json = await response.json();
-                        if (json.success) { data = json; break; }
+
+                        console.log('daySelect response', {
+                            attempt,
+                            status: response.status,
+                            ok: response.ok,
+                            redirected: response.redirected,
+                            url: response.url
+                        });
+
+                        const text = await response.text();
+                        let json;
+                        try {
+                            json = JSON.parse(text);
+                        } catch (parseError) {
+                            throw new Error(`Failed to parse times JSON on attempt ${attempt}: ${parseError.message}. Response text: ${text}`);
+                        }
+                        console.log('daySelect parsed response', { attempt, json });
+
+                        if (response.ok && json.success) {
+                            data = json;
+                            break;
+                        } else {
+                            const failureMsg = `Availability times request failed on attempt ${attempt}: status=${response.status}, success=${json.success}, message=${json.message || ''}`;
+                            console.warn(failureMsg, { json });
+                        }
                     } catch (err) {
-                        if (err.name === 'AbortError') break;
+                        if (err.name === 'AbortError') {
+                            console.error('daySelect fetch aborted on attempt', attempt, err);
+                            break;
+                        }
+                        console.error('daySelect fetch error on attempt', attempt, err);
                     }
                 }
 
