@@ -272,19 +272,25 @@ export default async function handler(req, res) {
         const values = getRes.data.values || [];
         console.log('Sheet values in column A:', values.length, 'rows');
 
-        // Find the first empty row (top-left most free box in column A)
-        let targetRow = 1; // 1-based
-        for (let i = 0; i < values.length; i++) {
-          if (!values[i] || values[i][0] === '' || values[i][0] === undefined) {
+        // Start invoice rows at spreadsheet row 50.
+        // Row 50 maps to INV-0001, row 51 -> INV-0002, etc.
+        const invoiceStartRow = 50;
+        let targetRow = invoiceStartRow;
+
+        for (let i = invoiceStartRow - 1; i < values.length; i++) {
+          const cellValue = values[i] && values[i][0];
+          if (!cellValue || cellValue === '') {
             targetRow = i + 1;
             break;
           }
+          targetRow = i + 2;
         }
-        if (targetRow === 1 && values.length > 0 && values[0] && values[0][0]) {
-          // All rows filled, use next row
-          targetRow = values.length + 1;
+
+        if (values.length < invoiceStartRow) {
+          targetRow = invoiceStartRow;
         }
-        invoiceNum = String(targetRow).padStart(4, '0');
+
+        invoiceNum = String(targetRow - invoiceStartRow + 1).padStart(4, '0');
         console.log('Target row for booking:', targetRow, 'Invoice number:', invoiceNum);
 
         // Update the target row with booking details
