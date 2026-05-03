@@ -309,6 +309,19 @@
         body.admin-mode .btn {
             display: inline-block;
         }
+        #admin-secret-spot {
+            position: fixed;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 20px;
+            background: yellow;
+            opacity: 0.7;
+            cursor: pointer;
+            border-radius: 4px;
+            z-index: 100;
+        }
         footer {
             background-color: var(--footer-bg);
             color: var(--footer-text);
@@ -467,6 +480,8 @@
         </nav>
     </header>
 
+    <div id="admin-secret-spot"></div>
+
     <section class="pricing-section">
         <h1>Lesson Plans</h1>
         <p>*Please provide at least 24 hours’ notice to receive a make-up lesson.</p>
@@ -588,16 +603,16 @@
             bgContainer.style.transform = `translate3d(0, ${scrolled * 0.1}px, 0)`;
         }, { passive: true });
 
-        // Admin mode - click logo 5 times quickly to toggle
+        // Admin mode - click secret spot 5 times rapidly to toggle
         let clickCount = 0;
         let clickTimeout;
-        const brand = document.getElementById('brand');
-        brand.addEventListener('click', (e) => {
+        const secretSpot = document.getElementById('admin-secret-spot');
+        secretSpot.addEventListener('click', (e) => {
+            e.stopPropagation();
             clickCount++;
             clearTimeout(clickTimeout);
             
             if (clickCount === 5) {
-                e.preventDefault();
                 document.body.classList.toggle('admin-mode');
                 const isAdminMode = document.body.classList.contains('admin-mode');
                 console.log(isAdminMode ? '✅ Admin mode ON' : '❌ Admin mode OFF');
