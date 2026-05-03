@@ -26,7 +26,7 @@ export default function handler(req, res) {
   const {
     inv, name, email, phone, age, type,
     selectedTime, preferredDay, selectedPack,
-    alignWithTerm, calculatedWeeks, calculatedCost,
+    lessonAmount,
     bookingFor, childName,
   } = booking;
 
@@ -43,17 +43,11 @@ export default function handler(req, res) {
   if (type === 'trial') {
     description = 'Free Trial Lesson (20 minutes)';
     amount = 0;
-  } else if (selectedPack === 'pack') {
-    if (alignWithTerm === 'true') {
-      description = `${type}-Minute Drum Lessons &times; ${calculatedWeeks} (Term Aligned Pack)`;
-      amount = Number(calculatedCost);
-    } else {
-      description = `${type}-Minute Drum Lessons &times; 10 (10-Lesson Pack)`;
-      amount = pricing.pack;
-    }
   } else {
-    description = `${type}-Minute Drum Lesson`;
-    amount = pricing.single;
+    const numLessons = Number(lessonAmount || 1);
+    const pricePerLesson = selectedPack === 'pack' ? Math.round(pricing.pack / 10) : pricing.single;
+    description = `${type}-Minute Drum Lessons &times; <input type="text" value="${numLessons}" style="border: none; background: transparent; font-size: 14px; color: #555; width: 30px; text-align: center;" /> (${selectedPack === 'pack' ? 'Pack Rate' : 'Single Rate'})`;
+    amount = pricePerLesson * numLessons;
   }
 
   const amountDisplay = amount === 0 ? 'Free' : `$${amount}`;
@@ -202,9 +196,12 @@ export default function handler(req, res) {
           ${bookingFor === 'child' ? `<p style="margin-top:8px;color:#555;font-size:14px;">Student: ${childName}</p>` : ''}
         </div>
         <div class="info-card">
-          <h3>Invoice</h3>
-          <p>Issued ${invoiceDate}</p>
-          <p>Due ${formattedDate}</p>
+          <h3>Invoice Details</h3>
+          <p><strong>Invoice Number:</strong> INV-${inv}</p>
+          <p><strong>Type:</strong> ${type === 'trial' ? 'Free Trial' : `${type}-Minute Lesson${selectedPack === 'pack' ? ' (Pack Rate)' : ''}`}</p>
+          <p><strong>Issued:</strong> ${invoiceDate}</p>
+          <p><strong>Due:</strong> ${formattedDate}</p>
+          <p><strong>Status:</strong> Unpaid</p>
         </div>
       </div>
 
@@ -222,7 +219,7 @@ export default function handler(req, res) {
               ${description}
               <div class="desc-meta">${formattedDate} &middot; ${selectedTime}</div>
             </td>
-            <td>${amountDisplay}</td>
+            <td><input type="text" value="${amountDisplay}" style="border: none; background: transparent; font-size: 15px; font-weight: bold; color: #111111; text-align: right; width: 60px;" /></td>
           </tr>
         </tbody>
       </table>
@@ -233,7 +230,7 @@ export default function handler(req, res) {
           <tbody>
             <tr>
               <td>Subtotal</td>
-              <td>${amountDisplay}</td>
+              <td><input type="text" value="${amountDisplay}" style="border: none; background: transparent; font-size: 15px; color: #333; text-align: right; width: 60px;" /></td>
             </tr>
             <tr class="gst-row">
               <td>GST</td>
@@ -243,7 +240,7 @@ export default function handler(req, res) {
           <tfoot>
             <tr>
               <td>Total Due</td>
-              <td>${amountDisplay}</td>
+              <td><input type="text" value="${amountDisplay}" style="border: none; background: transparent; font-size: 16px; font-weight: bold; color: #fff; text-align: right; width: 60px;" /></td>
             </tr>
           </tfoot>
         </table>

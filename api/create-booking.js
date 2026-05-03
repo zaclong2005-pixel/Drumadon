@@ -163,7 +163,7 @@ async function sendAdminEmail({ name, email, phone, age, message, selectedTime, 
         <p><strong>Type:</strong> ${type === 'trial' ? 'Free Trial' : type + '-Minute Lesson'}</p>
         <p><strong>Date:</strong> ${formattedDate}</p>
         <p><strong>Time:</strong> ${selectedTime} (${pricing.duration} minutes)</p>
-        ${type !== 'trial' ? `<p><strong>Pricing:</strong> ${selectedPack === 'pack' ? (alignWithTerm === 'true' ? `$${calculatedCost} (${calculatedWeeks}× lessons - Term Aligned)` : `$${pricing.pack} (10× Pack)`) : `$${pricing.single} (Single Lesson)`}</p>` : ''}
+        ${type !== 'trial' ? `<p><strong>Pricing:</strong> $${bookingAmount} (${lessonAmount || 1}× lessons at ${selectedPack === 'pack' ? `$${(pricing.pack / 10).toFixed(0)} each (pack rate)` : `$${pricing.single} each`})</p>` : ''}
         ${invoiceUrl ? `<p><strong>Invoice:</strong> <a href="${invoiceUrl}">INV-${invoiceNum}</a></p>` : ''}
         <p><strong>Message:</strong> ${message || 'No additional information'}</p>
       </body>
@@ -204,13 +204,23 @@ export default async function handler(req, res) {
 
     const calendar = google.calendar({ version: 'v3', auth });
 
-    const params = new URLSearchParams(req.body);
+    let params;
+    if (typeof req.body === 'string') {
+      params = new URLSearchParams(req.body);
+    } else if (req.body instanceof URLSearchParams) {
+      params = req.body;
+    } else if (req.body && typeof req.body === 'object') {
+      params = new URLSearchParams(req.body);
+    } else {
+      params = new URLSearchParams();
+    }
+
     const data = {};
     for (let [key, value] of params) {
       data[key] = value;
     }
 
-    const { name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost, bookingFor, childName } = data;
+    const { name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, lessonAmount, bookingFor, childName } = data;
 
     if (!name || !email || !phone || !selectedTime || !preferredDay) {
       return res.status(400).json({
@@ -227,15 +237,13 @@ export default async function handler(req, res) {
       });
     }
 
-    console.log('Processing booking request:', { name, email, phone, selectedTime, preferredDay, type, selectedPack, alignWithTerm });
+    console.log('Processing booking request:', { name, email, phone, selectedTime, preferredDay, type, selectedPack, lessonAmount });
 
     // Compute pricing and date (needed for invoice and calendar)
     const pricing = getPricing(type);
     const bookingDate = new Date(preferredDay);
     const formattedDate = `${bookingDate.getDate().toString().padStart(2, '0')}/${(bookingDate.getMonth() + 1).toString().padStart(2, '0')}/${bookingDate.getFullYear()}`;
-    const bookingAmount = type === 'trial' ? 0 : selectedPack === 'pack'
-      ? (alignWithTerm === 'true' ? Number(calculatedCost) : pricing.pack)
-      : pricing.single;
+    const bookingAmount = type === 'trial' ? 0 : selectedPack === 'pack' ? Math.round((pricing.pack / 10) * Number(lessonAmount || 1)) : pricing.single * Number(lessonAmount || 1);
 
     // Generate invoice number and URL (trials don't need invoices)
     let invoiceNum, invoiceUrl;
@@ -261,7 +269,7 @@ export default async function handler(req, res) {
           requestBody: {
             values: [[
               `INV-${invoiceNum}`, name, email, phone,
-              type === 'trial' ? 'Free Trial' : `${type}-Minute Lesson`,
+              type === 'trial' ? 'Free Trial' : `${type}-Minute Lesson (${lessonAmount || 1} lessons${selectedPack === 'pack' ? ' - Pack Rate' : ''})`,
               bookingAmount === 0 ? 'Free' : `$${bookingAmount}`,
               new Date().toLocaleDateString('en-AU', { timeZone: 'Australia/Perth' }),
               'Unpaid',
@@ -422,9 +430,11 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
+    console.error('Booking failed:', error);
     return res.status(500).json({
       error: 'Booking failed',
-      message: 'We encountered an issue processing your booking. Please try again or contact us directly.'
+      message: 'We encountered an issue processing your booking. Please try again or contact us directly.',
+      details: error.message || 'Unknown server error'
     });
   }
 };

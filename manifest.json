@@ -8,12 +8,12 @@
   "theme_color": "#7b97ac",
   "icons": [
     {
-      "src": "Drumadon_Email.png",
+      "src": "https://drumadon.com.au/Drumadon_Email.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "Drumadon_Email.png",
+      "src": "https://drumadon.com.au/Drumadon_Email.png",
       "sizes": "512x512",
       "type": "image/png"
     }
