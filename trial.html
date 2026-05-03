@@ -3,20 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Free Trial - Drumadon</title>
-    <meta name="description" content="Sign up for a free 20-minute drum lesson trial in Lesmurdie. No drum kit required. Book now with Drumadon.">
+    <title>Free Drum Trial Lesson Perth | Book Now | Drumadon</title>
+    <meta name="description" content="Sign up for a free 20-minute drum lesson trial in Lesmurdie, Perth. No drum kit required — book instantly online. Available for all ages and skill levels.">
     <meta name="keywords" content="free drum trial, drum lessons Lesmurdie, drum teacher Perth, music trial lesson">
     <meta name="author" content="Drumadon">
-    <link rel="icon" type="image/png" sizes="32x32" href="Dramadon_Email.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="Dramadon_Email.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="Dramadon_Email.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="Drumadon_Email.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="Drumadon_Email.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="Drumadon_Email.png">
     <link rel="manifest" href="manifest.json">
     <link rel="canonical" href="https://www.drumadon.com.au/trial.html">
-    <meta property="og:title" content="Free Trial - Drumadon">
-    <meta property="og:description" content="Sign up for a free 20-minute drum lesson trial in Lesmurdie. No drum kit required.">
+    <meta property="og:title" content="Free Drum Trial Lesson Perth | Book Now | Drumadon">
+    <meta property="og:description" content="Sign up for a free 20-minute drum lesson trial in Lesmurdie, Perth. No drum kit required — book instantly online. Available for all ages and skill levels.">
     <meta property="og:image" content="https://www.drumadon.com.au/logo_white.png">
     <meta property="og:url" content="https://www.drumadon.com.au/trial.html">
     <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Free Drum Trial Lesson Perth | Book Now | Drumadon">
+    <meta name="twitter:description" content="Sign up for a free 20-minute drum lesson trial in Lesmurdie, Perth. No drum kit required — book instantly online. Available for all ages and skill levels.">
+    <meta name="twitter:image" content="https://www.drumadon.com.au/logo_white.png">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "name": "Free Trial Drum Lesson",
+      "provider": {
+        "@type": "LocalBusiness",
+        "name": "Drumadon",
+        "url": "https://www.drumadon.com.au",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "5 Arthur Rd",
+          "addressLocality": "Lesmurdie",
+          "addressRegion": "WA",
+          "addressCountry": "AU"
+        }
+      },
+      "description": "Free 20-minute drum trial lesson in Lesmurdie, Perth. No drum kit required. Book instantly online.",
+      "areaServed": { "@type": "City", "name": "Perth" },
+      "offers": {
+        "@type": "Offer",
+        "name": "Free Trial Lesson",
+        "price": "0",
+        "priceCurrency": "AUD"
+      }
+    }
+    </script>
     <style>
         /* CSS Variables */
         :root {
@@ -210,6 +241,7 @@
 
         .day-selection-section h3,
         .time-selection-section h3,
+        .booking-for-section h3,
         .booking-form-section h3 {
             margin-bottom: 1rem;
             color: var(--text-color);
@@ -837,6 +869,14 @@
                 <div class="time-bubbles" id="timeBubbles"></div>
             </div>
 
+            <div class="booking-for-section" id="bookingForSection" style="display: none;">
+                <h3>Who is this lesson for?</h3>
+                <div class="time-bubbles" id="bookingForBubbles">
+                    <div class="time-bubble" data-for="me">Me</div>
+                    <div class="time-bubble" data-for="child">My Child</div>
+                </div>
+            </div>
+
             <div class="booking-form-section" id="bookingForm">
                 <h3>Your Details</h3>
                 <form name="trial-booking" method="POST" action="/api/create-booking">
@@ -848,8 +888,9 @@
                     <input type="hidden" id="alignWithTermHidden" name="alignWithTerm" value="false">
                     <input type="hidden" id="calculatedWeeks" name="calculatedWeeks">
                     <input type="hidden" id="calculatedCost" name="calculatedCost">
+                    <input type="hidden" id="bookingFor" name="bookingFor" value="me">
                     <div class="form-group">
-                        <label for="name">Name</label>
+                        <label for="name" id="nameLabel">Full Name</label>
                         <input type="text" id="name" name="name" placeholder="Enter your name" required>
                         <div class="error-message">This field is required.</div>
                     </div>
@@ -863,9 +904,14 @@
                         <input type="tel" id="phone" name="phone" placeholder="Enter your phone" required>
                         <div class="error-message">This field is required.</div>
                     </div>
-                    <div class="form-group">
-                        <label for="age">Age</label>
-                        <input type="number" id="age" name="age" placeholder="Enter your age" min="6" max="100" required>
+                    <div class="form-group" id="childNameGroup" style="display: none;">
+                        <label for="childName">Child's Name</label>
+                        <input type="text" id="childName" name="childName" placeholder="Enter child's name">
+                        <div class="error-message">This field is required.</div>
+                    </div>
+                    <div class="form-group" id="ageGroup" style="display: none;">
+                        <label for="age">Child's Age</label>
+                        <input type="number" id="age" name="age" placeholder="Enter child's age" min="4" max="18">
                     </div>
                     <div class="form-group">
                         <label for="message">Additional Information</label>
@@ -917,7 +963,7 @@
 
     <footer>
         <div class="footer-left">
-            <img src="wwcc.png" alt="WWCC Logo" style="height: 80px; width: auto;">
+            <img src="wwcc.png" alt="WWCC Logo" style="height: 80px; width: auto;" loading="lazy">
         </div>
         <div class="footer-center">
             <p>© 2026 Drumadon</p>
@@ -947,6 +993,7 @@
         // Elements
         const daySelect = document.getElementById('daySelect');
         const timeSelection = document.getElementById('timeSelection');
+        const bookingForSection = document.getElementById('bookingForSection');
         const bookingForm = document.getElementById('bookingForm');
         const customSelect = document.querySelector('.custom-select');
         const selectSelected = document.querySelector('.select-selected');
@@ -1085,7 +1132,9 @@
                 const timeBubbles = document.getElementById('timeBubbles');
                 timeBubbles.innerHTML = '<span style="color:#333;font-size:1rem;">Loading times...</span>';
                 timeSelection.style.display = 'block';
+                bookingForSection.style.display = 'none';
                 bookingForm.style.display = 'none';
+                document.querySelectorAll('#bookingForBubbles .time-bubble').forEach(b => b.classList.remove('selected'));
 
                 let data = null;
                 for (let attempt = 0; attempt < 4; attempt++) {
@@ -1114,10 +1163,14 @@
                         bubble.textContent = time;
                         bubble.dataset.time = time;
                         bubble.addEventListener('click', () => {
-                            document.querySelectorAll('.time-bubble').forEach(b => b.classList.remove('selected'));
+                            document.querySelectorAll('#timeBubbles .time-bubble').forEach(b => b.classList.remove('selected'));
                             bubble.classList.add('selected');
                             document.getElementById('selectedTime').value = time;
-                            bookingForm.style.display = 'block';
+                            // Reset bookingFor selection when a new time is picked
+                            document.querySelectorAll('#bookingForBubbles .time-bubble').forEach(b => b.classList.remove('selected'));
+                            document.getElementById('bookingFor').value = 'me';
+                            bookingForSection.style.display = 'block';
+                            bookingForm.style.display = 'none';
                         });
                         timeBubbles.appendChild(bubble);
                     });
@@ -1129,8 +1182,39 @@
                 }
             } else {
                 timeSelection.style.display = 'none';
+                bookingForSection.style.display = 'none';
                 bookingForm.style.display = 'none';
             }
+        });
+
+        // Handle "who is this lesson for?" selection
+        document.getElementById('bookingForBubbles').addEventListener('click', (e) => {
+            const bubble = e.target.closest('.time-bubble');
+            if (!bubble) return;
+
+            document.querySelectorAll('#bookingForBubbles .time-bubble').forEach(b => b.classList.remove('selected'));
+            bubble.classList.add('selected');
+
+            const forValue = bubble.dataset.for;
+            document.getElementById('bookingFor').value = forValue;
+
+            const nameLabel = document.getElementById('nameLabel');
+            const ageGroup = document.getElementById('ageGroup');
+            const childNameGroup = document.getElementById('childNameGroup');
+
+            if (forValue === 'me') {
+                nameLabel.textContent = 'Full Name';
+                childNameGroup.style.display = 'none';
+                ageGroup.style.display = 'none';
+                document.getElementById('childName').value = '';
+                document.getElementById('age').value = '';
+            } else {
+                nameLabel.textContent = 'Full Name';
+                childNameGroup.style.display = 'block';
+                ageGroup.style.display = 'block';
+            }
+
+            bookingForm.style.display = 'block';
         });
 
         // Parallax effect for background
@@ -1155,6 +1239,8 @@
             const email = document.getElementById('email').value.trim();
             const phone = document.getElementById('phone').value.trim();
             const age = document.getElementById('age').value.trim();
+            const childName = document.getElementById('childName').value.trim();
+            const bookingForValue = document.getElementById('bookingFor').value;
             const selectedTime = document.getElementById('selectedTime').value;
             const preferredDay = document.getElementById('preferredDay').value;
 
@@ -1173,9 +1259,15 @@
                 document.querySelector('label[for="phone"]').parentElement.classList.add('error');
                 hasErrors = true;
             }
-            if (!age) {
-                document.querySelector('label[for="age"]').parentElement.classList.add('error');
-                hasErrors = true;
+            if (bookingForValue === 'child') {
+                if (!childName) {
+                    document.getElementById('childNameGroup').classList.add('error');
+                    hasErrors = true;
+                }
+                if (!age) {
+                    document.getElementById('ageGroup').classList.add('error');
+                    hasErrors = true;
+                }
             }
             if (!preferredDay) {
                 alert('Please select a date.');
@@ -1295,8 +1387,12 @@
             document.getElementById('phone').parentElement.classList.toggle('has-value', e.target.value.trim() !== '');
         });
         document.getElementById('age').addEventListener('input', (e) => {
-            document.getElementById('age').parentElement.classList.remove('error');
-            document.getElementById('age').parentElement.classList.toggle('has-value', e.target.value.trim() !== '');
+            document.getElementById('ageGroup').classList.remove('error');
+            document.getElementById('ageGroup').classList.toggle('has-value', e.target.value.trim() !== '');
+        });
+        document.getElementById('childName').addEventListener('input', (e) => {
+            document.getElementById('childNameGroup').classList.remove('error');
+            document.getElementById('childNameGroup').classList.toggle('has-value', e.target.value.trim() !== '');
         });
     </script>
     <script>
@@ -1336,7 +1432,7 @@
             ogDesc = 'Sign up for a free 20-minute drum lesson trial in Lesmurdie. No drum kit required.';
             heroTitle.textContent = 'Free Trial Lesson';
             submitBtn.textContent = 'Book My Free Trial';
-            successMessage.textContent = 'Your free trial lesson has been successfully booked!';
+            successMessage.innerHTML = '<h2>Booking Confirmed!</h2><p><strong>Your free trial lesson has been successfully booked!</strong></p><p>You should receive a confirmation email shortly with all the details.</p>';
             // Completely remove toggle sections for trials
             const packFormGroup = document.querySelector('.pack-form-group');
             const schoolTermSection = document.getElementById('schoolTermSection');
@@ -1349,7 +1445,7 @@
             ogDesc = 'Book a ' + lessonType + '-minute drum lesson in Lesmurdie. Professional instruction for all skill levels.';
             heroTitle.textContent = lessonType + '-Minute Lesson Booking';
             submitBtn.textContent = 'Book My Lesson';
-            successMessage.textContent = 'Your lesson has been successfully booked!';
+            successMessage.innerHTML = '<h2>Booking Confirmed!</h2><p><strong>Your lesson has been successfully booked!</strong></p><p>You should receive a confirmation email shortly with all the details, including your invoice.</p>';
             // Show lesson pack container for actual lessons
             const packFormGroup = document.querySelector('.pack-form-group');
             if (packFormGroup) packFormGroup.style.display = 'block';

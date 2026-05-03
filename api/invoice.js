@@ -27,6 +27,7 @@ export default function handler(req, res) {
     inv, name, email, phone, age, type,
     selectedTime, preferredDay, selectedPack,
     alignWithTerm, calculatedWeeks, calculatedCost,
+    bookingFor, childName,
   } = booking;
 
   const pricing = prices[type] || { single: 0, pack: 0, duration: 30 };
@@ -73,7 +74,7 @@ export default function handler(req, res) {
     .header-band img { height: 50px; display: block; }
     .invoice-title-block { text-align: right; }
     .invoice-title-block .word { font-size: 28px; font-weight: bold; letter-spacing: 5px; color: #fff; }
-    .invoice-title-block .inv-num { font-size: 14px; color: #7b97ac; margin-top: 3px; letter-spacing: 1px; }
+    .invoice-title-block .inv-num { font-size: 18px; color: white; margin-top: 4px; letter-spacing: 1px; }
 
     /* ── Accent strip ── */
     .accent-strip { height: 3px; background: linear-gradient(90deg, #7b97ac, #8fc4da); }
@@ -84,13 +85,13 @@ export default function handler(req, res) {
     /* ── From block ── */
     .meta-row { margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid #e8e8e8; }
     .from-block .company { font-size: 17px; font-weight: bold; color: #111111; margin-bottom: 6px; }
-    .from-block p { margin: 2px 0; color: #444; font-size: 14px; }
-    .from-block .abn { font-size: 13px; color: #888; margin-top: 8px; }
+    .from-block p { margin: 2px 0; color: #333; font-size: 15px; }
+    .from-block .abn { font-size: 14px; color: #555; margin-top: 8px; }
 
     /* ── Info cards ── */
     .info-section { display: flex; gap: 16px; margin-bottom: 32px; }
     .info-card { flex: 1; background: #f4f7fa; border-radius: 8px; padding: 18px 20px; border-top: 3px solid #7b97ac; }
-    .info-card h3 { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #7b97ac; margin-bottom: 10px; font-weight: bold; }
+    .info-card h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #7b97ac; margin-bottom: 10px; font-weight: bold; }
     .info-card p { margin: 3px 0; font-size: 15px; color: #333; }
     .info-card p strong { color: #111111; font-size: 15px; }
 
@@ -101,24 +102,24 @@ export default function handler(req, res) {
     thead th:last-child { text-align: right; white-space: nowrap; }
     tbody td { padding: 18px 16px; border-bottom: 1px solid #f0f0f0; font-size: 15px; color: #222; vertical-align: top; }
     tbody td:last-child { text-align: right; font-weight: bold; color: #111111; white-space: nowrap; }
-    .desc-meta { font-size: 13px; color: #7b97ac; margin-top: 5px; font-weight: normal; letter-spacing: 0.2px; }
+    .desc-meta { font-size: 14px; color: #555; margin-top: 5px; font-weight: normal; letter-spacing: 0.2px; }
 
     /* ── Totals ── */
     .totals { display: flex; justify-content: flex-end; margin-bottom: 32px; }
     .totals-inner { width: 300px; border: 1px solid #e4e4e4; border-radius: 8px; overflow: hidden; }
     .totals-inner table { margin-bottom: 0; }
-    .totals-inner tbody td { padding: 10px 18px; font-size: 14px; border-bottom: 1px solid #f0f0f0; color: #444; }
-    .totals-inner tbody td:last-child { text-align: right; color: #333; font-weight: normal; }
-    .totals-inner tbody .gst-row td { font-size: 12px; color: #999; font-style: italic; }
-    .totals-inner tbody .gst-row td:last-child { color: #999; font-weight: normal; }
+    .totals-inner tbody td { padding: 10px 18px; font-size: 15px; border-bottom: 1px solid #f0f0f0; color: #333; }
+    .totals-inner tbody td:last-child { text-align: right; color: #222; font-weight: normal; }
+    .totals-inner tbody .gst-row td { font-size: 14px; color: #555; }
+    .totals-inner tbody .gst-row td:last-child { color: #555; font-weight: normal; }
     .totals-inner tfoot td { padding: 13px 18px; font-size: 16px; font-weight: bold; background: #000000; color: #fff; }
-    .totals-inner tfoot td:last-child { text-align: right; color: #8fc4da; }
+    .totals-inner tfoot td:last-child { text-align: right; color: white; }
 
     /* ── Payment box ── */
     .payment-box { background: #f4f7fa; border-left: 4px solid #7b97ac; border-radius: 8px; padding: 20px 24px; margin-bottom: 32px; }
-    .payment-box h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 1.8px; color: #7b97ac; margin-bottom: 14px; font-weight: bold; }
-    .payment-grid { display: grid; grid-template-columns: 95px 1fr; gap: 9px 0; font-size: 14.5px; }
-    .payment-grid .label { color: #666; }
+    .payment-box h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 1.8px; color: #7b97ac; margin-bottom: 14px; font-weight: bold; }
+    .payment-grid { display: grid; grid-template-columns: 95px 1fr; gap: 9px 0; font-size: 15px; }
+    .payment-grid .label { color: #333; }
     .payment-grid .value { color: #111111; font-weight: bold; }
 
     /* ── Footer ── */
@@ -130,9 +131,35 @@ export default function handler(req, res) {
     .print-btn:hover { background: #7b97ac; }
 
     @media print {
-      body { background: #fff; padding: 0; }
-      .invoice { box-shadow: none; border-radius: 0; }
-      .print-btn { display: none; }
+      @page { size: A4; margin: 12mm 10mm; }
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      body { background: #fff !important; padding: 0 !important; margin: 0 !important; font-size: 13px !important; line-height: 1.5 !important; }
+      .invoice { box-shadow: none !important; border-radius: 0 !important; max-width: 100% !important; width: 100% !important; overflow: visible !important; }
+      .header-band { padding: 18px 32px !important; }
+      .header-band img { height: 38px !important; }
+      .invoice-title-block .word { font-size: 22px !important; }
+      .invoice-title-block .inv-num { font-size: 14px !important; }
+      .body-content { padding: 24px 32px !important; }
+      .meta-row { margin-bottom: 18px !important; padding-bottom: 16px !important; }
+      .from-block .company { font-size: 15px !important; }
+      .from-block p, .from-block .abn { font-size: 12px !important; }
+      .info-section { margin-bottom: 20px !important; }
+      .info-card { padding: 12px 16px !important; }
+      .info-card h3 { font-size: 10px !important; margin-bottom: 6px !important; }
+      .info-card p, .info-card p strong { font-size: 13px !important; }
+      tbody td { padding: 12px 14px !important; font-size: 13px !important; }
+      .desc-meta { font-size: 12px !important; }
+      .totals { margin-bottom: 20px !important; }
+      .totals-inner { overflow: visible !important; width: 260px !important; }
+      .totals-inner tbody td { font-size: 13px !important; padding: 8px 14px !important; }
+      .totals-inner tfoot td { font-size: 14px !important; padding: 10px 14px !important; }
+      .payment-box { padding: 14px 18px !important; margin-bottom: 20px !important; }
+      .payment-box h3 { font-size: 11px !important; margin-bottom: 10px !important; }
+      .payment-grid { font-size: 13px !important; }
+      .footer { padding: 16px 32px !important; }
+      .print-btn { display: none !important; }
+      .header-band, .accent-strip, .info-section, .meta-row, .totals, .payment-box { page-break-inside: avoid; }
+      tbody tr { page-break-inside: avoid; }
     }
     @media (max-width: 560px) {
       .header-band, .body-content, .footer { padding-left: 22px; padding-right: 22px; }
@@ -172,6 +199,7 @@ export default function handler(req, res) {
           <p><strong>${name}</strong></p>
           <p>${email}</p>
           <p>${phone}</p>
+          ${bookingFor === 'child' ? `<p style="margin-top:8px;color:#555;font-size:14px;">Student: ${childName}</p>` : ''}
         </div>
         <div class="info-card">
           <h3>Invoice</h3>
@@ -209,7 +237,7 @@ export default function handler(req, res) {
             </tr>
             <tr class="gst-row">
               <td>GST</td>
-              <td>Not applicable &mdash; not registered for GST</td>
+              <td>No GST charged &mdash; not registered for GST</td>
             </tr>
           </tbody>
           <tfoot>
@@ -229,7 +257,6 @@ export default function handler(req, res) {
           <span class="label">Bank</span><span class="value">Westpac</span>
           <span class="label">BSB</span><span class="value">036-062</span>
           <span class="label">Account</span><span class="value">327003</span>
-          <span class="label">Reference</span><span class="value">INV-${inv} / ${name}</span>
         </div>
       </div>
       ` : ''}

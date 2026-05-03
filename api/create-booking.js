@@ -32,7 +32,7 @@ async function sendMailgunEmail(emailData) {
 }
 
 // Email sending function for user confirmation
-async function sendUserConfirmationEmail({ name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost, invoiceUrl, invoiceNum }) {
+async function sendUserConfirmationEmail({ name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost, invoiceUrl, invoiceNum, bookingFor, childName }) {
   if (!process.env.MAILGUN_API_KEY || !process.env.MAILGUN_DOMAIN) {
     throw new Error('Email service not configured');
   }
@@ -83,10 +83,16 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
           </div>
           <div class="content">
             <p class="welcome-text">Hi ${name},</p>
-            <p style="font-size: 14px; color: #111111; margin-bottom: 20px;">${type === 'trial' ? 'Your free trial has been booked!' : 'Your lesson has been booked!'} Here are the details:</p>
+            <p style="font-size: 14px; color: #111111; margin-bottom: 20px;">${bookingFor === 'child' ? `A ${type === 'trial' ? 'free trial' : 'lesson'} has been booked for ${childName}!` : (type === 'trial' ? 'Your free trial has been booked!' : 'Your lesson has been booked!')} Here are the details:</p>
             <div class="booking-card">
               <h2>🎯 Your Booking Details</h2>
               <div class="details-table">
+                ${bookingFor === 'child' ? `
+                <div class="details-row">
+                  <div class="details-cell details-label">🥁 Student:</div>
+                  <div class="details-cell details-value">${childName}</div>
+                </div>
+                ` : ''}
                 <div class="details-row">
                   <div class="details-cell details-label">📅 Date:</div>
                   <div class="details-cell details-value">${formattedDate}</div>
@@ -131,7 +137,7 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
 }
 
 // Email sending function for admin notification
-async function sendAdminEmail({ name, email, phone, age, message, selectedTime, preferredDay, eventId, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost, invoiceUrl, invoiceNum }) {
+async function sendAdminEmail({ name, email, phone, age, message, selectedTime, preferredDay, eventId, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost, invoiceUrl, invoiceNum, bookingFor, childName }) {
   if (!process.env.MAILGUN_API_KEY || !process.env.MAILGUN_DOMAIN) {
     throw new Error('Email service not configured');
   }
@@ -148,11 +154,11 @@ async function sendAdminEmail({ name, email, phone, age, message, selectedTime, 
       <html>
       <body>
         <h2>${type === 'trial' ? 'New Trial Booking' : 'New Lesson Booking'}</h2>
-        <h3>Student Details</h3>
+        <h3>Contact Details</h3>
         <p><strong>Name:</strong> ${name}</p>
         <p><strong>Email:</strong> ${email}</p>
         <p><strong>Phone:</strong> ${phone}</p>
-        ${age ? `<p><strong>Age:</strong> ${age}</p>` : ''}
+        ${bookingFor === 'child' ? `<p><strong>Student:</strong> ${childName}${age ? ` (age ${age})` : ''}</p>` : (age ? `<p><strong>Age:</strong> ${age}</p>` : '')}
         <h3>Booking Details</h3>
         <p><strong>Type:</strong> ${type === 'trial' ? 'Free Trial' : type + '-Minute Lesson'}</p>
         <p><strong>Date:</strong> ${formattedDate}</p>
@@ -204,7 +210,7 @@ export default async function handler(req, res) {
       data[key] = value;
     }
 
-    const { name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost } = data;
+    const { name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost, bookingFor, childName } = data;
 
     if (!name || !email || !phone || !selectedTime || !preferredDay) {
       return res.status(400).json({
@@ -294,13 +300,14 @@ export default async function handler(req, res) {
         inv: invoiceNum, name, email, phone, age, type,
         selectedTime, preferredDay, selectedPack,
         alignWithTerm, calculatedWeeks, calculatedCost,
+        bookingFor, childName,
       })).toString('base64url');
       invoiceUrl = `https://www.drumadon.com.au/api/invoice?d=${invoiceToken}`;
     }
 
     // Step 1: Send user confirmation email — must succeed before proceeding
     try {
-      await sendUserConfirmationEmail({ name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost, invoiceUrl, invoiceNum });
+      await sendUserConfirmationEmail({ name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost, invoiceUrl, invoiceNum, bookingFor, childName });
       console.log('✅ User confirmation email sent successfully');
     } catch (emailError) {
       console.error('❌ CRITICAL: User confirmation email failed:', emailError);
@@ -355,10 +362,9 @@ export default async function handler(req, res) {
           summary: `Drumadon ${type}-Minute Lesson (Lesson ${currentLessonNumber} out of ${totalLessons}) - ${name}`,
           description: `
             ${type}-Minute Lesson - ${packDescription} (Lesson ${currentLessonNumber} of ${totalLessons})
-            Name: ${name}
+            ${bookingFor === 'child' ? `Student: ${childName}${age ? ` (age ${age})` : ''}\nParent/Guardian: ${name}` : `Name: ${name}`}
             Email: ${email}
             Phone: ${phone}
-            Age: ${age}
             Message: ${message || 'No additional information'}
             Total Cost: $${alignWithTerm === 'true' ? calculatedCost : pricing.pack}
           `,
@@ -384,10 +390,9 @@ export default async function handler(req, res) {
         summary: `Drumadon ${type === 'trial' ? 'Trial' : type + '-Minute Lesson'} - ${name}`,
         description: `
           ${type === 'trial' ? 'Trial' : type + '-Minute Lesson'} Booking Details:
-          Name: ${name}
+          ${bookingFor === 'child' ? `Student: ${childName}${age ? ` (age ${age})` : ''}\nParent/Guardian: ${name}` : `Name: ${name}`}
           Email: ${email}
           Phone: ${phone}
-          Age: ${age}
           Message: ${message || 'No additional information'}
         `,
         start: { dateTime: isoString, timeZone: 'Australia/Perth' },
@@ -405,7 +410,7 @@ export default async function handler(req, res) {
 
     // Step 3: Send admin notification
     try {
-      await sendAdminEmail({ name, email, phone, age, message, selectedTime, preferredDay, eventId: calendarResponse.data.id, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost, invoiceUrl, invoiceNum });
+      await sendAdminEmail({ name, email, phone, age, message, selectedTime, preferredDay, eventId: calendarResponse.data.id, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost, invoiceUrl, invoiceNum, bookingFor, childName });
       console.log('Admin notification email sent successfully');
     } catch (adminEmailError) {
       console.error('Admin email failed, but booking is confirmed:', adminEmailError);
