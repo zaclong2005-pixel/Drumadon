@@ -46,7 +46,7 @@ export default function handler(req, res) {
   } else {
     const numLessons = Number(lessonAmount || 1);
     const pricePerLesson = selectedPack === 'pack' ? Math.round(pricing.pack / 10) : pricing.single;
-    description = `${type}-Minute Drum Lessons &times; <input type="text" value="${numLessons}" style="border: none; background: transparent; font-size: 14px; color: #555; width: 30px; text-align: center;" /> (${selectedPack === 'pack' ? 'Pack Rate' : 'Single Rate'})`;
+    description = `${type}-Minute Drum Lessons &times; <input type="text" value="${numLessons}" style="border: none; background: transparent; font-size: 14px; color: #555; width: 30px; text-align: center;" /> (${selectedPack === 'pack' ? 'Bulk Rate' : 'Single Rate'})`;
     amount = pricePerLesson * numLessons;
   }
 
@@ -198,7 +198,7 @@ export default function handler(req, res) {
         <div class="info-card">
           <h3>Invoice Details</h3>
           <p><strong>Invoice Number:</strong> INV-${inv}</p>
-          <p><strong>Type:</strong> ${type === 'trial' ? 'Free Trial' : `${type}-Minute Lesson${selectedPack === 'pack' ? ' (Pack Rate)' : ''}`}</p>
+          <p><strong>Type:</strong> ${type === 'trial' ? 'Free Trial' : `${type}-Minute Lesson${selectedPack === 'pack' ? ' (Bulk Rate)' : ''}`}</p>
           <p><strong>Issued:</strong> ${invoiceDate}</p>
           <p><strong>Due:</strong> ${formattedDate}</p>
           <p><strong>Status:</strong> Unpaid</p>

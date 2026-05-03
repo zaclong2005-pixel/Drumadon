@@ -1464,6 +1464,13 @@
         lessonType = getUrlParameter('type') || 'trial';
         document.getElementById('lessonType').value = lessonType;
 
+        // Update child bubble text based on lesson type
+        if (lessonType === 'trial') {
+            document.querySelector('[data-for="child"]').textContent = 'My Child';
+        } else {
+            document.querySelector('[data-for="child"]').textContent = 'Child';
+        }
+
         // Get DOM element references
         const heroTitle = document.getElementById('pageTitle');
         const submitBtn = document.getElementById('submitBtn');

@@ -108,7 +108,7 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
                 ${type !== 'trial' ? `
                 <div class="details-row">
                   <div class="details-cell details-label">💰 Price:</div>
-                  <div class="details-cell details-value">${selectedPack === 'pack' ? `$${pricing.pack} (10× Pack)` : `$${pricing.single} (Single Lesson)`}</div>
+                  <div class="details-cell details-value">${selectedPack === 'pack' ? `$${pricing.pack} (10× Bulk)` : `$${pricing.single} (Single Lesson)`}</div>
                 </div>
                 ` : ''}
                 ${invoiceUrl ? `
@@ -163,7 +163,7 @@ async function sendAdminEmail({ name, email, phone, age, message, selectedTime, 
         <p><strong>Type:</strong> ${type === 'trial' ? 'Free Trial' : type + '-Minute Lesson'}</p>
         <p><strong>Date:</strong> ${formattedDate}</p>
         <p><strong>Time:</strong> ${selectedTime} (${pricing.duration} minutes)</p>
-        ${type !== 'trial' ? `<p><strong>Pricing:</strong> $${bookingAmount} (${lessonAmount || 1}× lessons at ${selectedPack === 'pack' ? `$${(pricing.pack / 10).toFixed(0)} each (pack rate)` : `$${pricing.single} each`})</p>` : ''}
+        ${type !== 'trial' ? `<p><strong>Pricing:</strong> $${bookingAmount} (${lessonAmount || 1}× lessons, ${selectedPack === 'pack' ? 'bulk rate' : 'single rate'})</p>` : ''}
         ${invoiceUrl ? `<p><strong>Invoice:</strong> <a href="${invoiceUrl}">INV-${invoiceNum}</a></p>` : ''}
         <p><strong>Message:</strong> ${message || 'No additional information'}</p>
       </body>
@@ -252,7 +252,7 @@ export default async function handler(req, res) {
         if (!process.env.GOOGLE_SHEET_ID) throw new Error('GOOGLE_SHEET_ID not configured');
         const sheets = google.sheets({ version: 'v4', auth });
 
-        // Count existing rows (row 1 is header, so existingRows=1 → next invoice is 0001)
+        console.log('Fetching existing rows from Google Sheet for invoice numbering...');
         const getRes = await sheets.spreadsheets.values.get({
           spreadsheetId: process.env.GOOGLE_SHEET_ID,
           range: 'Sheet1!A:A',
@@ -260,6 +260,7 @@ export default async function handler(req, res) {
         const existingRows = getRes.data.values ? getRes.data.values.length : 1;
         const nextNum = existingRows; // 1-based: header row + n data rows → next = n+1
         invoiceNum = String(nextNum).padStart(4, '0');
+        console.log('Existing rows in sheet:', existingRows, 'Next invoice number:', invoiceNum);
 
         // Append booking row to sheet
         await sheets.spreadsheets.values.append({
@@ -277,7 +278,7 @@ export default async function handler(req, res) {
           },
         });
 
-        // Set dropdown validation on the entire Status column (H) so all rows show Paid/Unpaid/Canceled options
+        console.log('Successfully appended booking to Google Sheet with invoice number:', invoiceNum);
         await sheets.spreadsheets.batchUpdate({
           spreadsheetId: process.env.GOOGLE_SHEET_ID,
           requestBody: {
