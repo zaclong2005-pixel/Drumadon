@@ -32,7 +32,7 @@ async function sendMailgunEmail(emailData) {
 }
 
 // Email sending function for user confirmation
-async function sendUserConfirmationEmail({ name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, invoiceUrl, invoiceNum, bookingFor, childName }) {
+async function sendUserConfirmationEmail({ name, email, phone, age, message, selectedTime, preferredDay, eventId, type, selectedPack, invoiceUrl, invoiceNum, bookingFor, childName, grandTotal, lessonAmount }) {
   if (!process.env.MAILGUN_API_KEY || !process.env.MAILGUN_DOMAIN) {
     throw new Error('Email service not configured');
   }
@@ -108,7 +108,7 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
                 ${type !== 'trial' ? `
                 <div class="details-row">
                   <div class="details-cell details-label">💰 Price:</div>
-                  <div class="details-cell details-value">${selectedPack === 'pack' ? `$${pricing.pack} (10× Bulk)` : `$${pricing.single} (Single Lesson)`}</div>
+                  <div class="details-cell details-value">${selectedPack === 'pack' ? `$${grandTotal} (${lessonAmount} Lessons)` : `$${pricing.single} (Single Lesson)`}</div>
                 </div>
                 ` : ''}
                 ${invoiceUrl ? `
@@ -220,7 +220,7 @@ export default async function handler(req, res) {
       data[key] = value;
     }
 
-    const { name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, lessonAmount, bookingFor, childName } = data;
+    const { name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, lessonAmount, grandTotal, bookingFor, childName } = data;
 
     if (!name || !email || !phone || !selectedTime || !preferredDay) {
       return res.status(400).json({
@@ -328,7 +328,7 @@ export default async function handler(req, res) {
 
     // Step 1: Send user confirmation email — must succeed before proceeding
     try {
-      await sendUserConfirmationEmail({ name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, invoiceUrl, invoiceNum, bookingFor, childName });
+      await sendUserConfirmationEmail({ name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, invoiceUrl, invoiceNum, bookingFor, childName, grandTotal, lessonAmount });
       console.log('✅ User confirmation email sent successfully');
     } catch (emailError) {
       console.error('❌ CRITICAL: User confirmation email failed:', emailError);
