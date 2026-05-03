@@ -32,7 +32,7 @@ async function sendMailgunEmail(emailData) {
 }
 
 // Email sending function for user confirmation
-async function sendUserConfirmationEmail({ name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost, invoiceUrl, invoiceNum, bookingFor, childName }) {
+async function sendUserConfirmationEmail({ name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, invoiceUrl, invoiceNum, bookingFor, childName }) {
   if (!process.env.MAILGUN_API_KEY || !process.env.MAILGUN_DOMAIN) {
     throw new Error('Email service not configured');
   }
@@ -108,7 +108,7 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
                 ${type !== 'trial' ? `
                 <div class="details-row">
                   <div class="details-cell details-label">💰 Price:</div>
-                  <div class="details-cell details-value">${selectedPack === 'pack' ? (alignWithTerm === 'true' ? `$${calculatedCost} (${calculatedWeeks}× Pack - Term Aligned)` : `$${pricing.pack} (10× Pack)`) : `$${pricing.single} (Single Lesson)`}</div>
+                  <div class="details-cell details-value">${selectedPack === 'pack' ? `$${pricing.pack} (10× Pack)` : `$${pricing.single} (Single Lesson)`}</div>
                 </div>
                 ` : ''}
                 ${invoiceUrl ? `
@@ -137,7 +137,7 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
 }
 
 // Email sending function for admin notification
-async function sendAdminEmail({ name, email, phone, age, message, selectedTime, preferredDay, eventId, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost, invoiceUrl, invoiceNum, bookingFor, childName }) {
+async function sendAdminEmail({ name, email, phone, age, message, selectedTime, preferredDay, eventId, type, selectedPack, invoiceUrl, invoiceNum, bookingFor, childName }) {
   if (!process.env.MAILGUN_API_KEY || !process.env.MAILGUN_DOMAIN) {
     throw new Error('Email service not configured');
   }
@@ -307,7 +307,6 @@ export default async function handler(req, res) {
       const invoiceToken = Buffer.from(JSON.stringify({
         inv: invoiceNum, name, email, phone, age, type,
         selectedTime, preferredDay, selectedPack,
-        alignWithTerm, calculatedWeeks, calculatedCost,
         bookingFor, childName,
       })).toString('base64url');
       invoiceUrl = `https://www.drumadon.com.au/api/invoice?d=${invoiceToken}`;
@@ -315,7 +314,7 @@ export default async function handler(req, res) {
 
     // Step 1: Send user confirmation email — must succeed before proceeding
     try {
-      await sendUserConfirmationEmail({ name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost, invoiceUrl, invoiceNum, bookingFor, childName });
+      await sendUserConfirmationEmail({ name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, invoiceUrl, invoiceNum, bookingFor, childName });
       console.log('✅ User confirmation email sent successfully');
     } catch (emailError) {
       console.error('❌ CRITICAL: User confirmation email failed:', emailError);
@@ -349,8 +348,8 @@ export default async function handler(req, res) {
     let calendarResponse;
 
     if (selectedPack === 'pack') {
-      const totalLessons = alignWithTerm === 'true' ? calculatedWeeks : 10;
-      console.log(`Creating ${totalLessons} calendar events for ${alignWithTerm === 'true' ? 'term-aligned' : 'regular 10-pack'} bulk booking`);
+      const totalLessons = 10;
+      console.log(`Creating ${totalLessons} calendar events for regular 10-pack bulk booking`);
 
       const events = [];
       const startDate = new Date(preferredDay);
@@ -364,7 +363,7 @@ export default async function handler(req, res) {
         const lessonEndString = `${lessonDateString}T${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}:00+08:00`;
 
         const currentLessonNumber = i + 1;
-        const packDescription = alignWithTerm === 'true' ? 'Term Aligned' : '10-Pack';
+        const packDescription = '10-Pack';
 
         const bulkEvent = {
           summary: `Drumadon ${type}-Minute Lesson (Lesson ${currentLessonNumber} out of ${totalLessons}) - ${name}`,
@@ -374,7 +373,7 @@ export default async function handler(req, res) {
             Email: ${email}
             Phone: ${phone}
             Message: ${message || 'No additional information'}
-            Total Cost: $${alignWithTerm === 'true' ? calculatedCost : pricing.pack}
+            Total Cost: $${pricing.pack}
           `,
           start: { dateTime: lessonStartString, timeZone: 'Australia/Perth' },
           end: { dateTime: lessonEndString, timeZone: 'Australia/Perth' },
@@ -418,7 +417,7 @@ export default async function handler(req, res) {
 
     // Step 3: Send admin notification
     try {
-      await sendAdminEmail({ name, email, phone, age, message, selectedTime, preferredDay, eventId: calendarResponse.data.id, type, selectedPack, alignWithTerm, calculatedWeeks, calculatedCost, invoiceUrl, invoiceNum, bookingFor, childName });
+      await sendAdminEmail({ name, email, phone, age, message, selectedTime, preferredDay, eventId: calendarResponse.data.id, type, selectedPack, invoiceUrl, invoiceNum, bookingFor, childName });
       console.log('Admin notification email sent successfully');
     } catch (adminEmailError) {
       console.error('Admin email failed, but booking is confirmed:', adminEmailError);
