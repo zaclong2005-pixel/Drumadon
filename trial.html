@@ -872,7 +872,7 @@
             <div class="booking-for-section" id="bookingForSection" style="display: none;">
                 <h3>Who is this lesson for?</h3>
                 <div class="time-bubbles" id="bookingForBubbles">
-                    <div class="time-bubble" data-for="me">Me</div>
+                    <div class="time-bubble" id="bookingForBubble" data-for="me">Me</div>
                     <div class="time-bubble" data-for="child">Child</div>
                 </div>
             </div>
@@ -1007,6 +1007,16 @@
             lessonTypeField.value = lessonType;
         } else {
             console.warn('Hidden lessonType input not found');
+        }
+
+        // Set booking for bubble based on lesson type
+        const bookingForBubble = document.getElementById('bookingForBubble');
+        if (lessonType === 'trial') {
+            bookingForBubble.textContent = 'Me';
+            bookingForBubble.dataset.for = 'me';
+        } else {
+            bookingForBubble.textContent = 'Adult';
+            bookingForBubble.dataset.for = 'adult';
         }
 
         // Load available days
@@ -1220,7 +1230,7 @@
                             document.getElementById('selectedTime').value = time;
                             // Reset bookingFor selection when a new time is picked
                             document.querySelectorAll('#bookingForBubbles .time-bubble').forEach(b => b.classList.remove('selected'));
-                            document.getElementById('bookingFor').value = 'me';
+                            document.getElementById('bookingFor').value = lessonType === 'trial' ? 'me' : 'adult';
                             bookingForSection.style.display = 'block';
                             bookingForm.style.display = 'none';
                         });
@@ -1250,7 +1260,7 @@
             const ageGroup = document.getElementById('ageGroup');
             const childNameGroup = document.getElementById('childNameGroup');
 
-            if (forValue === 'me') {
+            if (forValue !== 'child') {
                 nameLabel.textContent = 'Full Name';
                 childNameGroup.style.display = 'none';
                 ageGroup.style.display = 'none';
