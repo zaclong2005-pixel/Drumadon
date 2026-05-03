@@ -998,6 +998,7 @@
         const customSelect = document.querySelector('.custom-select');
         const selectSelected = document.querySelector('.select-selected');
         const selectItems = document.querySelector('.select-items');
+        let lessonType = 'trial';
 
         // Load available days
         async function loadAvailableDays() {
@@ -1414,7 +1415,7 @@
 
         // Calculate pricing for school term alignment
         // Set lesson type and update UI
-        const lessonType = getUrlParameter('type') || 'trial';
+        lessonType = getUrlParameter('type') || 'trial';
         document.getElementById('lessonType').value = lessonType;
 
         // Get DOM element references
