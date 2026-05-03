@@ -40,6 +40,11 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
   const date = new Date(preferredDay);
   const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
   const pricing = getPricing(type);
+  const amountToShow = type === 'trial'
+    ? 0
+    : (!isNaN(Number(grandTotal)) && Number(grandTotal) >= 0
+      ? Number(grandTotal)
+      : (selectedPack === 'pack' ? Math.round(pricing.pack / 10 * Number(lessonAmount || 1)) : pricing.single * Number(lessonAmount || 1)));
 
   const userEmailData = {
     from: `Drumadon <noreply@${process.env.MAILGUN_DOMAIN}>`,
@@ -108,7 +113,7 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
                 ${type !== 'trial' ? `
                 <div class="details-row">
                   <div class="details-cell details-label">💰 Price:</div>
-                  <div class="details-cell details-value">${selectedPack === 'pack' ? `$${grandTotal} (${lessonAmount} Lessons)` : `$${pricing.single} (Single Lesson)`}</div>
+                  <div class="details-cell details-value">${type !== 'trial' ? `$${!isNaN(Number(grandTotal)) && Number(grandTotal) >= 0 ? Number(grandTotal) : (selectedPack === 'pack' ? Math.round(pricing.pack / 10 * Number(lessonAmount || 1)) : pricing.single * Number(lessonAmount || 1))} (${lessonAmount || 1} Lessons)` : 'Free'}</div>
                 </div>
                 ` : ''}
                 ${invoiceUrl ? `
@@ -137,7 +142,7 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
 }
 
 // Email sending function for admin notification
-async function sendAdminEmail({ name, email, phone, age, message, selectedTime, preferredDay, eventId, type, selectedPack, invoiceUrl, invoiceNum, bookingFor, childName }) {
+async function sendAdminEmail({ name, email, phone, age, message, selectedTime, preferredDay, eventId, type, selectedPack, invoiceUrl, invoiceNum, bookingFor, childName, grandTotal, lessonAmount }) {
   if (!process.env.MAILGUN_API_KEY || !process.env.MAILGUN_DOMAIN) {
     throw new Error('Email service not configured');
   }
@@ -145,6 +150,11 @@ async function sendAdminEmail({ name, email, phone, age, message, selectedTime, 
   const date = new Date(preferredDay);
   const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
   const pricing = getPricing(type);
+  const amountToShow = type === 'trial'
+    ? 0
+    : (!isNaN(Number(grandTotal)) && Number(grandTotal) >= 0
+      ? Number(grandTotal)
+      : (selectedPack === 'pack' ? Math.round(pricing.pack / 10 * Number(lessonAmount || 1)) : pricing.single * Number(lessonAmount || 1)));
 
   const adminEmailData = {
     from: `Drumadon Website <noreply@${process.env.MAILGUN_DOMAIN}>`,
@@ -163,7 +173,7 @@ async function sendAdminEmail({ name, email, phone, age, message, selectedTime, 
         <p><strong>Type:</strong> ${type === 'trial' ? 'Free Trial' : type + '-Minute Lesson'}</p>
         <p><strong>Date:</strong> ${formattedDate}</p>
         <p><strong>Time:</strong> ${selectedTime} (${pricing.duration} minutes)</p>
-        ${type !== 'trial' ? `<p><strong>Pricing:</strong> $${bookingAmount} (${lessonAmount || 1}× lessons, ${selectedPack === 'pack' ? 'bulk rate' : 'single rate'})</p>` : ''}
+        ${type !== 'trial' ? `<p><strong>Pricing:</strong> $${amountToShow} (${lessonAmount || 1}× lessons, ${selectedPack === 'pack' ? 'bulk rate' : 'single rate'})</p>` : ''}
         ${invoiceUrl ? `<p><strong>Invoice:</strong> <a href="${invoiceUrl}">INV-${invoiceNum}</a></p>` : ''}
         <p><strong>Message:</strong> ${message || 'No additional information'}</p>
       </body>
@@ -243,7 +253,9 @@ export default async function handler(req, res) {
     const pricing = getPricing(type);
     const bookingDate = new Date(preferredDay);
     const formattedDate = `${bookingDate.getDate().toString().padStart(2, '0')}/${(bookingDate.getMonth() + 1).toString().padStart(2, '0')}/${bookingDate.getFullYear()}`;
-    const bookingAmount = type === 'trial' ? 0 : selectedPack === 'pack' ? Math.round((pricing.pack / 10) * Number(lessonAmount || 1)) : pricing.single * Number(lessonAmount || 1);
+    const rawGrandTotal = Number(grandTotal);
+    const defaultBookingAmount = type === 'trial' ? 0 : selectedPack === 'pack' ? Math.round((pricing.pack / 10) * Number(lessonAmount || 1)) : pricing.single * Number(lessonAmount || 1);
+    const bookingAmount = type === 'trial' ? 0 : (!Number.isNaN(rawGrandTotal) && rawGrandTotal >= 0 ? rawGrandTotal : defaultBookingAmount);
 
     // Generate invoice number and URL (trials don't need invoices)
     let invoiceNum, invoiceUrl;
@@ -283,7 +295,7 @@ export default async function handler(req, res) {
           requestBody: {
             values: [[
               `INV-${invoiceNum}`, name, email, phone,
-              type === 'trial' ? 'Free Trial' : `${type}-Minute Lesson (${lessonAmount || 1} lessons${selectedPack === 'pack' ? ' - Bulk Rate' : ''})`,
+              type === 'trial' ? 'Free Trial' : `${lessonAmount || 1}x ${type} min lesson${selectedPack === 'pack' ? ' - Bulk Rate' : ''}`,
               bookingAmount === 0 ? 'Free' : `$${bookingAmount}`,
               new Date().toLocaleDateString('en-AU', { timeZone: 'Australia/Perth' }),
               'Unpaid',
@@ -295,23 +307,43 @@ export default async function handler(req, res) {
         await sheets.spreadsheets.batchUpdate({
           spreadsheetId: process.env.GOOGLE_SHEET_ID,
           requestBody: {
-            requests: [{
-              setDataValidation: {
-                range: { sheetId: 0, startRowIndex: 1, startColumnIndex: 7, endColumnIndex: 8 },
-                rule: {
-                  condition: {
-                    type: 'ONE_OF_LIST',
-                    values: [
-                      { userEnteredValue: 'Unpaid' },
-                      { userEnteredValue: 'Paid' },
-                      { userEnteredValue: 'Canceled' },
-                    ],
+            requests: [
+              {
+                setDataValidation: {
+                  range: { sheetId: 0, startRowIndex: 1, startColumnIndex: 7, endColumnIndex: 8 },
+                  rule: {
+                    condition: {
+                      type: 'ONE_OF_LIST',
+                      values: [
+                        { userEnteredValue: 'Unpaid' },
+                        { userEnteredValue: 'Paid' },
+                        { userEnteredValue: 'Canceled' },
+                      ],
+                    },
+                    showCustomUi: true,
+                    strict: true,
                   },
-                  showCustomUi: true,
-                  strict: true,
                 },
               },
-            }],
+              {
+                repeatCell: {
+                  range: {
+                    sheetId: 0,
+                    startRowIndex: targetRow - 1,
+                    endRowIndex: targetRow,
+                    startColumnIndex: 0,
+                    endColumnIndex: 8,
+                  },
+                  cell: {
+                    userEnteredFormat: {
+                      backgroundColor: { red: 1, green: 0.95, blue: 0.86 },
+                      horizontalAlignment: 'LEFT',
+                    },
+                  },
+                  fields: 'userEnteredFormat(backgroundColor,horizontalAlignment)',
+                },
+              },
+            ],
           },
         });
       } catch (sheetErr) {
@@ -321,6 +353,7 @@ export default async function handler(req, res) {
       const invoiceToken = Buffer.from(JSON.stringify({
         inv: invoiceNum, name, email, phone, age, type,
         selectedTime, preferredDay, selectedPack,
+        lessonAmount, grandTotal: bookingAmount,
         bookingFor, childName,
       })).toString('base64url');
       invoiceUrl = `https://www.drumadon.com.au/api/invoice?d=${invoiceToken}`;
@@ -328,7 +361,7 @@ export default async function handler(req, res) {
 
     // Step 1: Send user confirmation email — must succeed before proceeding
     try {
-      await sendUserConfirmationEmail({ name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, invoiceUrl, invoiceNum, bookingFor, childName, grandTotal, lessonAmount });
+      await sendUserConfirmationEmail({ name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, invoiceUrl, invoiceNum, bookingFor, childName, grandTotal: bookingAmount, lessonAmount });
       console.log('✅ User confirmation email sent successfully');
     } catch (emailError) {
       console.error('❌ CRITICAL: User confirmation email failed:', emailError);
@@ -431,7 +464,7 @@ export default async function handler(req, res) {
 
     // Step 3: Send admin notification
     try {
-      await sendAdminEmail({ name, email, phone, age, message, selectedTime, preferredDay, eventId: calendarResponse.data.id, type, selectedPack, invoiceUrl, invoiceNum, bookingFor, childName });
+      await sendAdminEmail({ name, email, phone, age, message, selectedTime, preferredDay, eventId: calendarResponse.data.id, type, selectedPack, invoiceUrl, invoiceNum, bookingFor, childName, grandTotal: bookingAmount, lessonAmount });
       console.log('Admin notification email sent successfully');
     } catch (adminEmailError) {
       console.error('Admin email failed, but booking is confirmed:', adminEmailError);

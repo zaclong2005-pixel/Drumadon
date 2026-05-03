@@ -26,7 +26,7 @@ export default function handler(req, res) {
   const {
     inv, name, email, phone, age, type,
     selectedTime, preferredDay, selectedPack,
-    lessonAmount,
+    lessonAmount, grandTotal,
     bookingFor, childName,
   } = booking;
 
@@ -46,8 +46,9 @@ export default function handler(req, res) {
   } else {
     const numLessons = Number(lessonAmount || 1);
     const pricePerLesson = selectedPack === 'pack' ? Math.round(pricing.pack / 10) : pricing.single;
-    description = `${type}-Minute Drum Lessons &times; <input type="text" value="${numLessons}" style="border: none; background: transparent; font-size: 14px; color: #555; width: 30px; text-align: center;" /> (${selectedPack === 'pack' ? 'Bulk Rate' : 'Single Rate'})`;
-    amount = pricePerLesson * numLessons;
+    const totalFromForm = Number(grandTotal);
+    amount = !isNaN(totalFromForm) && totalFromForm >= 0 ? totalFromForm : pricePerLesson * numLessons;
+    description = `${numLessons}x ${type} min lesson${selectedPack === 'pack' ? ' (Bulk Rate)' : ''}`;
   }
 
   const amountDisplay = amount === 0 ? 'Free' : `$${amount}`;

@@ -1511,6 +1511,14 @@
             if (grandTotalInput) grandTotalInput.value = (manualRate * amount).toFixed(2);
         };
 
+        const updateLessonRateFromTotal = () => {
+            const amount = Number(lessonAmountInput?.value) || 1;
+            const total = Number(grandTotalInput?.value) || 0;
+            const newRate = amount > 0 ? total / amount : 0;
+            if (lessonRateInput) lessonRateInput.value = newRate.toFixed(2);
+            if (grandTotalInput) grandTotalInput.value = total.toFixed(2);
+        };
+
         // Initialize page content based on lesson type
         if (lessonType === 'trial') {
             pageTitle = 'Free Trial - Drumadon';
@@ -1560,13 +1568,19 @@
 
             if (lessonAmountInput) {
                 lessonAmountInput.addEventListener('input', () => {
-                    updateLessonPricing();
+                    updateLessonTotalFromRate();
                 });
             }
 
             if (lessonRateInput) {
                 lessonRateInput.addEventListener('input', () => {
                     updateLessonTotalFromRate();
+                });
+            }
+
+            if (grandTotalInput) {
+                grandTotalInput.addEventListener('input', () => {
+                    updateLessonRateFromTotal();
                 });
             }
         }
