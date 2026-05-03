@@ -918,7 +918,7 @@
                     <!-- Lesson Pack Selection -->
                     <div class="form-group pack-form-group" style="display: block;">
                         <div class="toggle-container">
-                            <span class="toggle-label">bulk bull</span>
+                            <span class="toggle-label">bulk bill</span>
                             <label class="toggle-switch">
                                 <input type="checkbox" id="bulkToggle" name="lessonPack" value="pack">
                                 <span class="toggle-slider"></span>
@@ -929,15 +929,15 @@
                     <div class="form-group lesson-pricing-section" id="lessonPricingSection" style="display: none;">
                         <div class="form-group">
                             <label for="lessonAmount">Lesson Amount</label>
-                            <input type="number" id="lessonAmount" name="lessonAmount" placeholder="Enter number of lessons" min="1" value="1">
+                            <input type="text" id="lessonAmount" name="lessonAmount" inputmode="numeric" pattern="\d*" placeholder="Enter number of lessons" value="1">
                         </div>
                         <div class="form-group">
                             <label for="lessonRate">Price per Lesson ($)</label>
-                            <input type="number" id="lessonRate" name="lessonRate" min="0" step="0.01" value="26">
+                            <input type="text" id="lessonRate" name="lessonRate" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" value="26.00">
                         </div>
                         <div class="form-group">
                             <label for="grandTotal">Grand Total ($)</label>
-                            <input type="number" id="grandTotal" name="grandTotal" min="0" step="0.01" value="26">
+                            <input type="text" id="grandTotal" name="grandTotal" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" value="26.00">
                         </div>
                     </div>
 
