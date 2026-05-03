@@ -302,6 +302,13 @@
             background-color: var(--btn-hover);
             transform: scale(1.05);
         }
+        /* Admin mode - hidden by default */
+        .btn {
+            display: none;
+        }
+        body.admin-mode .btn {
+            display: inline-block;
+        }
         footer {
             background-color: var(--footer-bg);
             color: var(--footer-text);
@@ -580,6 +587,24 @@
             const bgContainer = document.getElementById('bg-container');
             bgContainer.style.transform = `translate3d(0, ${scrolled * 0.1}px, 0)`;
         }, { passive: true });
+
+        // Admin mode - tap logo 5 times to toggle
+        let logoTaps = 0;
+        let logoTapTimeout;
+        const brand = document.getElementById('brand');
+        brand.addEventListener('click', (e) => {
+            e.preventDefault();
+            logoTaps++;
+            clearTimeout(logoTapTimeout);
+            logoTapTimeout = setTimeout(() => { logoTaps = 0; }, 1000);
+            
+            if (logoTaps === 5) {
+                logoTaps = 0;
+                document.body.classList.toggle('admin-mode');
+                const isAdminMode = document.body.classList.contains('admin-mode');
+                console.log(isAdminMode ? '✅ Admin mode ON' : '❌ Admin mode OFF');
+            }
+        });
     </script>
 </body>
 </html>
