@@ -1,4 +1,4 @@
-import { google } from 'npm:googleapis';
+import { google } from 'googleapis';
 
 // Shared pricing lookup
 function getPricing(lessonType) {
