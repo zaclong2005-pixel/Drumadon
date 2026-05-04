@@ -261,12 +261,10 @@ export default function handler(req, res) {
               <td>Subtotal</td>
               <td><span class="amount-text">${subtotalDisplay}</span></td>
             </tr>
-            ${discountDisplay ? `
             <tr>
               <td>${discountLabel}</td>
-              <td><span class="amount-text discount">${discountDisplay}</span></td>
+              <td><span class="amount-text discount">${discountDisplay || '$0'}</span></td>
             </tr>
-            ` : ''}
           </tbody>
           <tfoot>
             <tr>
