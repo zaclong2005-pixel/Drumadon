@@ -113,14 +113,10 @@ export default function handler(req, res) {
     .info-card p { margin: 3px 0; font-size: 15px; color: #333; }
     .info-card p strong { color: #111111; font-size: 15px; }
 
-    /* ── Line items table ── */
-    table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
-    thead tr { background: #000000; }
-    thead th { padding: 12px 16px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: bold; color: #fff; }
-    thead th:last-child { text-align: right; white-space: nowrap; }
-    tbody td { padding: 18px 16px; border-bottom: 1px solid #f0f0f0; font-size: 15px; color: #222; vertical-align: top; }
-    tbody td:last-child { text-align: right; font-weight: bold; color: #111111; white-space: nowrap; }
-    .desc-meta { font-size: 14px; color: #555; margin-top: 5px; font-weight: normal; letter-spacing: 0.2px; }
+    /* ── Line items section ── */
+    .line-item { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 20px 0; border-bottom: 1px solid #f0f0f0; margin-bottom: 24px; }
+    .line-item-desc { flex: 1; font-size: 15px; color: #222; line-height: 1.5; }
+    .line-item-price { text-align: right; font-weight: 700; color: #111111; font-size: 16px; white-space: nowrap; }
 
     /* ── Totals ── */
     .totals { display: flex; justify-content: flex-start; margin-bottom: 32px; }
@@ -172,8 +168,9 @@ export default function handler(req, res) {
       .info-card { padding: 12px 16px !important; }
       .info-card h3 { font-size: 10px !important; margin-bottom: 6px !important; }
       .info-card p, .info-card p strong { font-size: 13px !important; }
-      tbody td { padding: 12px 14px !important; font-size: 13px !important; }
-      .desc-meta { font-size: 12px !important; }
+      .line-item { padding: 14px 0 !important; margin-bottom: 16px !important; }
+      .line-item-desc { font-size: 13px !important; }
+      .line-item-price { font-size: 13px !important; }
       .totals { margin-bottom: 20px !important; }
       .totals-inner { overflow: visible !important; width: 260px !important; }
       .totals-inner tbody td { font-size: 13px !important; padding: 8px 14px !important; }
@@ -236,20 +233,10 @@ export default function handler(req, res) {
       </div>
 
       <!-- Line items -->
-      <table>
-        <thead>
-          <tr>
-            <th>Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              ${description}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="line-item">
+        <div class="line-item-desc">${description}</div>
+        <div class="line-item-price">${amountDisplay}</div>
+      </div>
 
       <!-- Totals -->
       <div class="totals">
