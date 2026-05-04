@@ -123,18 +123,21 @@ export default function handler(req, res) {
 
     /* ── Totals ── */
     .totals { display: flex; justify-content: flex-end; margin-bottom: 32px; }
-    .totals-inner { width: 100%; max-width: 360px; border: 1px solid #e4e4e4; border-radius: 8px; overflow: hidden; }
-    .totals-inner table { margin-bottom: 0; width: 100%; }
-    .totals-inner tbody td { padding: 10px 18px; font-size: 15px; border-bottom: 1px solid #f0f0f0; color: #333; }
+    .totals-inner { width: 100%; max-width: 420px; background: #f8fbff; border: 1px solid rgba(123, 151, 172, 0.18); border-radius: 20px; overflow: hidden; box-shadow: 0 20px 45px rgba(69, 101, 126, 0.08); }
+    .totals-inner table { margin-bottom: 0; width: 100%; border-collapse: collapse; }
+    .totals-inner tbody td { padding: 16px 20px; font-size: 15px; color: #333; }
+    .totals-inner tbody tr:not(:last-child) td { border-bottom: 1px solid rgba(0, 0, 0, 0.06); }
+    .totals-inner tbody td:first-child { color: #6b7a8a; font-weight: 600; }
     .totals-inner tbody td:last-child, .totals-inner tfoot td:last-child { text-align: right; }
-    .totals-inner tbody td:last-child { color: #222; font-weight: normal; }
-    .totals-inner tbody .gst-row td { font-size: 14px; color: #555; }
-    .totals-inner tbody .gst-row td:last-child { color: #555; font-weight: normal; }
-    .totals-inner tfoot td { padding: 13px 18px; font-size: 16px; font-weight: bold; background: #000000; color: #fff; }
-    .amount-text { display: inline-block; min-width: 60px; text-align: right; }
-    .amount-text.total { font-weight: bold; color: inherit; }
+    .totals-inner tbody td:last-child { color: #111; font-weight: 700; }
+    .totals-inner tfoot td { padding: 20px; font-size: 18px; font-weight: 800; background: linear-gradient(135deg, #2a2a2a, #000000); color: #fff; }
+    .totals-inner tfoot td:first-child { letter-spacing: 0.03em; text-transform: uppercase; font-weight: 700; }
+    .amount-text { display: inline-block; min-width: 70px; text-align: right; }
+    .amount-text.total { font-size: 18px; }
     .amount-text.discount { color: #111111; font-weight: bold; }
-    .gst-note { font-size: 12px; color: #fff; text-align: center; margin-top: 8px; font-style: italic; opacity: 0.8; }
+    .gst-note { font-size: 13px; color: #5c6f7f; text-align: right; margin-top: 12px; font-style: normal; opacity: 0.95; }
+    .gst-note::before { content: '• '; color: #7b97ac; }
+
 
     /* ── Payment box ── */
     .payment-box { background: #f4f7fa; border-left: 4px solid #7b97ac; border-radius: 8px; padding: 20px 24px; margin-bottom: 32px; }
