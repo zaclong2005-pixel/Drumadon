@@ -173,9 +173,9 @@ export default function handler(req, res) {
       .line-item-desc { font-size: 13px !important; }
       .line-item-price { font-size: 13px !important; }
       .totals { margin-bottom: 20px !important; }
-      .totals-inner { overflow: visible !important; width: 260px !important; }
-      .totals-inner tbody td { font-size: 13px !important; padding: 8px 14px !important; }
-      .totals-inner tfoot td { font-size: 14px !important; padding: 8px 14px !important; }
+      .totals-inner { overflow: visible !important; width: 240px !important; }
+      .totals-inner tbody td { font-size: 11px !important; padding: 6px 0 !important; }
+      .totals-inner tfoot td { font-size: 12px !important; padding: 8px 12px !important; }
       .gst-note { font-size: 9px !important; margin-top: 4px !important; color: #fff !important; }
       .payment-box { padding: 14px 18px !important; margin-bottom: 20px !important; }
       .payment-box h3 { font-size: 11px !important; margin-bottom: 10px !important; }
@@ -236,13 +236,16 @@ export default function handler(req, res) {
       <!-- Line items -->
       <div class="line-item">
         <div class="line-item-desc">${description}</div>
-        <div class="line-item-price">${amountDisplay}</div>
       </div>
 
       <!-- Totals -->
       <div class="totals">
         <table class="totals-inner">
           <tbody>
+            <tr>
+              <td>Subtotal</td>
+              <td><span class="amount-text">${subtotalDisplay}</span></td>
+            </tr>
             ${discountDisplay ? `
             <tr>
               <td>${discountLabel}</td>
@@ -252,8 +255,7 @@ export default function handler(req, res) {
           </tbody>
           <tfoot>
             <tr>
-              <td>Total Due</td>
-              <td><span class="amount-text total">${amountDisplay}</span></td>
+              <td colspan="2" style="text-align: center; font-weight: 700; font-size: 14px; padding: 12px 16px;">Total Due: ${amountDisplay}</td>
             </tr>
             <tr class="gst-row">
               <td colspan="2"><span class="gst-note">No GST charged - not registered</span></td>
