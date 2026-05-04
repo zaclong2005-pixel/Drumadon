@@ -121,6 +121,7 @@ export default function handler(req, res) {
     .totals-inner tfoot td { padding: 13px 18px; font-size: 16px; font-weight: bold; background: #000000; color: #fff; }
     .amount-text { display: inline-block; min-width: 60px; text-align: right; }
     .amount-text.total { font-weight: bold; color: inherit; }
+    .gst-note { font-size: 13px; color: #666; text-align: center; margin-top: 8px; font-style: italic; }
 
     /* ── Payment box ── */
     .payment-box { background: #f4f7fa; border-left: 4px solid #7b97ac; border-radius: 8px; padding: 20px 24px; margin-bottom: 32px; }
@@ -160,6 +161,7 @@ export default function handler(req, res) {
       .totals-inner { overflow: visible !important; width: 260px !important; }
       .totals-inner tbody td { font-size: 13px !important; padding: 8px 14px !important; }
       .totals-inner tfoot td { font-size: 14px !important; padding: 10px 14px !important; }
+      .gst-note { font-size: 11px !important; margin-top: 6px !important; }
       .payment-box { padding: 14px 18px !important; margin-bottom: 20px !important; }
       .payment-box h3 { font-size: 11px !important; margin-bottom: 10px !important; }
       .payment-grid { font-size: 13px !important; }
@@ -242,10 +244,6 @@ export default function handler(req, res) {
               <td>Subtotal</td>
               <td><span class="amount-text">${amountDisplay}</span></td>
             </tr>
-            <tr class="gst-row">
-              <td>GST</td>
-              <td>No GST charged &mdash; not registered for GST</td>
-            </tr>
           </tbody>
           <tfoot>
             <tr>
@@ -254,6 +252,9 @@ export default function handler(req, res) {
             </tr>
           </tfoot>
         </table>
+        <div class="gst-note">
+          No GST charged - not registered
+        </div>
       </div>
 
       ${amount > 0 ? `
