@@ -407,14 +407,17 @@ export default async function handler(req, res) {
 
     let calendarResponse;
 
-    if (selectedPack === 'pack') {
-      const totalLessons = Number(lessonAmount) || 10;
-      console.log(`Creating recurring ${totalLessons}-pack bulk booking event`);
+    const totalLessons = Number(lessonAmount) || 1;
+    const recurring = totalLessons > 1;
 
-      const bulkEvent = {
-        summary: `${type}-Minute Lesson (${totalLessons}-Pack) - ${name}`,
+    if (recurring) {
+      const titleSuffix = selectedPack === 'pack' ? `${totalLessons}-Pack` : `${totalLessons} Session${totalLessons === 1 ? '' : 's'}`;
+      console.log(`Creating recurring ${titleSuffix} booking event`);
+
+      const recurringEvent = {
+        summary: `${type}-Minute Lesson (${titleSuffix}) - ${name}`,
         description: `
-          ${type}-Minute Lesson - ${totalLessons}-Pack (Weekly recurring)
+          ${type}-Minute Lesson - ${titleSuffix} (Weekly recurring)
           ${bookingFor === 'child' ? `Student: ${childName}${age ? ` (age ${age})` : ''}\nParent/Guardian: ${name}` : `Name: ${name}`}
           Email: ${email}
           Phone: ${phone}
@@ -429,11 +432,10 @@ export default async function handler(req, res) {
 
       calendarResponse = await calendar.events.insert({
         calendarId: process.env.GOOGLE_CALENDAR_ID,
-        resource: bulkEvent,
+        resource: recurringEvent,
       });
 
-      console.log(`Recurring ${totalLessons}-pack calendar event created:`, calendarResponse.data.id);
-
+      console.log(`Recurring ${titleSuffix} calendar event created:`, calendarResponse.data.id);
     } else {
       const event = {
         summary: `${type === 'trial' ? 'Trial Lesson' : type + '-Minute Lesson'} - ${name}`,

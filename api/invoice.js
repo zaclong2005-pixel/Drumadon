@@ -49,7 +49,7 @@ export default function handler(req, res) {
     day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Australia/Perth',
   });
 
-  let description, amount, subtotalAmount, discountAmount = 0;
+  let description, amount, subtotalAmount, discountAmount = 0, discountLabel = 'Discount';
   if (type === 'trial') {
     description = 'Free Trial Lesson (20 minutes)';
     amount = 0;
@@ -59,15 +59,16 @@ export default function handler(req, res) {
     const singlePricePerLesson = pricing.single;
     const packPricePerLesson = Math.round(pricing.pack / 10);
     const totalFromForm = Number(grandTotal);
-    amount = !isNaN(totalFromForm) && totalFromForm >= 0 ? totalFromForm : (selectedPack === 'pack' ? packPricePerLesson : singlePricePerLesson) * numLessons;
-    
-    if (selectedPack === 'pack') {
-      subtotalAmount = singlePricePerLesson * numLessons;
-      discountAmount = subtotalAmount - amount;
-    } else {
-      subtotalAmount = amount;
-    }
-    
+    const standardTotal = singlePricePerLesson * numLessons;
+
+    amount = !isNaN(totalFromForm) && totalFromForm >= 0
+      ? totalFromForm
+      : (selectedPack === 'pack' ? packPricePerLesson : singlePricePerLesson) * numLessons;
+
+    subtotalAmount = standardTotal;
+    discountAmount = Math.max(0, subtotalAmount - amount);
+    discountLabel = selectedPack === 'pack' ? 'Bulk Discount' : 'Discount';
+
     description = `${numLessons}x ${type} min lesson${selectedPack === 'pack' ? ' (Bulk Rate)' : ''}`;
   }
 
@@ -262,7 +263,7 @@ export default function handler(req, res) {
             </tr>
             ${discountDisplay ? `
             <tr>
-              <td>Bulk Discount</td>
+              <td>${discountLabel}</td>
               <td><span class="amount-text discount">${discountDisplay}</span></td>
             </tr>
             ` : ''}
