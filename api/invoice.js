@@ -49,20 +49,31 @@ export default function handler(req, res) {
     day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Australia/Perth',
   });
 
-  let description, amount;
+  let description, amount, subtotalAmount, discountAmount = 0;
   if (type === 'trial') {
     description = 'Free Trial Lesson (20 minutes)';
     amount = 0;
+    subtotalAmount = 0;
   } else {
     const numLessons = Number(lessonAmount || 1);
-    const pricePerLesson = selectedPack === 'pack' ? Math.round(pricing.pack / 10) : pricing.single;
+    const singlePricePerLesson = pricing.single;
+    const packPricePerLesson = Math.round(pricing.pack / 10);
     const totalFromForm = Number(grandTotal);
-    amount = !isNaN(totalFromForm) && totalFromForm >= 0 ? totalFromForm : pricePerLesson * numLessons;
+    amount = !isNaN(totalFromForm) && totalFromForm >= 0 ? totalFromForm : (selectedPack === 'pack' ? packPricePerLesson : singlePricePerLesson) * numLessons;
+    
+    if (selectedPack === 'pack') {
+      subtotalAmount = singlePricePerLesson * numLessons;
+      discountAmount = subtotalAmount - amount;
+    } else {
+      subtotalAmount = amount;
+    }
+    
     description = `${numLessons}x ${type} min lesson${selectedPack === 'pack' ? ' (Bulk Rate)' : ''}`;
   }
 
   const amountDisplay = amount === 0 ? 'Free' : `$${amount}`;
-  const grandTotalDisplay = grandTotal === 0 ? 'Free' : `$${grandTotal}`;
+  const subtotalDisplay = subtotalAmount === 0 ? 'Free' : `$${subtotalAmount}`;
+  const discountDisplay = discountAmount === 0 ? null : `-$${discountAmount}`;
 
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -122,6 +133,7 @@ export default function handler(req, res) {
     .totals-inner tfoot td { padding: 13px 18px; font-size: 16px; font-weight: bold; background: #000000; color: #fff; }
     .amount-text { display: inline-block; min-width: 60px; text-align: right; }
     .amount-text.total { font-weight: bold; color: inherit; }
+    .amount-text.discount { color: #d32f2f; font-weight: bold; }
     .gst-note { font-size: 13px; color: #666; text-align: center; margin-top: 8px; font-style: italic; }
 
     /* ── Payment box ── */
@@ -243,8 +255,14 @@ export default function handler(req, res) {
           <tbody>
             <tr>
               <td>Subtotal</td>
-              <td><span class="amount-text">${grandTotalDisplay}</span></td>
+              <td><span class="amount-text">${subtotalDisplay}</span></td>
             </tr>
+            ${discountDisplay ? `
+            <tr>
+              <td>Bulk Discount</td>
+              <td><span class="amount-text discount">${discountDisplay}</span></td>
+            </tr>
+            ` : ''}
           </tbody>
           <tfoot>
             <tr>
