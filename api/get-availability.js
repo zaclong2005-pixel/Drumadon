@@ -61,7 +61,7 @@ export default async function handler(req, res) {
 
     const advanceBookingHours = 48;
     const { type = '30' } = req.query;
-    const timeSlotDuration = type === 'trial' ? 20 : parseInt(type);
+    const timeSlotDuration = type === 'trial' ? 30 : parseInt(type);
     const defaultWorkingHours = { start: '09:00', end: '17:00' };
 
     // Perth timezone offset (UTC+8)
