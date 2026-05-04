@@ -408,18 +408,18 @@ export default async function handler(req, res) {
     let calendarResponse;
 
     if (selectedPack === 'pack') {
-      const totalLessons = 10;
-      console.log(`Creating recurring 10-pack bulk booking event`);
+      const totalLessons = Number(lessonAmount) || 10;
+      console.log(`Creating recurring ${totalLessons}-pack bulk booking event`);
 
       const bulkEvent = {
-        summary: `Drumadon ${type}-Minute Lesson (10-Pack) - ${name}`,
+        summary: `${type}-Minute Lesson (${totalLessons}-Pack) - ${name}`,
         description: `
-          ${type}-Minute Lesson - 10-Pack (Weekly recurring)
+          ${type}-Minute Lesson - ${totalLessons}-Pack (Weekly recurring)
           ${bookingFor === 'child' ? `Student: ${childName}${age ? ` (age ${age})` : ''}\nParent/Guardian: ${name}` : `Name: ${name}`}
           Email: ${email}
           Phone: ${phone}
           Message: ${message || 'No additional information'}
-          Total Cost: $${pricing.pack}
+          Total Cost: $${bookingAmount}
         `,
         start: { dateTime: isoString, timeZone: 'Australia/Perth' },
         end: { dateTime: endTimeString, timeZone: 'Australia/Perth' },
@@ -432,13 +432,13 @@ export default async function handler(req, res) {
         resource: bulkEvent,
       });
 
-      console.log(`Recurring 10-pack calendar event created:`, calendarResponse.data.id);
+      console.log(`Recurring ${totalLessons}-pack calendar event created:`, calendarResponse.data.id);
 
     } else {
       const event = {
-        summary: `Drumadon ${type === 'trial' ? 'Trial' : type + '-Minute Lesson'} - ${name}`,
+        summary: `${type === 'trial' ? 'Trial Lesson' : type + '-Minute Lesson'} - ${name}`,
         description: `
-          ${type === 'trial' ? 'Trial' : type + '-Minute Lesson'} Booking Details:
+          ${type === 'trial' ? 'Trial Lesson' : type + '-Minute Lesson'} Booking Details:
           ${bookingFor === 'child' ? `Student: ${childName}${age ? ` (age ${age})` : ''}\nParent/Guardian: ${name}` : `Name: ${name}`}
           Email: ${email}
           Phone: ${phone}
