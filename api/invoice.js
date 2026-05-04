@@ -88,7 +88,7 @@ export default function handler(req, res) {
     .invoice { background: #fff; max-width: 720px; margin: 0 auto; border-radius: 12px; box-shadow: 0 6px 32px rgba(0,0,0,0.15); overflow: hidden; }
 
     /* ── Header ── */
-    .header-band { background: #000000; padding: 28px 44px; display: flex; justify-content: space-between; align-items: center; }
+    .header-band { background: #000000; padding: 22px 36px; display: flex; justify-content: space-between; align-items: center; }
     .header-band img { height: 50px; display: block; }
     .invoice-title-block { text-align: right; }
     .invoice-title-block .word { font-size: 28px; font-weight: bold; letter-spacing: 5px; color: #fff; }
@@ -98,53 +98,54 @@ export default function handler(req, res) {
     .accent-strip { height: 3px; background: linear-gradient(90deg, #7b97ac, #8fc4da); }
 
     /* ── Body ── */
-    .body-content { padding: 40px 44px; }
+    .body-content { padding: 28px 36px; }
 
     /* ── From block ── */
-    .meta-row { margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid #e8e8e8; }
-    .from-block .company { font-size: 17px; font-weight: bold; color: #111111; margin-bottom: 6px; }
-    .from-block p { margin: 2px 0; color: #333; font-size: 15px; }
-    .from-block .abn { font-size: 14px; color: #555; margin-top: 8px; }
+    .meta-row { margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid #e8e8e8; }
+    .from-block .company { font-size: 16px; font-weight: bold; color: #111111; margin-bottom: 4px; }
+    .from-block p { margin: 1px 0; color: #555; font-size: 14px; }
+    .from-block .abn { font-size: 13px; color: #666; margin-top: 4px; }
 
     /* ── Info cards ── */
-    .info-section { display: flex; gap: 16px; margin-bottom: 32px; }
-    .info-card { flex: 1; background: #f4f7fa; border-radius: 8px; padding: 18px 20px; border-top: 3px solid #7b97ac; }
-    .info-card h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #7b97ac; margin-bottom: 10px; font-weight: bold; }
-    .info-card p { margin: 3px 0; font-size: 15px; color: #333; }
-    .info-card p strong { color: #111111; font-size: 15px; }
+    .info-section { display: flex; gap: 16px; margin-bottom: 20px; }
+    .info-card { flex: 1; background: #f4f7fa; border-radius: 8px; padding: 16px 18px; border-top: 3px solid #7b97ac; }
+    .info-card h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #7b97ac; margin-bottom: 8px; font-weight: bold; }
+    .info-card p { margin: 2px 0; font-size: 14px; color: #333; }
+    .info-card p strong { color: #111111; font-size: 14px; }
 
     /* ── Line items section ── */
-    .line-item { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 20px 0; border-bottom: 1px solid #f0f0f0; margin-bottom: 24px; }
-    .line-item-desc { flex: 1; font-size: 15px; color: #222; line-height: 1.5; }
-    .line-item-price { text-align: right; font-weight: 700; color: #111111; font-size: 16px; white-space: nowrap; }
+    .line-item { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 16px 0; border-bottom: 1px solid #e8e8e8; margin-bottom: 12px; }
+    .line-item-desc { flex: 1; font-size: 14px; color: #333; line-height: 1.4; }
+    .line-item-price { text-align: right; font-weight: 600; color: #111111; font-size: 14px; white-space: nowrap; }
 
     /* ── Totals ── */
-    .totals { display: flex; justify-content: flex-start; margin-bottom: 32px; }
-    .totals-inner { width: 100%; max-width: 320px; background: #f8fbff; border: 1px solid rgba(123, 151, 172, 0.18); border-radius: 20px; overflow: hidden; box-shadow: 0 20px 45px rgba(69, 101, 126, 0.08); }
+    .totals { display: flex; justify-content: flex-start; margin-bottom: 24px; margin-top: 8px; }
+    .totals-inner { width: 100%; max-width: 280px; background: transparent; border: none; overflow: hidden; box-shadow: none; padding: 0; }
     .totals-inner table { margin-bottom: 0; width: 100%; border-collapse: collapse; }
-    .totals-inner tbody td { padding: 12px 16px; font-size: 13px; color: #111; }
-    .totals-inner tbody tr:not(:last-child) td { border-bottom: 1px solid rgba(0, 0, 0, 0.06); }
-    .totals-inner tbody td:first-child { color: #111; font-weight: 600; }
+    .totals-inner tbody td { padding: 8px 0; font-size: 12px; color: #111; border: none; }
+    .totals-inner tbody tr:not(:last-child) td { border-bottom: none; }
+    .totals-inner tbody td:first-child { color: #666; font-weight: 500; }
     .totals-inner tbody td:last-child, .totals-inner tfoot td:last-child { text-align: right; }
-    .totals-inner tbody td:last-child { color: #111; font-weight: 700; }
-    .totals-inner tfoot td { padding: 10px 16px; font-size: 13px; font-weight: 700; background: #000000; color: #fff; }
-    .totals-inner tfoot td:first-child { letter-spacing: 0.03em; text-transform: uppercase; font-weight: 700; }
-    .amount-text { display: inline-block; min-width: 70px; text-align: right; }
-    .amount-text.total { font-size: 16px; }
-    .amount-text.discount { color: #111; font-weight: bold; }
-    .gst-note { font-size: 11px; color: #fff; text-align: left; display: inline-block; margin-top: 4px; font-style: normal; opacity: 0.95; }
+    .totals-inner tbody td:last-child { color: #666; font-weight: 500; }
+    .totals-inner tfoot td { padding: 10px 16px; font-size: 13px; font-weight: 700; background: #000000; color: #fff; border: none; }
+    .totals-inner tfoot td:first-child { letter-spacing: 0.03em; text-transform: uppercase; font-weight: 700; padding-left: 0; }
+    .totals-inner tfoot td:last-child { padding-right: 0; }
+    .amount-text { display: inline-block; min-width: 60px; text-align: right; }
+    .amount-text.total { font-size: 13px; }
+    .amount-text.discount { color: #111; font-weight: 600; }
+    .gst-note { font-size: 10px; color: #fff; text-align: left; display: inline-block; margin-top: 3px; font-style: normal; opacity: 0.9; }
     .gst-note::before { content: '• '; color: #7b97ac; }
 
 
     /* ── Payment box ── */
-    .payment-box { background: #f4f7fa; border-left: 4px solid #7b97ac; border-radius: 8px; padding: 20px 24px; margin-bottom: 32px; }
+    .payment-box { background: #f4f7fa; border-left: 4px solid #7b97ac; border-radius: 8px; padding: 16px 20px; margin-bottom: 20px; }
     .payment-box h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 1.8px; color: #7b97ac; margin-bottom: 14px; font-weight: bold; }
     .payment-grid { display: grid; grid-template-columns: 95px 1fr; gap: 9px 0; font-size: 15px; }
     .payment-grid .label { color: #333; }
     .payment-grid .value { color: #111111; font-weight: bold; }
 
     /* ── Footer ── */
-    .footer { background: #000000; padding: 22px 44px; text-align: center; }
+    .footer { background: #000000; padding: 16px 36px; text-align: center; }
     .footer span { color: #fff; font-size: 14px; font-weight: bold; }
 
     /* ── Print button ── */
@@ -160,7 +161,7 @@ export default function handler(req, res) {
       .header-band img { height: 38px !important; }
       .invoice-title-block .word { font-size: 22px !important; }
       .invoice-title-block .inv-num { font-size: 14px !important; }
-      .body-content { padding: 24px 32px !important; }
+      .body-content { padding: 20px 28px !important; }
       .meta-row { margin-bottom: 18px !important; padding-bottom: 16px !important; }
       .from-block .company { font-size: 15px !important; }
       .from-block p, .from-block .abn { font-size: 12px !important; }
@@ -242,10 +243,6 @@ export default function handler(req, res) {
       <div class="totals">
         <table class="totals-inner">
           <tbody>
-            <tr>
-              <td>Subtotal</td>
-              <td><span class="amount-text">${subtotalDisplay}</span></td>
-            </tr>
             ${discountDisplay ? `
             <tr>
               <td>${discountLabel}</td>
