@@ -400,7 +400,7 @@ export default async function handler(req, res) {
     }
 
     const isoString = `${preferredDay}T${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00${offsetString}`;
-    const durationMinutes = 30;
+    const durationMinutes = parseInt(type);
     const endHours = Math.floor((hours * 60 + minutes + durationMinutes) / 60);
     const endMinutes = (hours * 60 + minutes + durationMinutes) % 60;
     const endTimeString = `${preferredDay}T${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}:00+08:00`;

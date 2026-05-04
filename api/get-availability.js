@@ -1,7 +1,7 @@
 import { google } from 'googleapis';
 
 // Returns available time strings for a single free event block, filtered against booked events
-function getAvailableSlots(freeEvent, bookedEventsForDate, timeSlotDuration, cutoffTime, defaultWorkingHours) {
+function getAvailableSlots(freeEvent, bookedEventsForDate, timeSlotDuration, lessonDuration, cutoffTime, defaultWorkingHours) {
   let start, end;
   if (freeEvent.start.dateTime) {
     start = new Date(freeEvent.start.dateTime);
@@ -16,7 +16,7 @@ function getAvailableSlots(freeEvent, bookedEventsForDate, timeSlotDuration, cut
   for (let time = new Date(start); time < end; time.setMinutes(time.getMinutes() + timeSlotDuration)) {
     if (time <= cutoffTime) continue;
 
-    const slotEnd = new Date(time.getTime() + timeSlotDuration * 60 * 1000);
+    const slotEnd = new Date(time.getTime() + lessonDuration * 60 * 1000);
     const isAvailable = !bookedEventsForDate.some(booked => {
       const bookedStart = new Date(booked.start.dateTime);
       const bookedEnd = new Date(booked.end.dateTime);
@@ -62,6 +62,7 @@ export default async function handler(req, res) {
     const advanceBookingHours = 48;
     const { type = '30' } = req.query;
     const timeSlotDuration = 30;
+    const lessonDuration = type === 'trial' ? 20 : parseInt(type);
     const defaultWorkingHours = { start: '09:00', end: '17:00' };
 
     // Perth timezone offset (UTC+8)
@@ -98,7 +99,7 @@ export default async function handler(req, res) {
       });
 
       const allTimes = filteredFreeEvents.flatMap(e =>
-        getAvailableSlots(e, filteredBookedEvents, timeSlotDuration, cutoffTime, defaultWorkingHours)
+        getAvailableSlots(e, filteredBookedEvents, timeSlotDuration, lessonDuration, cutoffTime, defaultWorkingHours)
       );
 
       const uniqueTimes = [...new Set(allTimes)].sort((a, b) =>
@@ -117,7 +118,7 @@ export default async function handler(req, res) {
           new Date(e.start.dateTime).toISOString().split('T')[0] === dateStr
         );
 
-        const slots = getAvailableSlots(event, bookedForDate, timeSlotDuration, cutoffTime, defaultWorkingHours);
+        const slots = getAvailableSlots(event, bookedForDate, timeSlotDuration, lessonDuration, cutoffTime, defaultWorkingHours);
         if (slots.length > 0) {
           availableDates.add(dateStr);
         }
