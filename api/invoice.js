@@ -123,20 +123,20 @@ export default function handler(req, res) {
     .desc-meta { font-size: 14px; color: #555; margin-top: 5px; font-weight: normal; letter-spacing: 0.2px; }
 
     /* ── Totals ── */
-    .totals { display: flex; justify-content: flex-end; margin-bottom: 32px; }
-    .totals-inner { width: 100%; max-width: 420px; background: #f8fbff; border: 1px solid rgba(123, 151, 172, 0.18); border-radius: 20px; overflow: hidden; box-shadow: 0 20px 45px rgba(69, 101, 126, 0.08); }
+    .totals { display: flex; justify-content: flex-start; margin-bottom: 32px; }
+    .totals-inner { width: 100%; max-width: 380px; background: #f8fbff; border: 1px solid rgba(123, 151, 172, 0.18); border-radius: 20px; overflow: hidden; box-shadow: 0 20px 45px rgba(69, 101, 126, 0.08); }
     .totals-inner table { margin-bottom: 0; width: 100%; border-collapse: collapse; }
     .totals-inner tbody td { padding: 16px 20px; font-size: 15px; color: #333; }
     .totals-inner tbody tr:not(:last-child) td { border-bottom: 1px solid rgba(0, 0, 0, 0.06); }
     .totals-inner tbody td:first-child { color: #6b7a8a; font-weight: 600; }
     .totals-inner tbody td:last-child, .totals-inner tfoot td:last-child { text-align: right; }
     .totals-inner tbody td:last-child { color: #111; font-weight: 700; }
-    .totals-inner tfoot td { padding: 20px; font-size: 18px; font-weight: 800; background: linear-gradient(135deg, #2a2a2a, #000000); color: #fff; }
+    .totals-inner tfoot td { padding: 18px 20px; font-size: 18px; font-weight: 800; background: #3d444f; color: #f8f9fb; }
     .totals-inner tfoot td:first-child { letter-spacing: 0.03em; text-transform: uppercase; font-weight: 700; }
     .amount-text { display: inline-block; min-width: 70px; text-align: right; }
     .amount-text.total { font-size: 18px; }
     .amount-text.discount { color: #111111; font-weight: bold; }
-    .gst-note { font-size: 13px; color: #5c6f7f; text-align: right; margin-top: 12px; font-style: normal; opacity: 0.95; }
+    .gst-note { font-size: 13px; color: #dfe6ee; text-align: left; display: inline-block; margin-top: 8px; font-style: normal; opacity: 0.95; }
     .gst-note::before { content: '• '; color: #7b97ac; }
 
 
@@ -273,9 +273,11 @@ export default function handler(req, res) {
               <td>Total Due</td>
               <td><span class="amount-text total">${amountDisplay}</span></td>
             </tr>
+            <tr class="gst-row">
+              <td colspan="2"><span class="gst-note">No GST charged - not registered</span></td>
+            </tr>
           </tfoot>
         </table>
-        <div class="gst-note">No GST charged - not registered</div>
       </div>
 
       ${amount > 0 ? `
