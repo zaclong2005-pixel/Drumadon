@@ -87,7 +87,7 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
             <img src="https://drumadon.com.au/logo_white.png" alt="Drumadon" style="max-width: 150px; height: auto;">
           </div>
           <div class="content">
-            <p class="welcome-text">Hi ${name},</p>
+            <p class="welcome-text">Hi ${firstName},</p>
             <p style="font-size: 14px; color: #111111; margin-bottom: 20px;">${bookingFor === 'child' ? `A ${type === 'trial' ? 'free trial' : 'lesson'} has been booked for ${childName}!` : (type === 'trial' ? 'Your free trial has been booked!' : 'Your lesson has been booked!')} Here are the details:</p>
             <div class="booking-card">
               <h2>🎯 Your Booking Details</h2>

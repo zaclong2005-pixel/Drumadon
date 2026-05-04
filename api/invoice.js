@@ -35,7 +35,17 @@ export default function handler(req, res) {
   const lessonDate = new Date(preferredDay);
   const formattedDate = `${lessonDate.getDate().toString().padStart(2, '0')}/${(lessonDate.getMonth() + 1).toString().padStart(2, '0')}/${lessonDate.getFullYear()}`;
 
-  const invoiceDate = new Date().toLocaleDateString('en-AU', {
+  const invoiceDateObj = new Date();
+  const dueDateObj = new Date(preferredDay);
+  const oneWeekMs = 7 * 24 * 60 * 60 * 1000;
+  if (dueDateObj - invoiceDateObj < oneWeekMs) {
+    dueDateObj.setTime(invoiceDateObj.getTime() + oneWeekMs);
+  }
+
+  const invoiceDate = invoiceDateObj.toLocaleDateString('en-AU', {
+    day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Australia/Perth',
+  });
+  const dueDate = dueDateObj.toLocaleDateString('en-AU', {
     day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Australia/Perth',
   });
 
@@ -101,14 +111,16 @@ export default function handler(req, res) {
 
     /* ── Totals ── */
     .totals { display: flex; justify-content: flex-end; margin-bottom: 32px; }
-    .totals-inner { width: 300px; border: 1px solid #e4e4e4; border-radius: 8px; overflow: hidden; }
-    .totals-inner table { margin-bottom: 0; }
+    .totals-inner { width: 100%; max-width: 360px; border: 1px solid #e4e4e4; border-radius: 8px; overflow: hidden; }
+    .totals-inner table { margin-bottom: 0; width: 100%; }
     .totals-inner tbody td { padding: 10px 18px; font-size: 15px; border-bottom: 1px solid #f0f0f0; color: #333; }
-    .totals-inner tbody td:last-child { text-align: right; color: #222; font-weight: normal; }
+    .totals-inner tbody td:last-child, .totals-inner tfoot td:last-child { text-align: right; }
+    .totals-inner tbody td:last-child { color: #222; font-weight: normal; }
     .totals-inner tbody .gst-row td { font-size: 14px; color: #555; }
     .totals-inner tbody .gst-row td:last-child { color: #555; font-weight: normal; }
     .totals-inner tfoot td { padding: 13px 18px; font-size: 16px; font-weight: bold; background: #000000; color: #fff; }
-    .totals-inner tfoot td:last-child { text-align: right; color: white; }
+    .amount-text { display: inline-block; min-width: 60px; text-align: right; }
+    .amount-text.total { font-weight: bold; color: inherit; }
 
     /* ── Payment box ── */
     .payment-box { background: #f4f7fa; border-left: 4px solid #7b97ac; border-radius: 8px; padding: 20px 24px; margin-bottom: 32px; }
@@ -199,10 +211,8 @@ export default function handler(req, res) {
         <div class="info-card">
           <h3>Invoice Details</h3>
           <p><strong>Invoice Number:</strong> INV-${inv}</p>
-          <p><strong>Type:</strong> ${type === 'trial' ? 'Free Trial' : `${type}-Minute Lesson${selectedPack === 'pack' ? ' (Bulk Rate)' : ''}`}</p>
           <p><strong>Issued:</strong> ${invoiceDate}</p>
-          <p><strong>Due:</strong> ${formattedDate}</p>
-          <p><strong>Status:</strong> Unpaid</p>
+          <p><strong>Due:</strong> ${dueDate}</p>
         </div>
       </div>
 
@@ -218,9 +228,8 @@ export default function handler(req, res) {
           <tr>
             <td>
               ${description}
-              <div class="desc-meta">${formattedDate} &middot; ${selectedTime}</div>
             </td>
-            <td><input type="text" value="${amountDisplay}" style="border: none; background: transparent; font-size: 15px; font-weight: bold; color: #111111; text-align: right; width: 60px;" /></td>
+            <td><span class="amount-text total">${amountDisplay}</span></td>
           </tr>
         </tbody>
       </table>
@@ -231,7 +240,7 @@ export default function handler(req, res) {
           <tbody>
             <tr>
               <td>Subtotal</td>
-              <td><input type="text" value="${amountDisplay}" style="border: none; background: transparent; font-size: 15px; color: #333; text-align: right; width: 60px;" /></td>
+              <td><span class="amount-text">${amountDisplay}</span></td>
             </tr>
             <tr class="gst-row">
               <td>GST</td>
@@ -241,7 +250,7 @@ export default function handler(req, res) {
           <tfoot>
             <tr>
               <td>Total Due</td>
-              <td><input type="text" value="${amountDisplay}" style="border: none; background: transparent; font-size: 16px; font-weight: bold; color: #fff; text-align: right; width: 60px;" /></td>
+              <td><span class="amount-text total">${amountDisplay}</span></td>
             </tr>
           </tfoot>
         </table>
