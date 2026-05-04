@@ -399,7 +399,7 @@ export default async function handler(req, res) {
     }
 
     const isoString = `${preferredDay}T${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00${offsetString}`;
-    const durationMinutes = type === 'trial' ? 20 : parseInt(type);
+    const durationMinutes = type === 'trial' ? 30 : parseInt(type);
     const endHours = Math.floor((hours * 60 + minutes + durationMinutes) / 60);
     const endMinutes = (hours * 60 + minutes + durationMinutes) % 60;
     const endTimeString = `${preferredDay}T${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}:00+08:00`;
@@ -408,48 +408,30 @@ export default async function handler(req, res) {
 
     if (selectedPack === 'pack') {
       const totalLessons = 10;
-      console.log(`Creating ${totalLessons} calendar events for regular 10-pack bulk booking`);
+      console.log(`Creating recurring 10-pack bulk booking event`);
 
-      const events = [];
-      const startDate = new Date(preferredDay);
+      const bulkEvent = {
+        summary: `Drumadon ${type}-Minute Lesson (10-Pack) - ${name}`,
+        description: `
+          ${type}-Minute Lesson - 10-Pack (Weekly recurring)
+          ${bookingFor === 'child' ? `Student: ${childName}${age ? ` (age ${age})` : ''}\nParent/Guardian: ${name}` : `Name: ${name}`}
+          Email: ${email}
+          Phone: ${phone}
+          Message: ${message || 'No additional information'}
+          Total Cost: $${pricing.pack}
+        `,
+        start: { dateTime: isoString, timeZone: 'Australia/Perth' },
+        end: { dateTime: endTimeString, timeZone: 'Australia/Perth' },
+        recurrence: [`RRULE:FREQ=WEEKLY;COUNT=${totalLessons}`],
+        colorId: '7',
+      };
 
-      for (let i = 0; i < totalLessons; i++) {
-        const lessonDate = new Date(startDate);
-        lessonDate.setDate(startDate.getDate() + (i * 7));
+      calendarResponse = await calendar.events.insert({
+        calendarId: process.env.GOOGLE_CALENDAR_ID,
+        resource: bulkEvent,
+      });
 
-        const lessonDateString = lessonDate.toISOString().split('T')[0];
-        const lessonStartString = `${lessonDateString}T${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00${offsetString}`;
-        const lessonEndString = `${lessonDateString}T${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}:00+08:00`;
-
-        const currentLessonNumber = i + 1;
-        const packDescription = '10-Pack';
-
-        const bulkEvent = {
-          summary: `Drumadon ${type}-Minute Lesson (Lesson ${currentLessonNumber} out of ${totalLessons}) - ${name}`,
-          description: `
-            ${type}-Minute Lesson - ${packDescription} (Lesson ${currentLessonNumber} of ${totalLessons})
-            ${bookingFor === 'child' ? `Student: ${childName}${age ? ` (age ${age})` : ''}\nParent/Guardian: ${name}` : `Name: ${name}`}
-            Email: ${email}
-            Phone: ${phone}
-            Message: ${message || 'No additional information'}
-            Total Cost: $${pricing.pack}
-          `,
-          start: { dateTime: lessonStartString, timeZone: 'Australia/Perth' },
-          end: { dateTime: lessonEndString, timeZone: 'Australia/Perth' },
-          colorId: '11',
-        };
-
-        const eventResponse = await calendar.events.insert({
-          calendarId: process.env.GOOGLE_CALENDAR_ID,
-          resource: bulkEvent,
-        });
-
-        events.push(eventResponse.data);
-        console.log(`Bulk event ${currentLessonNumber}/${totalLessons} created:`, eventResponse.data.id);
-      }
-
-      calendarResponse = { data: { id: events.map(e => e.id).join(',') } };
-      console.log(`All ${totalLessons} bulk calendar events created`);
+      console.log(`Recurring 10-pack calendar event created:`, calendarResponse.data.id);
 
     } else {
       const event = {
@@ -463,7 +445,7 @@ export default async function handler(req, res) {
         `,
         start: { dateTime: isoString, timeZone: 'Australia/Perth' },
         end: { dateTime: endTimeString, timeZone: 'Australia/Perth' },
-        colorId: type === 'trial' ? '6' : '11',
+        colorId: type === 'trial' ? '6' : '7',
       };
 
       calendarResponse = await calendar.events.insert({
