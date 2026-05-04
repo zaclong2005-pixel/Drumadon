@@ -131,12 +131,12 @@ export default function handler(req, res) {
     .totals-inner tbody td:first-child { color: #111; font-weight: 600; }
     .totals-inner tbody td:last-child, .totals-inner tfoot td:last-child { text-align: right; }
     .totals-inner tbody td:last-child { color: #111; font-weight: 700; }
-    .totals-inner tfoot td { padding: 12px 20px; font-size: 16px; font-weight: 700; background: #3d444f; color: #111; }
+    .totals-inner tfoot td { padding: 12px 20px; font-size: 16px; font-weight: 700; background: #000000; color: #fff; }
     .totals-inner tfoot td:first-child { letter-spacing: 0.03em; text-transform: uppercase; font-weight: 700; }
     .amount-text { display: inline-block; min-width: 70px; text-align: right; }
     .amount-text.total { font-size: 16px; }
     .amount-text.discount { color: #111; font-weight: bold; }
-    .gst-note { font-size: 11px; color: #111; text-align: left; display: inline-block; margin-top: 4px; font-style: normal; opacity: 0.95; }
+    .gst-note { font-size: 11px; color: #fff; text-align: left; display: inline-block; margin-top: 4px; font-style: normal; opacity: 0.95; }
     .gst-note::before { content: '• '; color: #7b97ac; }
 
 
@@ -178,7 +178,7 @@ export default function handler(req, res) {
       .totals-inner { overflow: visible !important; width: 260px !important; }
       .totals-inner tbody td { font-size: 13px !important; padding: 8px 14px !important; }
       .totals-inner tfoot td { font-size: 14px !important; padding: 8px 14px !important; }
-      .gst-note { font-size: 9px !important; margin-top: 4px !important; color: #666 !important; }
+      .gst-note { font-size: 9px !important; margin-top: 4px !important; color: #fff !important; }
       .payment-box { padding: 14px 18px !important; margin-bottom: 20px !important; }
       .payment-box h3 { font-size: 11px !important; margin-bottom: 10px !important; }
       .payment-grid { font-size: 13px !important; }
