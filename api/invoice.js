@@ -271,7 +271,8 @@ export default function handler(req, res) {
             </tr>
           </tfoot>
         </table>
-        </div>
+        <div class="gst-note">No GST charged - not registered</div>
+      </div>
 
       ${amount > 0 ? `
       <!-- Payment details -->
@@ -290,7 +291,6 @@ export default function handler(req, res) {
     <!-- Footer -->
     <div class="footer">
       <span>Thank you for booking with Drumadon!</span>
-      <div class="gst-note">No GST charged - not registered</div>
     </div>
 
   </div><!-- /invoice -->
