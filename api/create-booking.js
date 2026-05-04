@@ -39,6 +39,7 @@ async function sendUserConfirmationEmail({ name, email, phone, age, message, sel
 
   const date = new Date(preferredDay);
   const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+  const firstName = name.split(' ')[0] || name;
   const pricing = getPricing(type);
   const amountToShow = type === 'trial'
     ? 0
