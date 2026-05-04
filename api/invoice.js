@@ -62,6 +62,7 @@ export default function handler(req, res) {
   }
 
   const amountDisplay = amount === 0 ? 'Free' : `$${amount}`;
+  const grandTotalDisplay = grandTotal === 0 ? 'Free' : `$${grandTotal}`;
 
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -242,7 +243,7 @@ export default function handler(req, res) {
           <tbody>
             <tr>
               <td>Subtotal</td>
-              <td><span class="amount-text">${amountDisplay}</span></td>
+              <td><span class="amount-text">${grandTotalDisplay}</span></td>
             </tr>
           </tbody>
           <tfoot>
