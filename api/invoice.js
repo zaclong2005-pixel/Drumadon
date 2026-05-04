@@ -132,7 +132,7 @@ export default function handler(req, res) {
     .totals-inner tfoot td:last-child { padding-right: 0; }
     .amount-text { display: inline-block; min-width: 60px; text-align: right; }
     .amount-text.total { font-size: 13px; }
-    .amount-text.discount { color: #111; font-weight: 600; }
+    .amount-text.discount { color: #111; font-weight: 400; }
     .gst-note { font-size: 10px; color: #fff; text-align: left; display: inline-block; margin-top: 3px; font-style: normal; opacity: 0.9; }
     .gst-note::before { content: '• '; color: #7b97ac; }
 
