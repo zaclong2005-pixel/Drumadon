@@ -126,17 +126,17 @@ export default function handler(req, res) {
     .totals { display: flex; justify-content: flex-start; margin-bottom: 32px; }
     .totals-inner { width: 100%; max-width: 380px; background: #f8fbff; border: 1px solid rgba(123, 151, 172, 0.18); border-radius: 20px; overflow: hidden; box-shadow: 0 20px 45px rgba(69, 101, 126, 0.08); }
     .totals-inner table { margin-bottom: 0; width: 100%; border-collapse: collapse; }
-    .totals-inner tbody td { padding: 16px 20px; font-size: 15px; color: #333; }
+    .totals-inner tbody td { padding: 16px 20px; font-size: 15px; color: #111; }
     .totals-inner tbody tr:not(:last-child) td { border-bottom: 1px solid rgba(0, 0, 0, 0.06); }
-    .totals-inner tbody td:first-child { color: #6b7a8a; font-weight: 600; }
+    .totals-inner tbody td:first-child { color: #111; font-weight: 600; }
     .totals-inner tbody td:last-child, .totals-inner tfoot td:last-child { text-align: right; }
     .totals-inner tbody td:last-child { color: #111; font-weight: 700; }
-    .totals-inner tfoot td { padding: 18px 20px; font-size: 18px; font-weight: 800; background: #3d444f; color: #f8f9fb; }
+    .totals-inner tfoot td { padding: 12px 20px; font-size: 16px; font-weight: 700; background: #3d444f; color: #111; }
     .totals-inner tfoot td:first-child { letter-spacing: 0.03em; text-transform: uppercase; font-weight: 700; }
     .amount-text { display: inline-block; min-width: 70px; text-align: right; }
-    .amount-text.total { font-size: 18px; }
-    .amount-text.discount { color: #111111; font-weight: bold; }
-    .gst-note { font-size: 13px; color: #dfe6ee; text-align: left; display: inline-block; margin-top: 8px; font-style: normal; opacity: 0.95; }
+    .amount-text.total { font-size: 16px; }
+    .amount-text.discount { color: #111; font-weight: bold; }
+    .gst-note { font-size: 11px; color: #111; text-align: left; display: inline-block; margin-top: 4px; font-style: normal; opacity: 0.95; }
     .gst-note::before { content: '• '; color: #7b97ac; }
 
 
@@ -177,8 +177,8 @@ export default function handler(req, res) {
       .totals { margin-bottom: 20px !important; }
       .totals-inner { overflow: visible !important; width: 260px !important; }
       .totals-inner tbody td { font-size: 13px !important; padding: 8px 14px !important; }
-      .totals-inner tfoot td { font-size: 14px !important; padding: 10px 14px !important; }
-      .gst-note { font-size: 10px !important; margin-top: 6px !important; color: #666 !important; }
+      .totals-inner tfoot td { font-size: 14px !important; padding: 8px 14px !important; }
+      .gst-note { font-size: 9px !important; margin-top: 4px !important; color: #666 !important; }
       .payment-box { padding: 14px 18px !important; margin-bottom: 20px !important; }
       .payment-box h3 { font-size: 11px !important; margin-bottom: 10px !important; }
       .payment-grid { font-size: 13px !important; }
