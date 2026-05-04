@@ -124,14 +124,14 @@ export default function handler(req, res) {
 
     /* ── Totals ── */
     .totals { display: flex; justify-content: flex-start; margin-bottom: 32px; }
-    .totals-inner { width: 100%; max-width: 380px; background: #f8fbff; border: 1px solid rgba(123, 151, 172, 0.18); border-radius: 20px; overflow: hidden; box-shadow: 0 20px 45px rgba(69, 101, 126, 0.08); }
+    .totals-inner { width: 100%; max-width: 320px; background: #f8fbff; border: 1px solid rgba(123, 151, 172, 0.18); border-radius: 20px; overflow: hidden; box-shadow: 0 20px 45px rgba(69, 101, 126, 0.08); }
     .totals-inner table { margin-bottom: 0; width: 100%; border-collapse: collapse; }
-    .totals-inner tbody td { padding: 16px 20px; font-size: 15px; color: #111; }
+    .totals-inner tbody td { padding: 12px 16px; font-size: 13px; color: #111; }
     .totals-inner tbody tr:not(:last-child) td { border-bottom: 1px solid rgba(0, 0, 0, 0.06); }
     .totals-inner tbody td:first-child { color: #111; font-weight: 600; }
     .totals-inner tbody td:last-child, .totals-inner tfoot td:last-child { text-align: right; }
     .totals-inner tbody td:last-child { color: #111; font-weight: 700; }
-    .totals-inner tfoot td { padding: 12px 20px; font-size: 16px; font-weight: 700; background: #000000; color: #fff; }
+    .totals-inner tfoot td { padding: 10px 16px; font-size: 13px; font-weight: 700; background: #000000; color: #fff; }
     .totals-inner tfoot td:first-child { letter-spacing: 0.03em; text-transform: uppercase; font-weight: 700; }
     .amount-text { display: inline-block; min-width: 70px; text-align: right; }
     .amount-text.total { font-size: 16px; }
@@ -240,7 +240,6 @@ export default function handler(req, res) {
         <thead>
           <tr>
             <th>Description</th>
-            <th>Amount</th>
           </tr>
         </thead>
         <tbody>
@@ -248,7 +247,6 @@ export default function handler(req, res) {
             <td>
               ${description}
             </td>
-            <td><span class="amount-text total">${amountDisplay}</span></td>
           </tr>
         </tbody>
       </table>
