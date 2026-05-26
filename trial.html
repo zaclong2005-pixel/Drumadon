@@ -1364,13 +1364,19 @@
                     console.log(`${key}: ${value}`);
                 }
 
+                // Convert FormData to URLSearchParams properly
+                const urlParams = new URLSearchParams();
+                for (let [key, value] of formData.entries()) {
+                    urlParams.append(key, value);
+                }
+
                 // Add timeout for form submission (longer timeout since it involves email sending)
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
 
                 const response = await fetch(form.action, {
                     method: 'POST',
-                    body: new URLSearchParams(formData),
+                    body: urlParams.toString(),
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
@@ -1391,9 +1397,11 @@
                 } else {
                     // Error - show detailed error info
                     const errorDetails = result.details || result.error || 'Unknown error';
-                    const errorType = result.type || 'Error';
+                    const errorType = result.type || result.error || 'Error';
                     const errorCode = result.code || '';
                     const debugInfo = result.debug || {};
+                    const step = result.step || 'unknown';
+                    const missing = result.missing || {};
 
                     submitBtn.textContent = 'Error - Check Details';
                     submitBtn.style.backgroundColor = '#f44336';
@@ -1401,16 +1409,31 @@
                     console.error('=== EMAIL SUBMISSION ERROR ===');
                     console.error('Submission error:', result);
                     console.error('Response status:', response.status);
+                    console.error('Step that failed:', step);
+                    console.error('Missing fields:', missing);
                     console.error('Error details:', {
+                        step: step,
+                        message: result.message,
                         details: errorDetails,
                         type: errorType,
                         code: errorCode,
+                        missing: missing,
                         debug: debugInfo,
                         fullResponse: result
                     });
 
-                    // Show generic error message
-                    alert('Sorry, there was an error processing your booking. Please try again or contact us directly.');
+                    // Show user-friendly error message with technical details
+                    let userMessage = result.message || 'An error occurred while processing your booking.';
+                    if (step === 'user_confirmation_email') {
+                        userMessage = 'Failed to send confirmation email. Please check your email address and try again.';
+                    } else if (step === 'calendar_event') {
+                        userMessage = 'Booking was confirmed but could not add to calendar. Please contact us.';
+                    } else if (Object.keys(missing).length > 0) {
+                        const missingList = Object.keys(missing).filter(k => missing[k]).join(', ');
+                        userMessage = `Missing required fields: ${missingList}. Please fill them in and try again.`;
+                    }
+
+                    alert(`${userMessage}\n\nTechnical details: ${errorDetails}\n\nPlease check the browser console (F12) for more information.`);
                 }
             } catch (error) {
                 submitBtn.textContent = 'Error - Check Console';

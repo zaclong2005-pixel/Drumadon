@@ -15,20 +15,36 @@ function getPricing(lessonType) {
 // Shared Mailgun sender
 async function sendMailgunEmail(emailData) {
   const apiUrl = `https://api.eu.mailgun.net/v3/${process.env.MAILGUN_DOMAIN}/messages`;
-  const response = await fetch(apiUrl, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Basic ${Buffer.from(`api:${process.env.MAILGUN_API_KEY}`).toString('base64')}`,
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: new URLSearchParams(emailData),
-  });
+  console.log('🔗 Mailgun URL:', apiUrl);
+  console.log('📧 Email from:', emailData.from);
+  console.log('📧 Email to:', emailData.to);
+  console.log('📧 Email subject:', emailData.subject);
 
-  if (!response.ok) {
-    throw new Error('Email service temporarily unavailable');
+  try {
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${Buffer.from(`api:${process.env.MAILGUN_API_KEY}`).toString('base64')}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams(emailData),
+    });
+
+    console.log('📮 Mailgun response status:', response.status);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('❌ Mailgun error response:', errorText);
+      throw new Error(`Mailgun error ${response.status}: ${errorText}`);
+    }
+
+    const result = await response.json();
+    console.log('✅ Mailgun email sent:', result.id);
+    return result;
+  } catch (error) {
+    console.error('❌ Mailgun error:', error.message);
+    throw error;
   }
-
-  return response.json();
 }
 
 // Email sending function for user confirmation
@@ -192,23 +208,44 @@ async function sendAdminEmail({ name, email, phone, age, message, selectedTime, 
 }
 
 export default async function handler(req, res) {
+  console.log('=== BOOKING REQUEST START ===');
+  console.log('Method:', req.method);
+  console.log('Body type:', typeof req.body);
+  console.log('Body length:', req.body ? req.body.toString().length : 0);
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
   try {
-    if (!process.env.GOOGLE_SERVICE_ACCOUNT_KEY) {
-      throw new Error('GOOGLE_SERVICE_ACCOUNT_KEY environment variable is not set. Please add your Google Service Account key JSON as a string.');
-    }
-    if (!process.env.GOOGLE_CALENDAR_ID) {
-      throw new Error('GOOGLE_CALENDAR_ID environment variable is not set. Please add your Google Calendar ID.');
+    // Check required environment variables and provide clear feedback
+    const missingVars = [];
+    if (!process.env.GOOGLE_SERVICE_ACCOUNT_KEY) missingVars.push('GOOGLE_SERVICE_ACCOUNT_KEY');
+    if (!process.env.GOOGLE_CALENDAR_ID) missingVars.push('GOOGLE_CALENDAR_ID');
+    if (!process.env.MAILGUN_API_KEY) missingVars.push('MAILGUN_API_KEY');
+    if (!process.env.MAILGUN_DOMAIN) missingVars.push('MAILGUN_DOMAIN');
+
+    if (missingVars.length > 0) {
+      console.error('❌ Missing environment variables:', missingVars);
+      return res.status(500).json({
+        error: 'Configuration Error',
+        message: 'The booking system is not properly configured.',
+        details: `Missing environment variables: ${missingVars.join(', ')}`
+      });
     }
 
     let serviceAccountKey;
     try {
+      console.log('🔑 Parsing Google Service Account Key...');
       serviceAccountKey = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY);
+      console.log('✅ Service account key parsed successfully');
     } catch (parseError) {
-      throw new Error('GOOGLE_SERVICE_ACCOUNT_KEY is not valid JSON. Please check your service account key.');
+      console.error('❌ Service account key parse error:', parseError.message);
+      return res.status(500).json({
+        error: 'Configuration Error',
+        message: 'Invalid Google Service Account key format.',
+        details: parseError.message
+      });
     }
 
     const auth = new google.auth.GoogleAuth({
@@ -222,14 +259,28 @@ export default async function handler(req, res) {
     const calendar = google.calendar({ version: 'v3', auth });
 
     let params;
-    if (typeof req.body === 'string') {
-      params = new URLSearchParams(req.body);
-    } else if (req.body instanceof URLSearchParams) {
-      params = req.body;
-    } else if (req.body && typeof req.body === 'object') {
-      params = new URLSearchParams(req.body);
-    } else {
-      params = new URLSearchParams();
+    console.log('📝 Parsing form data...');
+    try {
+      if (typeof req.body === 'string') {
+        params = new URLSearchParams(req.body);
+        console.log('✅ Body is string, parsed as URLSearchParams');
+      } else if (req.body instanceof URLSearchParams) {
+        params = req.body;
+        console.log('✅ Body is already URLSearchParams');
+      } else if (req.body && typeof req.body === 'object') {
+        params = new URLSearchParams(req.body);
+        console.log('✅ Body is object, converted to URLSearchParams');
+      } else {
+        params = new URLSearchParams();
+        console.log('⚠️ Body is empty, using empty URLSearchParams');
+      }
+    } catch (paramError) {
+      console.error('❌ Parameter parsing error:', paramError.message);
+      return res.status(400).json({
+        error: 'Invalid Request',
+        message: 'Failed to parse form data.',
+        details: paramError.message
+      });
     }
 
     const data = {};
@@ -237,23 +288,49 @@ export default async function handler(req, res) {
       data[key] = value;
     }
 
+    console.log('📋 Extracted form data keys:', Object.keys(data));
+    console.log('📋 Form data:', {
+      name: data.name ? '✓' : '✗',
+      email: data.email ? '✓' : '✗',
+      phone: data.phone ? '✓' : '✗',
+      selectedTime: data.selectedTime ? '✓' : '✗',
+      preferredDay: data.preferredDay ? '✓' : '✗',
+      type: data.type ? '✓' : '✗',
+    });
+
     const { name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, lessonAmount, grandTotal, bookingFor, childName } = data;
 
     if (!name || !email || !phone || !selectedTime || !preferredDay) {
+      console.error('❌ Missing required fields:', {
+        name: !name ? 'MISSING' : 'present',
+        email: !email ? 'MISSING' : 'present',
+        phone: !phone ? 'MISSING' : 'present',
+        selectedTime: !selectedTime ? 'MISSING' : 'present',
+        preferredDay: !preferredDay ? 'MISSING' : 'present',
+      });
       return res.status(400).json({
         error: 'Missing information',
-        message: 'Please fill in all required fields and try again.'
+        message: 'Please fill in all required fields and try again.',
+        missing: {
+          name: !name,
+          email: !email,
+          phone: !phone,
+          selectedTime: !selectedTime,
+          preferredDay: !preferredDay,
+        }
       });
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
+      console.error('❌ Invalid email format:', email);
       return res.status(400).json({
         error: 'Invalid email',
         message: 'Please enter a valid email address.'
       });
     }
 
+    console.log('✅ All validations passed');
     console.log('Processing booking request:', { name, email, phone, selectedTime, preferredDay, type, selectedPack, lessonAmount });
 
     // Compute pricing and date (needed for invoice and calendar)
@@ -374,110 +451,137 @@ export default async function handler(req, res) {
 
     // Step 1: Send user confirmation email — must succeed before proceeding
     try {
+      console.log('📧 Sending user confirmation email to:', email);
       await sendUserConfirmationEmail({ name, email, phone, age, message, selectedTime, preferredDay, type, selectedPack, invoiceUrl, invoiceNum, bookingFor, childName, grandTotal: bookingAmount, lessonAmount });
       console.log('✅ User confirmation email sent successfully');
     } catch (emailError) {
-      console.error('❌ CRITICAL: User confirmation email failed:', emailError);
+      console.error('❌ CRITICAL: User confirmation email failed:', emailError.message);
+      console.error('Email error stack:', emailError.stack);
       return res.status(500).json({
         error: 'Email service unavailable',
-        message: 'We cannot confirm your booking at this time. Please try again later or contact us directly.'
+        message: 'We cannot confirm your booking at this time. Please try again later or contact us directly.',
+        details: emailError.message,
+        step: 'user_confirmation_email'
       });
     }
 
     // Step 2: Create calendar event(s)
-    const perthOffset = 8;
-    const offsetString = `+${perthOffset.toString().padStart(2, '0')}:00`;
+    console.log('📅 Creating calendar events...');
+    try {
+      const perthOffset = 8;
+      const offsetString = `+${perthOffset.toString().padStart(2, '0')}:00`;
 
-    const time24h = selectedTime.replace(' AM', '').replace(' PM', '');
-    const isPM = selectedTime.includes(' PM');
-    const is12 = selectedTime.startsWith('12');
+      const time24h = selectedTime.replace(' AM', '').replace(' PM', '');
+      const isPM = selectedTime.includes(' PM');
+      const is12 = selectedTime.startsWith('12');
 
-    let [hours, minutes] = time24h.split(':').map(Number);
-    if (isPM && !is12) {
-      hours += 12;
-    } else if (!isPM && is12) {
-      hours = 0;
-    }
+      let [hours, minutes] = time24h.split(':').map(Number);
+      if (isPM && !is12) {
+        hours += 12;
+      } else if (!isPM && is12) {
+        hours = 0;
+      }
 
-    const isoString = `${preferredDay}T${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00${offsetString}`;
-    const durationMinutes = parseInt(type);
-    const endHours = Math.floor((hours * 60 + minutes + durationMinutes) / 60);
-    const endMinutes = (hours * 60 + minutes + durationMinutes) % 60;
-    const endTimeString = `${preferredDay}T${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}:00+08:00`;
+      console.log('⏰ Time conversion:', { selectedTime, time24h, hours, minutes, isPM, is12 });
 
-    let calendarResponse;
+      const isoString = `${preferredDay}T${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00${offsetString}`;
+      const durationMinutes = parseInt(type);
+      const endHours = Math.floor((hours * 60 + minutes + durationMinutes) / 60);
+      const endMinutes = (hours * 60 + minutes + durationMinutes) % 60;
+      const endTimeString = `${preferredDay}T${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}:00+08:00`;
 
-    const totalLessons = Number(lessonAmount) || 1;
-    const recurring = totalLessons > 1;
+      console.log('📅 Calendar times:', { isoString, endTimeString, durationMinutes });
 
-    if (recurring) {
-      const titleSuffix = selectedPack === 'pack' ? `${totalLessons}-Pack` : `${totalLessons} Session${totalLessons === 1 ? '' : 's'}`;
-      console.log(`Creating recurring ${titleSuffix} booking event`);
+      let calendarResponse;
 
-      const recurringEvent = {
-        summary: `${type}-Minute Lesson (${titleSuffix}) - ${name}`,
-        description: `
-          ${type}-Minute Lesson - ${titleSuffix} (Weekly recurring)
-          ${bookingFor === 'child' ? `Student: ${childName}${age ? ` (age ${age})` : ''}\nParent/Guardian: ${name}` : `Name: ${name}`}
-          Email: ${email}
-          Phone: ${phone}
-          Message: ${message || 'No additional information'}
-          Total Cost: $${bookingAmount}
-        `,
-        start: { dateTime: isoString, timeZone: 'Australia/Perth' },
-        end: { dateTime: endTimeString, timeZone: 'Australia/Perth' },
-        recurrence: [`RRULE:FREQ=WEEKLY;COUNT=${totalLessons}`],
-        colorId: '7',
-      };
+      const totalLessons = Number(lessonAmount) || 1;
+      const recurring = totalLessons > 1;
 
-      calendarResponse = await calendar.events.insert({
-        calendarId: process.env.GOOGLE_CALENDAR_ID,
-        resource: recurringEvent,
+      if (recurring) {
+        const titleSuffix = selectedPack === 'pack' ? `${totalLessons}-Pack` : `${totalLessons} Session${totalLessons === 1 ? '' : 's'}`;
+        console.log(`📅 Creating recurring ${titleSuffix} booking event`);
+
+        const recurringEvent = {
+          summary: `${type}-Minute Lesson (${titleSuffix}) - ${name}`,
+          description: `
+            ${type}-Minute Lesson - ${titleSuffix} (Weekly recurring)
+            ${bookingFor === 'child' ? `Student: ${childName}${age ? ` (age ${age})` : ''}\nParent/Guardian: ${name}` : `Name: ${name}`}
+            Email: ${email}
+            Phone: ${phone}
+            Message: ${message || 'No additional information'}
+            Total Cost: $${bookingAmount}
+          `,
+          start: { dateTime: isoString, timeZone: 'Australia/Perth' },
+          end: { dateTime: endTimeString, timeZone: 'Australia/Perth' },
+          recurrence: [`RRULE:FREQ=WEEKLY;COUNT=${totalLessons}`],
+          colorId: '7',
+        };
+
+        console.log('📅 Recurring event object:', recurringEvent.summary);
+        calendarResponse = await calendar.events.insert({
+          calendarId: process.env.GOOGLE_CALENDAR_ID,
+          resource: recurringEvent,
+        });
+
+        console.log(`✅ Recurring ${titleSuffix} calendar event created:`, calendarResponse.data.id);
+      } else {
+        const event = {
+          summary: `${type === 'trial' ? 'Trial Lesson' : type + '-Minute Lesson'} - ${name}`,
+          description: `
+            ${type === 'trial' ? 'Trial Lesson' : type + '-Minute Lesson'} Booking Details:
+            ${bookingFor === 'child' ? `Student: ${childName}${age ? ` (age ${age})` : ''}\nParent/Guardian: ${name}` : `Name: ${name}`}
+            Email: ${email}
+            Phone: ${phone}
+            Message: ${message || 'No additional information'}
+          `,
+          start: { dateTime: isoString, timeZone: 'Australia/Perth' },
+          end: { dateTime: endTimeString, timeZone: 'Australia/Perth' },
+          colorId: type === 'trial' ? '6' : '7',
+        };
+
+        console.log('📅 Single event object:', event.summary);
+        calendarResponse = await calendar.events.insert({
+          calendarId: process.env.GOOGLE_CALENDAR_ID,
+          resource: event,
+        });
+
+        console.log('✅ Single calendar event created:', calendarResponse.data.id);
+      }
+    } catch (calendarError) {
+      console.error('❌ Calendar event creation failed:', calendarError.message);
+      console.error('Calendar error stack:', calendarError.stack);
+      return res.status(500).json({
+        error: 'Calendar service error',
+        message: 'Booking confirmed but calendar event could not be created.',
+        details: calendarError.message,
+        step: 'calendar_event'
       });
-
-      console.log(`Recurring ${titleSuffix} calendar event created:`, calendarResponse.data.id);
-    } else {
-      const event = {
-        summary: `${type === 'trial' ? 'Trial Lesson' : type + '-Minute Lesson'} - ${name}`,
-        description: `
-          ${type === 'trial' ? 'Trial Lesson' : type + '-Minute Lesson'} Booking Details:
-          ${bookingFor === 'child' ? `Student: ${childName}${age ? ` (age ${age})` : ''}\nParent/Guardian: ${name}` : `Name: ${name}`}
-          Email: ${email}
-          Phone: ${phone}
-          Message: ${message || 'No additional information'}
-        `,
-        start: { dateTime: isoString, timeZone: 'Australia/Perth' },
-        end: { dateTime: endTimeString, timeZone: 'Australia/Perth' },
-        colorId: type === 'trial' ? '6' : '7',
-      };
-
-      calendarResponse = await calendar.events.insert({
-        calendarId: process.env.GOOGLE_CALENDAR_ID,
-        resource: event,
-      });
-
-      console.log('Single calendar event created:', calendarResponse.data.id);
     }
 
     // Step 3: Send admin notification
+    console.log('📧 Sending admin notification...');
     try {
       await sendAdminEmail({ name, email, phone, age, message, selectedTime, preferredDay, eventId: calendarResponse.data.id, type, selectedPack, invoiceUrl, invoiceNum, bookingFor, childName, grandTotal: bookingAmount, lessonAmount });
-      console.log('Admin notification email sent successfully');
+      console.log('✅ Admin notification email sent successfully');
     } catch (adminEmailError) {
-      console.error('Admin email failed, but booking is confirmed:', adminEmailError);
+      console.error('⚠️ Admin email failed, but booking is confirmed:', adminEmailError.message);
     }
 
+    console.log('✅✅✅ BOOKING COMPLETE ✅✅✅');
     return res.status(200).json({
       message: 'Booking confirmed and calendar event created',
       eventId: calendarResponse.data.id
     });
 
   } catch (error) {
-    console.error('Booking failed:', error);
+    console.error('❌ CRITICAL ERROR - Booking failed:', error.message);
+    console.error('Error stack:', error.stack);
+    console.error('Full error object:', error);
     return res.status(500).json({
       error: 'Booking failed',
       message: 'We encountered an issue processing your booking. Please try again or contact us directly.',
-      details: error.message || 'Unknown server error'
+      details: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 };
