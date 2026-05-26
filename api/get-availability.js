@@ -1,15 +1,99 @@
 import { google } from 'googleapis';
 
+function formatCalendarError(error) {
+  const responseData = error?.response?.data;
+  const errors = Array.isArray(error?.errors)
+    ? error.errors.map((item) => ({
+        domain: item.domain,
+        reason: item.reason,
+        message: item.message,
+      }))
+    : undefined;
+
+  return {
+    message: error?.message || 'Unknown Calendar API error',
+    code: error?.code,
+    status: error?.response?.status,
+    reason: errors?.[0]?.reason,
+    errors,
+    responseData,
+  };
+}
+
+function toPerthDateKey(dateValue) {
+  const date = new Date(dateValue);
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Australia/Perth',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(date);
+}
+
+function getEventDateTime(event) {
+  if (event?.start?.dateTime) {
+    return new Date(event.start.dateTime);
+  }
+
+  if (event?.start?.date) {
+    return new Date(`${event.start.date}T00:00:00`);
+  }
+
+  return null;
+}
+
+function parseLessonDuration(type) {
+  if (type === 'trial') {
+    return 20;
+  }
+
+  const duration = Number(type);
+  if (!Number.isFinite(duration) || duration <= 0) {
+    throw new Error(`type "${type}" must be a positive number of minutes or "trial"`);
+  }
+
+  return duration;
+}
+
+function getEventStartDateTime(event, defaultWorkingHours) {
+  if (event?.start?.dateTime) {
+    return new Date(event.start.dateTime);
+  }
+
+  if (event?.start?.date) {
+    return new Date(`${event.start.date}T${defaultWorkingHours.start}:00`);
+  }
+
+  return null;
+}
+
+function getEventEndDateTime(event, defaultWorkingHours) {
+  if (event?.end?.dateTime) {
+    return new Date(event.end.dateTime);
+  }
+
+  if (event?.end?.date) {
+    return new Date(`${event.end.date}T${defaultWorkingHours.end}:00`);
+  }
+
+  if (event?.start?.date) {
+    return new Date(`${event.start.date}T${defaultWorkingHours.end}:00`);
+  }
+
+  return null;
+}
+
 // Returns available time strings for a single free event block, filtered against booked events
-function getAvailableSlots(freeEvent, bookedEventsForDate, timeSlotDuration, lessonDuration, cutoffTime, defaultWorkingHours) {
-  let start, end;
-  if (freeEvent.start.dateTime) {
-    start = new Date(freeEvent.start.dateTime);
-    end = new Date(freeEvent.end.dateTime);
-  } else {
-    const dateStr = freeEvent.start.date;
-    start = new Date(`${dateStr}T${defaultWorkingHours.start}:00`);
-    end = new Date(`${dateStr}T${defaultWorkingHours.end}:00`);
+function getAvailableSlots(freeEvent, occupiedEventsForDate, timeSlotDuration, lessonDuration, cutoffTime, defaultWorkingHours) {
+  const start = getEventStartDateTime(freeEvent, defaultWorkingHours);
+  const end = getEventEndDateTime(freeEvent, defaultWorkingHours);
+
+  if (!start || !end) {
+    throw new Error('Free event is missing valid start/end data');
   }
 
   const slots = [];
@@ -17,9 +101,13 @@ function getAvailableSlots(freeEvent, bookedEventsForDate, timeSlotDuration, les
     if (time <= cutoffTime) continue;
 
     const slotEnd = new Date(time.getTime() + lessonDuration * 60 * 1000);
-    const isAvailable = !bookedEventsForDate.some(booked => {
-      const bookedStart = new Date(booked.start.dateTime);
-      const bookedEnd = new Date(booked.end.dateTime);
+    const isAvailable = !occupiedEventsForDate.some(booked => {
+      const bookedStart = getEventStartDateTime(booked, defaultWorkingHours);
+      const bookedEnd = getEventEndDateTime(booked, defaultWorkingHours);
+      if (!bookedStart || !bookedEnd) {
+        return false;
+      }
+
       return time < bookedEnd && slotEnd > bookedStart;
     });
 
@@ -60,10 +148,26 @@ export default async function handler(req, res) {
     const calendar = google.calendar({ version: 'v3', auth });
 
     const advanceBookingHours = 48;
-    const { type = '30' } = req.query;
+    const { type = '30', date } = req.query;
     const timeSlotDuration = 30;
-    const lessonDuration = type === 'trial' ? 20 : parseInt(type);
     const defaultWorkingHours = { start: '09:00', end: '17:00' };
+
+    if (date && !/^\d{4}-\d{2}-\d{2}$/.test(String(date))) {
+      return res.status(400).json({
+        error: 'Invalid date',
+        message: 'date must be in YYYY-MM-DD format.'
+      });
+    }
+
+    let lessonDuration;
+    try {
+      lessonDuration = parseLessonDuration(type);
+    } catch (validationError) {
+      return res.status(400).json({
+        error: 'Invalid type',
+        message: validationError.message,
+      });
+    }
 
     // Perth timezone offset (UTC+8)
     const perthOffset = 8 * 60 * 60 * 1000;
@@ -71,6 +175,14 @@ export default async function handler(req, res) {
     const nowPerth = new Date(now.getTime() + perthOffset);
     const nineDaysLater = new Date(nowPerth);
     nineDaysLater.setDate(nowPerth.getDate() + 9);
+
+    console.log('Fetching availability from Google Calendar:', {
+      calendarId: process.env.GOOGLE_CALENDAR_ID,
+      timeMin: nowPerth.toISOString(),
+      timeMax: nineDaysLater.toISOString(),
+      type,
+      date: date || null,
+    });
 
     const response = await calendar.events.list({
       calendarId: process.env.GOOGLE_CALENDAR_ID,
@@ -81,25 +193,18 @@ export default async function handler(req, res) {
       maxResults: 250,
     });
 
-    const items = response.data.items;
+    const items = response.data.items || [];
     const freeEvents = items.filter(e => e.summary === 'Free');
-    const bookedEvents = items.filter(e => e.summary && e.summary.startsWith('Drumadon'));
+    const occupiedEvents = items.filter(e => e.summary && e.summary !== 'Free');
 
     const cutoffTime = new Date(nowPerth.getTime() + advanceBookingHours * 60 * 60 * 1000);
 
-    const { date } = req.query;
-
     if (date) {
-      // Return available times for a specific date
-      const filteredFreeEvents = freeEvents.filter(e => {
-        return new Date(e.start.date || e.start.dateTime).toISOString().split('T')[0] === date;
-      });
-      const filteredBookedEvents = bookedEvents.filter(e => {
-        return new Date(e.start.dateTime).toISOString().split('T')[0] === date;
-      });
+      const filteredFreeEvents = freeEvents.filter(e => toPerthDateKey(getEventDateTime(e)) === date);
+      const filteredOccupiedEvents = occupiedEvents.filter(e => toPerthDateKey(getEventDateTime(e)) === date);
 
       const allTimes = filteredFreeEvents.flatMap(e =>
-        getAvailableSlots(e, filteredBookedEvents, timeSlotDuration, lessonDuration, cutoffTime, defaultWorkingHours)
+        getAvailableSlots(e, filteredOccupiedEvents, timeSlotDuration, lessonDuration, cutoffTime, defaultWorkingHours)
       );
 
       const uniqueTimes = [...new Set(allTimes)].sort((a, b) =>
@@ -107,33 +212,34 @@ export default async function handler(req, res) {
       );
 
       return res.status(200).json({ availableTimes: uniqueTimes, success: true });
-
-    } else {
-      // Return available dates
-      const availableDates = new Set();
-
-      freeEvents.forEach(event => {
-        const dateStr = new Date(event.start.date || event.start.dateTime).toISOString().split('T')[0];
-        const bookedForDate = bookedEvents.filter(e =>
-          new Date(e.start.dateTime).toISOString().split('T')[0] === dateStr
-        );
-
-        const slots = getAvailableSlots(event, bookedForDate, timeSlotDuration, lessonDuration, cutoffTime, defaultWorkingHours);
-        if (slots.length > 0) {
-          availableDates.add(dateStr);
-        }
-      });
-
-      const sortedDates = Array.from(availableDates).sort((a, b) => new Date(a) - new Date(b));
-
-      return res.status(200).json({ availableDates: sortedDates, success: true });
     }
 
+    const availableDates = new Set();
+
+    freeEvents.forEach(event => {
+      const dateStr = toPerthDateKey(getEventDateTime(event));
+      if (!dateStr) {
+        return;
+      }
+
+      const bookedForDate = occupiedEvents.filter(e => toPerthDateKey(getEventDateTime(e)) === dateStr);
+      const slots = getAvailableSlots(event, bookedForDate, timeSlotDuration, lessonDuration, cutoffTime, defaultWorkingHours);
+      if (slots.length > 0) {
+        availableDates.add(dateStr);
+      }
+    });
+
+    const sortedDates = Array.from(availableDates).sort((a, b) => new Date(a) - new Date(b));
+
+    return res.status(200).json({ availableDates: sortedDates, success: true });
+
   } catch (error) {
-    console.error('Error fetching availability:', error);
-    return res.status(500).json({
+    const formattedCalendarError = formatCalendarError(error);
+    console.error('Error fetching availability:', formattedCalendarError);
+    return res.status(502).json({
       error: 'Failed to fetch availability',
-      message: 'Unable to load available dates at this time.'
+      message: formattedCalendarError.message,
+      details: formattedCalendarError,
     });
   }
 }

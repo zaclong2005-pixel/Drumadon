@@ -191,6 +191,75 @@ async function sendAdminEmail({ name, email, phone, age, message, selectedTime, 
   return sendMailgunEmail(adminEmailData);
 }
 
+function pad2(value) {
+  return String(value).padStart(2, '0');
+}
+
+function validatePreferredDay(preferredDay) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(preferredDay || ''))) {
+    throw new Error(`preferredDay "${preferredDay}" must be in YYYY-MM-DD format`);
+  }
+
+  const parsedDate = new Date(`${preferredDay}T00:00:00`);
+  if (Number.isNaN(parsedDate.getTime())) {
+    throw new Error(`preferredDay "${preferredDay}" is not a valid date`);
+  }
+
+  return preferredDay;
+}
+
+function parseSelectedTime(selectedTime) {
+  const trimmed = String(selectedTime || '').trim();
+  const match = /^(\d{1,2}):(\d{2})\s*(AM|PM)$/i.exec(trimmed);
+
+  if (!match) {
+    throw new Error(`selectedTime "${selectedTime}" is not a valid 12-hour time`);
+  }
+
+  const [, hoursPart, minutesPart, meridiem] = match;
+  const hours = Number(hoursPart);
+  const minutes = Number(minutesPart);
+
+  if (hours < 1 || hours > 12 || minutes < 0 || minutes > 59) {
+    throw new Error(`selectedTime "${selectedTime}" is out of range`);
+  }
+
+  let normalizedHours = hours % 12;
+  if (meridiem.toUpperCase() === 'PM') {
+    normalizedHours += 12;
+  }
+
+  return { hours: normalizedHours, minutes };
+}
+
+function buildPerthLocalIso(preferredDay, hours, minutes, addMinutes = 0) {
+  const [year, month, day] = preferredDay.split('-').map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day, hours, minutes, 0));
+  date.setUTCMinutes(date.getUTCMinutes() + addMinutes);
+
+  return `${pad2(date.getUTCFullYear())}-${pad2(date.getUTCMonth() + 1)}-${pad2(date.getUTCDate())}T${pad2(date.getUTCHours())}:${pad2(date.getUTCMinutes())}:00`;
+}
+
+function formatCalendarError(error) {
+  const responseData = error?.response?.data;
+  const errors = Array.isArray(error?.errors)
+    ? error.errors.map((item) => ({
+        domain: item.domain,
+        reason: item.reason,
+        message: item.message,
+      }))
+    : undefined;
+
+  return {
+    message: error?.message || 'Unknown Calendar API error',
+    code: error?.code,
+    status: error?.response?.status,
+    reason: errors?.[0]?.reason,
+    errors,
+    responseData,
+  };
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
@@ -256,10 +325,26 @@ export default async function handler(req, res) {
 
     console.log('Processing booking request:', { name, email, phone, selectedTime, preferredDay, type, selectedPack, lessonAmount });
 
+    let parsedSelectedTime;
+    let bookingDate;
+    try {
+      parsedSelectedTime = parseSelectedTime(selectedTime);
+      bookingDate = validatePreferredDay(preferredDay);
+    } catch (validationError) {
+      return res.status(400).json({
+        error: 'Invalid booking data',
+        message: validationError.message,
+      });
+    }
+
     // Compute pricing and date (needed for invoice and calendar)
     const pricing = getPricing(type);
-    const bookingDate = new Date(preferredDay);
-    const formattedDate = `${bookingDate.getDate().toString().padStart(2, '0')}/${(bookingDate.getMonth() + 1).toString().padStart(2, '0')}/${bookingDate.getFullYear()}`;
+    const durationMinutes = Number(pricing.duration);
+    if (!Number.isFinite(durationMinutes) || durationMinutes <= 0) {
+      throw new Error(`Pricing duration for type "${type}" is invalid`);
+    }
+
+    const formattedDate = `${new Date(`${bookingDate}T00:00:00`).getDate().toString().padStart(2, '0')}/${(new Date(`${bookingDate}T00:00:00`).getMonth() + 1).toString().padStart(2, '0')}/${new Date(`${bookingDate}T00:00:00`).getFullYear()}`;
     const rawGrandTotal = Number(grandTotal);
     const defaultBookingAmount = type === 'trial' ? 0 : selectedPack === 'pack' ? Math.round((pricing.pack / 10) * Number(lessonAmount || 1)) : pricing.single * Number(lessonAmount || 1);
     const bookingAmount = type === 'trial' ? 0 : (!Number.isNaN(rawGrandTotal) && rawGrandTotal >= 0 ? rawGrandTotal : defaultBookingAmount);
@@ -385,37 +470,20 @@ export default async function handler(req, res) {
     }
 
     // Step 2: Create calendar event(s)
-    const perthOffset = 8;
-    const offsetString = `+${perthOffset.toString().padStart(2, '0')}:00`;
+    const isoString = buildPerthLocalIso(bookingDate, parsedSelectedTime.hours, parsedSelectedTime.minutes);
+    const endTimeString = buildPerthLocalIso(bookingDate, parsedSelectedTime.hours, parsedSelectedTime.minutes, durationMinutes);
 
-    const time24h = selectedTime.replace(' AM', '').replace(' PM', '');
-    const isPM = selectedTime.includes(' PM');
-    const is12 = selectedTime.startsWith('12');
-
-    let [hours, minutes] = time24h.split(':').map(Number);
-    if (isPM && !is12) {
-      hours += 12;
-    } else if (!isPM && is12) {
-      hours = 0;
-    }
-
-    const isoString = `${preferredDay}T${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00${offsetString}`;
-    const durationMinutes = parseInt(type);
-    const endHours = Math.floor((hours * 60 + minutes + durationMinutes) / 60);
-    const endMinutes = (hours * 60 + minutes + durationMinutes) % 60;
-    const endTimeString = `${preferredDay}T${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}:00+08:00`;
-
-    let calendarResponse;
+    let calendarResponse = null;
 
     const totalLessons = Number(lessonAmount) || 1;
     const recurring = totalLessons > 1;
 
     if (recurring) {
       const titleSuffix = selectedPack === 'pack' ? `${totalLessons}-Pack` : `${totalLessons} Session${totalLessons === 1 ? '' : 's'}`;
-      console.log(`Creating recurring ${titleSuffix} booking event`);
+      console.log(`Creating recurring ${titleSuffix} booking event`, { start: isoString, end: endTimeString, totalLessons });
 
       const recurringEvent = {
-        summary: `${type}-Minute Lesson (${titleSuffix}) - ${name}`,
+        summary: `Drumadon Booking - ${type}-Minute Lesson (${titleSuffix}) - ${name}`,
         description: `
           ${type}-Minute Lesson - ${titleSuffix} (Weekly recurring)
           ${bookingFor === 'child' ? `Student: ${childName}${age ? ` (age ${age})` : ''}\nParent/Guardian: ${name}` : `Name: ${name}`}
@@ -430,15 +498,26 @@ export default async function handler(req, res) {
         colorId: '7',
       };
 
-      calendarResponse = await calendar.events.insert({
-        calendarId: process.env.GOOGLE_CALENDAR_ID,
-        resource: recurringEvent,
-      });
+      try {
+        calendarResponse = await calendar.events.insert({
+          calendarId: process.env.GOOGLE_CALENDAR_ID,
+          resource: recurringEvent,
+        });
+      } catch (calendarError) {
+        const formattedCalendarError = formatCalendarError(calendarError);
+        console.error('Google Calendar insert failed for recurring booking:', formattedCalendarError);
+        return res.status(502).json({
+          error: 'Calendar service unavailable',
+          message: 'We could not save your recurring booking to Google Calendar. Please try again later.',
+          details: formattedCalendarError.message,
+          calendarError: formattedCalendarError,
+        });
+      }
 
       console.log(`Recurring ${titleSuffix} calendar event created:`, calendarResponse.data.id);
     } else {
       const event = {
-        summary: `${type === 'trial' ? 'Trial Lesson' : type + '-Minute Lesson'} - ${name}`,
+        summary: `Drumadon Booking - ${type === 'trial' ? 'Trial Lesson' : type + '-Minute Lesson'} - ${name}`,
         description: `
           ${type === 'trial' ? 'Trial Lesson' : type + '-Minute Lesson'} Booking Details:
           ${bookingFor === 'child' ? `Student: ${childName}${age ? ` (age ${age})` : ''}\nParent/Guardian: ${name}` : `Name: ${name}`}
@@ -451,12 +530,27 @@ export default async function handler(req, res) {
         colorId: type === 'trial' ? '6' : '7',
       };
 
-      calendarResponse = await calendar.events.insert({
-        calendarId: process.env.GOOGLE_CALENDAR_ID,
-        resource: event,
-      });
+      try {
+        calendarResponse = await calendar.events.insert({
+          calendarId: process.env.GOOGLE_CALENDAR_ID,
+          resource: event,
+        });
+      } catch (calendarError) {
+        const formattedCalendarError = formatCalendarError(calendarError);
+        console.error('Google Calendar insert failed for single booking:', formattedCalendarError);
+        return res.status(502).json({
+          error: 'Calendar service unavailable',
+          message: 'We could not save your booking to Google Calendar. Please try again later.',
+          details: formattedCalendarError.message,
+          calendarError: formattedCalendarError,
+        });
+      }
 
       console.log('Single calendar event created:', calendarResponse.data.id);
+    }
+
+    if (!calendarResponse?.data?.id) {
+      throw new Error('Calendar API returned no event ID after insert');
     }
 
     // Step 3: Send admin notification
@@ -476,7 +570,7 @@ export default async function handler(req, res) {
     console.error('Booking failed:', error);
     return res.status(500).json({
       error: 'Booking failed',
-      message: 'We encountered an issue processing your booking. Please try again or contact us directly.',
+      message: error.message || 'We encountered an issue processing your booking. Please try again or contact us directly.',
       details: error.message || 'Unknown server error'
     });
   }
