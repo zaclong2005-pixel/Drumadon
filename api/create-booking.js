@@ -1,4 +1,46 @@
-import { google } from 'googleapis';
+import { createHmac, createSign } from 'crypto';
+
+// Generate JWT token for Google API authentication
+async function getGoogleAccessToken(serviceAccountKey) {
+  const now = Math.floor(Date.now() / 1000);
+  const expiresIn = 3600;
+  const header = {
+    alg: 'RS256',
+    typ: 'JWT'
+  };
+  const payload = {
+    iss: serviceAccountKey.client_email,
+    scope: 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/spreadsheets',
+    aud: 'https://oauth2.googleapis.com/token',
+    exp: now + expiresIn,
+    iat: now
+  };
+
+  const headerEncoded = Buffer.from(JSON.stringify(header)).toString('base64url');
+  const payloadEncoded = Buffer.from(JSON.stringify(payload)).toString('base64url');
+  const signatureInput = `${headerEncoded}.${payloadEncoded}`;
+
+  const sign = createSign('RSA-SHA256');
+  sign.update(signatureInput);
+  const signature = sign.sign(serviceAccountKey.private_key, 'base64url');
+  const jwt = `${signatureInput}.${signature}`;
+
+  const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+      assertion: jwt
+    })
+  });
+
+  if (!tokenResponse.ok) {
+    throw new Error(`Failed to get access token: ${tokenResponse.statusText}`);
+  }
+
+  const tokenData = await tokenResponse.json();
+  return tokenData.access_token;
+}
 
 // Shared pricing lookup
 function getPricing(lessonType) {
@@ -263,18 +305,11 @@ export default async function handler(req, res) {
       });
     }
 
-    let auth, calendar;
+    let accessToken;
     try {
-      console.log('🔐 Initializing Google Auth...');
-      auth = new google.auth.GoogleAuth({
-        credentials: serviceAccountKey,
-        scopes: [
-          'https://www.googleapis.com/auth/calendar',
-          'https://www.googleapis.com/auth/spreadsheets',
-        ],
-      });
-      calendar = google.calendar({ version: 'v3', auth });
-      console.log('✅ Google Auth initialized');
+      console.log('🔐 Getting Google API access token...');
+      accessToken = await getGoogleAccessToken(serviceAccountKey);
+      console.log('✅ Access token obtained');
     } catch (authError) {
       console.error('❌ Auth initialization error:', authError.message);
       return res.status(500).json({
@@ -381,15 +416,19 @@ export default async function handler(req, res) {
     if (type !== 'trial') {
       try {
         if (!process.env.GOOGLE_SHEET_ID) throw new Error('GOOGLE_SHEET_ID not configured');
-        const sheets = google.sheets({ version: 'v4', auth });
 
-        console.log('Fetching existing rows from Google Sheet for invoice numbering...');
-        const getRes = await sheets.spreadsheets.values.get({
-          spreadsheetId: process.env.GOOGLE_SHEET_ID,
-          range: 'Sheet1!A:A',
+        console.log('📊 Fetching existing rows from Google Sheet for invoice numbering...');
+        const getRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${process.env.GOOGLE_SHEET_ID}/values/Sheet1!A:A`, {
+          headers: { 'Authorization': `Bearer ${accessToken}` }
         });
-        const values = getRes.data.values || [];
-        console.log('Sheet values in column A:', values.length, 'rows');
+
+        if (!getRes.ok) {
+          throw new Error(`Sheets API error: ${getRes.statusText}`);
+        }
+
+        const getResData = await getRes.json();
+        const values = getResData.values || [];
+        console.log('📊 Sheet values in column A:', values.length, 'rows');
 
         // Start invoice rows at spreadsheet row 50.
         // Row 50 maps to INV-0001, row 51 -> INV-0002, etc.
@@ -410,69 +449,33 @@ export default async function handler(req, res) {
         }
 
         invoiceNum = String(targetRow - invoiceStartRow + 1).padStart(4, '0');
-        console.log('Target row for booking:', targetRow, 'Invoice number:', invoiceNum);
+        console.log('📊 Target row for booking:', targetRow, 'Invoice number:', invoiceNum);
 
         // Update the target row with booking details
-        await sheets.spreadsheets.values.update({
-          spreadsheetId: process.env.GOOGLE_SHEET_ID,
-          range: `Sheet1!A${targetRow}:H${targetRow}`,
-          valueInputOption: 'USER_ENTERED',
-          requestBody: {
+        const updateRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${process.env.GOOGLE_SHEET_ID}/values/Sheet1!A${targetRow}:H${targetRow}?valueInputOption=USER_ENTERED`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
             values: [[
               `INV-${invoiceNum}`, name, email, phone,
               type === 'trial' ? 'Free Trial' : `${lessonAmount || 1}x ${type} min lesson${selectedPack === 'pack' ? ' - Bulk Rate' : ''}`,
               bookingAmount === 0 ? 'Free' : `$${bookingAmount}`,
               new Date().toLocaleDateString('en-AU', { timeZone: 'Australia/Perth' }),
               'Unpaid',
-            ]],
-          },
+            ]]
+          })
         });
 
-        console.log('Successfully updated Google Sheet with booking at row', targetRow, 'invoice number:', invoiceNum);
-        await sheets.spreadsheets.batchUpdate({
-          spreadsheetId: process.env.GOOGLE_SHEET_ID,
-          requestBody: {
-            requests: [
-              {
-                setDataValidation: {
-                  range: { sheetId: 0, startRowIndex: 1, startColumnIndex: 7, endColumnIndex: 8 },
-                  rule: {
-                    condition: {
-                      type: 'ONE_OF_LIST',
-                      values: [
-                        { userEnteredValue: 'Unpaid' },
-                        { userEnteredValue: 'Paid' },
-                        { userEnteredValue: 'Canceled' },
-                      ],
-                    },
-                    showCustomUi: true,
-                    strict: true,
-                  },
-                },
-              },
-              {
-                repeatCell: {
-                  range: {
-                    sheetId: 0,
-                    startRowIndex: targetRow - 1,
-                    endRowIndex: targetRow,
-                    startColumnIndex: 0,
-                    endColumnIndex: 8,
-                  },
-                  cell: {
-                    userEnteredFormat: {
-                      backgroundColor: { red: 1, green: 0.95, blue: 0.86 },
-                      horizontalAlignment: 'LEFT',
-                    },
-                  },
-                  fields: 'userEnteredFormat(backgroundColor,horizontalAlignment)',
-                },
-              },
-            ],
-          },
-        });
+        if (!updateRes.ok) {
+          throw new Error(`Sheets update failed: ${updateRes.statusText}`);
+        }
+
+        console.log('📊 Successfully updated Google Sheet with booking at row', targetRow, 'invoice number:', invoiceNum);
       } catch (sheetErr) {
-        console.error('Sheet invoice numbering unavailable, using random fallback:', sheetErr.message);
+        console.error('⚠️ Sheet invoice numbering unavailable, using random fallback:', sheetErr.message);
         invoiceNum = String(Math.floor(1000 + Math.random() * 9000));
       }
       const invoiceToken = Buffer.from(JSON.stringify({
@@ -553,12 +556,21 @@ export default async function handler(req, res) {
         };
 
         console.log('📅 Recurring event object:', recurringEvent.summary);
-        calendarResponse = await calendar.events.insert({
-          calendarId: process.env.GOOGLE_CALENDAR_ID,
-          resource: recurringEvent,
+        const calendarRes = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(process.env.GOOGLE_CALENDAR_ID)}/events`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(recurringEvent)
         });
 
-        console.log(`✅ Recurring ${titleSuffix} calendar event created:`, calendarResponse.data.id);
+        if (!calendarRes.ok) {
+          throw new Error(`Calendar API error: ${calendarRes.statusText}`);
+        }
+
+        calendarResponse = await calendarRes.json();
+        console.log(`✅ Recurring ${titleSuffix} calendar event created:`, calendarResponse.id);
       } else {
         const event = {
           summary: `${type === 'trial' ? 'Trial Lesson' : type + '-Minute Lesson'} - ${name}`,
@@ -575,12 +587,21 @@ export default async function handler(req, res) {
         };
 
         console.log('📅 Single event object:', event.summary);
-        calendarResponse = await calendar.events.insert({
-          calendarId: process.env.GOOGLE_CALENDAR_ID,
-          resource: event,
+        const calendarRes = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(process.env.GOOGLE_CALENDAR_ID)}/events`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(event)
         });
 
-        console.log('✅ Single calendar event created:', calendarResponse.data.id);
+        if (!calendarRes.ok) {
+          throw new Error(`Calendar API error: ${calendarRes.statusText}`);
+        }
+
+        calendarResponse = await calendarRes.json();
+        console.log('✅ Single calendar event created:', calendarResponse.id);
       }
     } catch (calendarError) {
       console.error('❌ Calendar event creation failed:', calendarError.message);
@@ -596,7 +617,7 @@ export default async function handler(req, res) {
     // Step 3: Send admin notification
     console.log('📧 Sending admin notification...');
     try {
-      await sendAdminEmail({ name, email, phone, age, message, selectedTime, preferredDay, eventId: calendarResponse.data.id, type, selectedPack, invoiceUrl, invoiceNum, bookingFor, childName, grandTotal: bookingAmount, lessonAmount });
+      await sendAdminEmail({ name, email, phone, age, message, selectedTime, preferredDay, eventId: calendarResponse.id, type, selectedPack, invoiceUrl, invoiceNum, bookingFor, childName, grandTotal: bookingAmount, lessonAmount });
       console.log('✅ Admin notification email sent successfully');
     } catch (adminEmailError) {
       console.error('⚠️ Admin email failed, but booking is confirmed:', adminEmailError.message);
@@ -605,7 +626,7 @@ export default async function handler(req, res) {
     console.log('✅✅✅ BOOKING COMPLETE ✅✅✅');
     return res.status(200).json({
       message: 'Booking confirmed and calendar event created',
-      eventId: calendarResponse.data.id
+      eventId: calendarResponse.id
     });
 
   } catch (error) {
