@@ -21,21 +21,27 @@ async function sendMailgunEmail(emailData) {
   console.log('📧 Email subject:', emailData.subject);
 
   try {
+    const urlParams = new URLSearchParams();
+    for (const [key, value] of Object.entries(emailData)) {
+      urlParams.append(key, value);
+    }
+
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Authorization': `Basic ${Buffer.from(`api:${process.env.MAILGUN_API_KEY}`).toString('base64')}`,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: new URLSearchParams(emailData),
+      body: urlParams.toString(),
     });
 
     console.log('📮 Mailgun response status:', response.status);
+    console.log('📮 Mailgun response content-type:', response.headers.get('content-type'));
 
     if (!response.ok) {
       const errorText = await response.text();
       console.error('❌ Mailgun error response:', errorText);
-      throw new Error(`Mailgun error ${response.status}: ${errorText}`);
+      throw new Error(`Mailgun error ${response.status}: ${errorText.substring(0, 100)}`);
     }
 
     const result = await response.json();
@@ -208,6 +214,9 @@ async function sendAdminEmail({ name, email, phone, age, message, selectedTime, 
 }
 
 export default async function handler(req, res) {
+  // Set JSON response header first
+  res.setHeader('Content-Type', 'application/json');
+
   console.log('=== BOOKING REQUEST START ===');
   console.log('Method:', req.method);
   console.log('Body type:', typeof req.body);
@@ -248,15 +257,26 @@ export default async function handler(req, res) {
       });
     }
 
-    const auth = new google.auth.GoogleAuth({
-      credentials: serviceAccountKey,
-      scopes: [
-        'https://www.googleapis.com/auth/calendar',
-        'https://www.googleapis.com/auth/spreadsheets',
-      ],
-    });
-
-    const calendar = google.calendar({ version: 'v3', auth });
+    let auth, calendar;
+    try {
+      console.log('🔐 Initializing Google Auth...');
+      auth = new google.auth.GoogleAuth({
+        credentials: serviceAccountKey,
+        scopes: [
+          'https://www.googleapis.com/auth/calendar',
+          'https://www.googleapis.com/auth/spreadsheets',
+        ],
+      });
+      calendar = google.calendar({ version: 'v3', auth });
+      console.log('✅ Google Auth initialized');
+    } catch (authError) {
+      console.error('❌ Auth initialization error:', authError.message);
+      return res.status(500).json({
+        error: 'Authentication Error',
+        message: 'Failed to initialize Google services.',
+        details: authError.message
+      });
+    }
 
     let params;
     console.log('📝 Parsing form data...');
@@ -284,8 +304,17 @@ export default async function handler(req, res) {
     }
 
     const data = {};
-    for (let [key, value] of params) {
-      data[key] = value;
+    try {
+      for (let [key, value] of params) {
+        data[key] = value;
+      }
+    } catch (dataError) {
+      console.error('❌ Data extraction error:', dataError.message);
+      return res.status(400).json({
+        error: 'Invalid Request',
+        message: 'Failed to extract form fields.',
+        details: dataError.message
+      });
     }
 
     console.log('📋 Extracted form data keys:', Object.keys(data));
@@ -577,11 +606,16 @@ export default async function handler(req, res) {
     console.error('❌ CRITICAL ERROR - Booking failed:', error.message);
     console.error('Error stack:', error.stack);
     console.error('Full error object:', error);
-    return res.status(500).json({
-      error: 'Booking failed',
-      message: 'We encountered an issue processing your booking. Please try again or contact us directly.',
-      details: error.message,
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
-    });
+
+    // Ensure response headers are set
+    if (!res.headersSent) {
+      res.setHeader('Content-Type', 'application/json');
+      return res.status(500).json({
+        error: 'Booking failed',
+        message: 'We encountered an issue processing your booking. Please try again or contact us directly.',
+        details: error.message || String(error),
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      });
+    }
   }
 };
