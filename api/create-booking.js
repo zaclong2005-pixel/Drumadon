@@ -506,9 +506,6 @@ export default async function handler(req, res) {
     // Step 2: Create calendar event(s)
     console.log('📅 Creating calendar events...');
     try {
-      const perthOffset = 8;
-      const offsetString = `+${perthOffset.toString().padStart(2, '0')}:00`;
-
       const time24h = selectedTime.replace(' AM', '').replace(' PM', '');
       const isPM = selectedTime.includes(' PM');
       const is12 = selectedTime.startsWith('12');
@@ -522,11 +519,12 @@ export default async function handler(req, res) {
 
       console.log('⏰ Time conversion:', { selectedTime, time24h, hours, minutes, isPM, is12 });
 
-      const isoString = `${preferredDay}T${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00${offsetString}`;
+      // Format ISO strings WITHOUT timezone offset (let Google Calendar apply the timeZone)
+      const isoString = `${preferredDay}T${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00`;
       const durationMinutes = parseInt(type);
       const endHours = Math.floor((hours * 60 + minutes + durationMinutes) / 60);
       const endMinutes = (hours * 60 + minutes + durationMinutes) % 60;
-      const endTimeString = `${preferredDay}T${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}:00+08:00`;
+      const endTimeString = `${preferredDay}T${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}:00`;
 
       console.log('📅 Calendar times:', { isoString, endTimeString, durationMinutes });
 
