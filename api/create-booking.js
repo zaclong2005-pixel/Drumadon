@@ -214,13 +214,19 @@ async function sendAdminEmail({ name, email, phone, age, message, selectedTime, 
 }
 
 export default async function handler(req, res) {
-  // Set JSON response header first
+  // Set JSON response header FIRST before anything else
   res.setHeader('Content-Type', 'application/json');
 
+  // Log immediately
   console.log('=== BOOKING REQUEST START ===');
   console.log('Method:', req.method);
   console.log('Body type:', typeof req.body);
-  console.log('Body length:', req.body ? req.body.toString().length : 0);
+  console.log('Body length:', req.body ? (typeof req.body.toString === 'function' ? req.body.toString().length : 'N/A') : 0);
+
+  // Send early response to ensure connectivity
+  if (req.method === 'OPTIONS') {
+    return res.status(200).json({ message: 'OK' });
+  }
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
