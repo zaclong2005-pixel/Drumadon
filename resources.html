@@ -787,7 +787,7 @@
                             button.onclick = () => alert('Tutorials coming soon!');
                         } else if (heading.includes('Manual')) {
                             button.textContent = 'View';
-                            button.onclick = () => openPDFViewer('drumadon-manual.pdf', 'Drumadon Manual');
+                            button.onclick = () => openPDFViewer('Drumadon_Essentials_Book.pdf', 'Drumadon Manual');
                         }
                     }
                     
@@ -817,7 +817,7 @@
             if (pdfSrc) {
                 const a = document.createElement('a');
                 a.href = pdfSrc;
-                a.download = 'drumadon-manual.pdf';
+                a.download = 'Drumadon_Essentials_Book.pdf';
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
