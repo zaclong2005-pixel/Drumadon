@@ -404,11 +404,48 @@
             margin: 0;
             color: white;
             font-size: 1.2rem;
-            flex: 1;
+            flex: 0;
         }
         .pdf-controls {
             display: flex;
             gap: 0.75rem;
+            align-items: center;
+            margin-left: auto;
+        }
+        .pdf-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+        }
+        .pdf-nav button {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0.4rem;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            border-radius: 4px;
+        }
+        .pdf-nav button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .pdf-nav button svg {
+            width: 20px;
+            height: 20px;
+        }
+        .page-counter {
+            color: white;
+            font-size: 0.9rem;
+            min-width: 50px;
+            text-align: center;
         }
         .pdf-controls button {
             padding: 0.6rem 1.2rem;
@@ -677,12 +714,25 @@
         </div>
     </div>
 
-    <!-- PDF Viewer Modal -->
+    <!-- Custom PDF Viewer Modal -->
     <div id="pdf-modal" class="pdf-modal">
         <div class="pdf-content">
             <div class="pdf-header">
                 <h2 id="pdf-title">Drumadon Manual</h2>
                 <div class="pdf-controls">
+                    <div class="pdf-nav">
+                        <button onclick="prevPage()" title="Previous page" id="prev-btn">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M15 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <span class="page-counter"><span id="current-page">1</span> / <span id="total-pages">1</span></span>
+                        <button onclick="nextPage()" title="Next page" id="next-btn">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
                     <button onclick="downloadPDF()" title="Download PDF">
                         <svg class="download-arrow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 2v11m0 0l-4-4m4 4l4-4M3 13v5c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -692,9 +742,7 @@
                     <button onclick="closePDFModal()">✕ Close</button>
                 </div>
             </div>
-            <div class="pdf-viewer">
-                <iframe id="pdf-viewer" src="" type="application/pdf"></iframe>
-            </div>
+            <div class="pdf-viewer" id="pdf-viewer"></div>
         </div>
     </div>
 
@@ -823,21 +871,24 @@
 
         // PDF Viewer Functions
         function openPDFViewer(pdfPath, pdfTitle) {
+            currentPage = 1;
+            currentPdfPath = pdfPath;
             document.getElementById('pdf-title').textContent = pdfTitle;
-            document.getElementById('pdf-viewer').src = pdfPath;
             document.getElementById('pdf-modal').classList.add('show');
+            loadPDF(pdfPath);
         }
 
         function closePDFModal() {
             document.getElementById('pdf-modal').classList.remove('show');
-            document.getElementById('pdf-viewer').src = '';
+            pdfDoc = null;
+            currentPage = 1;
+            document.getElementById('pdf-viewer').innerHTML = '';
         }
 
         function downloadPDF() {
-            const pdfSrc = document.getElementById('pdf-viewer').src;
-            if (pdfSrc) {
+            if (currentPdfPath) {
                 const a = document.createElement('a');
-                a.href = pdfSrc;
+                a.href = currentPdfPath;
                 a.download = 'Drumadon_Essentials_Book.pdf';
                 a.style.display = 'none';
                 document.body.appendChild(a);
@@ -845,6 +896,83 @@
                 setTimeout(() => document.body.removeChild(a), 100);
             }
         }
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        // Set PDF.js worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        let pdfDoc = null;
+        let currentPage = 1;
+        let totalPages = 1;
+        let currentPdfPath = '';
+
+        async function loadPDF(path) {
+            try {
+                pdfDoc = await pdfjsLib.getDocument(path).promise;
+                totalPages = pdfDoc.numPages;
+                document.getElementById('total-pages').textContent = totalPages;
+                renderPage(1);
+                updateNavButtons();
+            } catch (error) {
+                console.error('Error loading PDF:', error);
+                document.getElementById('pdf-viewer').innerHTML = '<p style="color: white; font-size: 1.1rem;">Error loading PDF file</p>';
+            }
+        }
+
+        async function renderPage(pageNum) {
+            if (!pdfDoc) return;
+            
+            try {
+                const page = await pdfDoc.getPage(pageNum);
+                const scale = window.innerWidth > 1200 ? 1.5 : 1.2;
+                const viewport = page.getViewport({ scale });
+
+                const canvas = document.createElement('canvas');
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+                canvas.className = 'pdf-canvas';
+
+                const context = canvas.getContext('2d');
+                await page.render({ canvasContext: context, viewport }).promise;
+
+                document.getElementById('pdf-viewer').innerHTML = '';
+                document.getElementById('pdf-viewer').appendChild(canvas);
+                
+                currentPage = pageNum;
+                document.getElementById('current-page').textContent = currentPage;
+                updateNavButtons();
+            } catch (error) {
+                console.error('Error rendering page:', error);
+            }
+        }
+
+        function nextPage() {
+            if (currentPage < totalPages) {
+                renderPage(currentPage + 1);
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                renderPage(currentPage - 1);
+            }
+        }
+
+        function updateNavButtons() {
+            document.getElementById('prev-btn').disabled = currentPage <= 1;
+            document.getElementById('next-btn').disabled = currentPage >= totalPages;
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('pdf-modal').classList.contains('show')) {
+                if (e.key === 'ArrowRight') nextPage();
+                if (e.key === 'ArrowLeft') prevPage();
+                if (e.key === 'Escape') closePDFModal();
+            }
+        });
     </script>
 </body>
 </html>
