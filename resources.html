@@ -418,9 +418,17 @@
             cursor: pointer;
             font-size: 0.9rem;
             transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         .pdf-controls button:hover {
             background: var(--btn-hover);
+        }
+        .download-arrow {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
         }
         .pdf-viewer {
             flex: 1;
@@ -672,7 +680,12 @@
             <div class="pdf-header">
                 <h2 id="pdf-title">Drumadon Manual</h2>
                 <div class="pdf-controls">
-                    <button onclick="downloadPDF()">⬇️ Download</button>
+                    <button onclick="downloadPDF()" title="Download PDF">
+                        <svg class="download-arrow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2v11m0 0l-4-4m4 4l4-4M3 13v5c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Download
+                    </button>
                     <button onclick="closePDFModal()">✕ Close</button>
                 </div>
             </div>
@@ -818,9 +831,10 @@
                 const a = document.createElement('a');
                 a.href = pdfSrc;
                 a.download = 'Drumadon_Essentials_Book.pdf';
+                a.style.display = 'none';
                 document.body.appendChild(a);
                 a.click();
-                document.body.removeChild(a);
+                setTimeout(() => document.body.removeChild(a), 100);
             }
         }
     </script>
