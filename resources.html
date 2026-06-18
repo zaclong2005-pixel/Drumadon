@@ -906,19 +906,15 @@
         }
 
         function downloadPage(pageNum, canvas) {
-            canvas.toBlob(blob => {
-                const url = URL.createObjectURL(blob);
+            if (currentPdfPath) {
                 const a = document.createElement('a');
-                a.href = url;
-                a.download = `Drumadon_Page_${pageNum}.png`;
+                a.href = currentPdfPath;
+                a.download = `Drumadon_Essentials_Book.pdf`;
                 a.style.display = 'none';
                 document.body.appendChild(a);
                 a.click();
-                setTimeout(() => {
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                }, 100);
-            }, 'image/png');
+                setTimeout(() => document.body.removeChild(a), 100);
+            }
         }
     </script>
 
