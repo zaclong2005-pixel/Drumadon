@@ -895,13 +895,23 @@
 
         function downloadPDF() {
             if (currentPdfPath) {
-                const a = document.createElement('a');
-                a.href = currentPdfPath;
-                a.download = 'Drumadon_Essentials_Book.pdf';
-                a.style.display = 'none';
-                document.body.appendChild(a);
-                a.click();
-                setTimeout(() => document.body.removeChild(a), 100);
+                fetch(currentPdfPath)
+                    .then(response => response.blob())
+                    .then(blob => {
+                        const blobWithType = new Blob([blob], { type: 'application/octet-stream' });
+                        const url = URL.createObjectURL(blobWithType);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'Drumadon_Essentials_Book.pdf';
+                        a.style.display = 'none';
+                        document.body.appendChild(a);
+                        a.click();
+                        setTimeout(() => {
+                            document.body.removeChild(a);
+                            URL.revokeObjectURL(url);
+                        }, 100);
+                    })
+                    .catch(err => console.error('Download failed:', err));
             }
         }
 
@@ -929,9 +939,10 @@
                         });
                         pdf.addImage(imgData, 'PNG', 0, 0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight());
                         
-                        // Force download without opening PDF reader
+                        // Force download without opening PDF reader - use octet-stream
                         const blob = pdf.output('blob');
-                        const url = URL.createObjectURL(blob);
+                        const blobWithType = new Blob([blob], { type: 'application/octet-stream' });
+                        const url = URL.createObjectURL(blobWithType);
                         const a = document.createElement('a');
                         a.href = url;
                         a.download = `Drumadon_Essentials_Page_${pageNum}.pdf`;

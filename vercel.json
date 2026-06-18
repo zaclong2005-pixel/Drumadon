@@ -5,7 +5,7 @@
       "headers": [
         {
           "key": "Content-Type",
-          "value": "application/pdf; charset=utf-8"
+          "value": "application/octet-stream"
         },
         {
           "key": "Content-Disposition",
