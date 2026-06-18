@@ -928,7 +928,20 @@
                             format: [viewport.width / 3.78, viewport.height / 3.78] // Convert px to mm at 3x scale
                         });
                         pdf.addImage(imgData, 'PNG', 0, 0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight());
-                        pdf.save(`Drumadon_Essentials_Page_${pageNum}.pdf`);
+                        
+                        // Force download without opening PDF reader
+                        const blob = pdf.output('blob');
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `Drumadon_Essentials_Page_${pageNum}.pdf`;
+                        a.style.display = 'none';
+                        document.body.appendChild(a);
+                        a.click();
+                        setTimeout(() => {
+                            document.body.removeChild(a);
+                            URL.revokeObjectURL(url);
+                        }, 100);
                     });
                 });
             }
