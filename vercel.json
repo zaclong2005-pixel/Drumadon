@@ -6,6 +6,10 @@
         {
           "key": "Content-Type",
           "value": "application/pdf; charset=utf-8"
+        },
+        {
+          "key": "Content-Disposition",
+          "value": "attachment"
         }
       ]
     }
