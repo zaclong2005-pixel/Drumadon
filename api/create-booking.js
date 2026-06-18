@@ -483,7 +483,7 @@ export default async function handler(req, res) {
       console.log(`Creating recurring ${titleSuffix} booking event`, { start: isoString, end: endTimeString, totalLessons });
 
       const recurringEvent = {
-        summary: `Drumadon Booking - ${type}-Minute Lesson (${titleSuffix}) - ${name}`,
+        summary: `${name} (${type === 'trial' ? 'Drumadon Trial' : 'Drumadon Lesson'})`,
         description: `
           ${type}-Minute Lesson - ${titleSuffix} (Weekly recurring)
           ${bookingFor === 'child' ? `Student: ${childName}${age ? ` (age ${age})` : ''}\nParent/Guardian: ${name}` : `Name: ${name}`}
@@ -517,7 +517,7 @@ export default async function handler(req, res) {
       console.log(`Recurring ${titleSuffix} calendar event created:`, calendarResponse.data.id);
     } else {
       const event = {
-        summary: `Drumadon Booking - ${type === 'trial' ? 'Trial Lesson' : type + '-Minute Lesson'} - ${name}`,
+        summary: `${name} (${type === 'trial' ? 'Drumadon Trial' : 'Drumadon Lesson'})`,
         description: `
           ${type === 'trial' ? 'Trial Lesson' : type + '-Minute Lesson'} Booking Details:
           ${bookingFor === 'child' ? `Student: ${childName}${age ? ` (age ${age})` : ''}\nParent/Guardian: ${name}` : `Name: ${name}`}
