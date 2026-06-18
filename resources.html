@@ -430,11 +430,41 @@
             align-items: center;
             padding: 2rem 0;
         }
-        .pdf-canvas {
+        .pdf-page-container {
+            position: relative;
             margin: 1rem 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        .pdf-canvas {
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-            max-width: 90%;
+            max-width: 100%;
             height: auto;
+        }
+        .pdf-page-download {
+            background: rgba(123, 151, 172, 0.8);
+            color: white;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background 0.2s;
+            min-width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 0.25rem;
+        }
+        .pdf-page-download:hover {
+            background: rgba(123, 151, 172, 1);
+        }
+        .pdf-page-download svg {
+            width: 16px;
+            height: 16px;
         }
         .pdf-controls button {
             padding: 0.6rem 1.2rem;
@@ -872,6 +902,22 @@
                 setTimeout(() => document.body.removeChild(a), 100);
             }
         }
+
+        function downloadPage(pageNum, canvas) {
+            canvas.toBlob(blob => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Drumadon_Page_${pageNum}.png`;
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 100);
+            }, 'image/png');
+        }
     </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -898,22 +944,40 @@
         async function renderAllPages() {
             const viewer = document.getElementById('pdf-viewer');
             viewer.innerHTML = '';
+            const viewerWidth = viewer.clientWidth - 40; // Account for padding
 
             for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
                 try {
                     const page = await pdfDoc.getPage(pageNum);
-                    const scale = window.innerWidth > 1200 ? 1.5 : 1.2;
-                    const viewport = page.getViewport({ scale });
+                    const viewport = page.getViewport({ scale: 1 });
+                    
+                    // Calculate scale to fit page to viewport width
+                    const scale = viewerWidth / viewport.width;
+                    const scaledViewport = page.getViewport({ scale });
 
                     const canvas = document.createElement('canvas');
-                    canvas.width = viewport.width;
-                    canvas.height = viewport.height;
+                    canvas.width = scaledViewport.width;
+                    canvas.height = scaledViewport.height;
                     canvas.className = 'pdf-canvas';
 
                     const context = canvas.getContext('2d');
-                    await page.render({ canvasContext: context, viewport }).promise;
+                    await page.render({ canvasContext: context, viewport: scaledViewport }).promise;
 
-                    viewer.appendChild(canvas);
+                    const container = document.createElement('div');
+                    container.className = 'pdf-page-container';
+                    container.appendChild(canvas);
+                    
+                    const downloadBtn = document.createElement('button');
+                    downloadBtn.className = 'pdf-page-download';
+                    downloadBtn.title = 'Download this page';
+                    downloadBtn.onclick = (e) => {
+                        e.preventDefault();
+                        downloadPage(pageNum, canvas);
+                    };
+                    downloadBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2v11m0 0l-4-4m4 4l4-4M3 13v5c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+                    container.appendChild(downloadBtn);
+
+                    viewer.appendChild(container);
                 } catch (error) {
                     console.error('Error rendering page ' + pageNum, error);
                 }
