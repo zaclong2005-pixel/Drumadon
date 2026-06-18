@@ -147,10 +147,14 @@ export default async function handler(req, res) {
 
     const calendar = google.calendar({ version: 'v3', auth });
 
-    const advanceBookingHours = 48;
     const { type = '30', date } = req.query;
     const timeSlotDuration = 30;
     const defaultWorkingHours = { start: '09:00', end: '17:00' };
+
+    // Different restrictions for trial vs actual lessons
+    const isTrialLesson = type === 'trial';
+    const advanceBookingHours = isTrialLesson ? 48 : 24; // Trial requires 48 hours, actual lessons need 24 hours
+    const bookingWindowDays = isTrialLesson ? 9 : 30; // Trial is 9 days, actual lessons are 30 days (1 month)
 
     if (date && !/^\d{4}-\d{2}-\d{2}$/.test(String(date))) {
       return res.status(400).json({
@@ -173,13 +177,13 @@ export default async function handler(req, res) {
     const perthOffset = 8 * 60 * 60 * 1000;
     const now = new Date();
     const nowPerth = new Date(now.getTime() + perthOffset);
-    const nineDaysLater = new Date(nowPerth);
-    nineDaysLater.setDate(nowPerth.getDate() + 9);
+    const bookingEndDate = new Date(nowPerth);
+    bookingEndDate.setDate(nowPerth.getDate() + bookingWindowDays);
 
     console.log('Fetching availability from Google Calendar:', {
       calendarId: process.env.GOOGLE_CALENDAR_ID,
       timeMin: nowPerth.toISOString(),
-      timeMax: nineDaysLater.toISOString(),
+      timeMax: bookingEndDate.toISOString(),
       type,
       date: date || null,
     });
@@ -187,7 +191,7 @@ export default async function handler(req, res) {
     const response = await calendar.events.list({
       calendarId: process.env.GOOGLE_CALENDAR_ID,
       timeMin: nowPerth.toISOString(),
-      timeMax: nineDaysLater.toISOString(),
+      timeMax: bookingEndDate.toISOString(),
       singleEvents: true,
       orderBy: 'startTime',
       maxResults: 250,
