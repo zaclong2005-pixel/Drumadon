@@ -907,21 +907,31 @@
 
         function downloadPage(pageNum, canvas) {
             const { jsPDF } = window.jspdf;
-            canvas.toBlob(blob => {
-                const url = URL.createObjectURL(blob);
-                const img = new Image();
-                img.onload = () => {
-                    const pdf = new jsPDF({
-                        orientation: canvas.width > canvas.height ? 'landscape' : 'portrait',
-                        unit: 'px',
-                        format: [canvas.width, canvas.height]
+            
+            // Render page at higher DPI for better quality
+            if (pdfDoc) {
+                pdfDoc.getPage(pageNum).then(page => {
+                    const scale = 3; // 3x resolution for high quality
+                    const viewport = page.getViewport({ scale });
+                    
+                    const highQualityCanvas = document.createElement('canvas');
+                    highQualityCanvas.width = viewport.width;
+                    highQualityCanvas.height = viewport.height;
+                    
+                    const context = highQualityCanvas.getContext('2d');
+                    return page.render({ canvasContext: context, viewport }).promise.then(() => {
+                        // Convert high-quality canvas to PDF
+                        const imgData = highQualityCanvas.toDataURL('image/png');
+                        const pdf = new jsPDF({
+                            orientation: viewport.width > viewport.height ? 'landscape' : 'portrait',
+                            unit: 'mm',
+                            format: [viewport.width / 3.78, viewport.height / 3.78] // Convert px to mm at 3x scale
+                        });
+                        pdf.addImage(imgData, 'PNG', 0, 0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight());
+                        pdf.save(`Drumadon_Essentials_Page_${pageNum}.pdf`);
                     });
-                    pdf.addImage(img, 'PNG', 0, 0, canvas.width, canvas.height);
-                    pdf.save(`Drumadon_Essentials_Page_${pageNum}.pdf`);
-                    URL.revokeObjectURL(url);
-                };
-                img.src = url;
-            }, 'image/png');
+                });
+            }
         }
     </script>
 
