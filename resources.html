@@ -434,8 +434,8 @@
             position: relative;
             margin: 1rem 0;
             display: flex;
-            align-items: flex-start;
-            gap: 1rem;
+            align-items: center;
+            justify-content: center;
         }
         .pdf-canvas {
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
@@ -451,13 +451,15 @@
             cursor: pointer;
             font-size: 0.8rem;
             transition: background 0.2s;
-            min-width: 32px;
+            width: 32px;
             height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            margin-top: 0.25rem;
+            position: absolute;
+            bottom: 0.5rem;
+            right: 0.5rem;
         }
         .pdf-page-download:hover {
             background: var(--btn-hover);
