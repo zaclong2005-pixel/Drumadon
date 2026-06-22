@@ -864,7 +864,7 @@
                             button.onclick = () => alert('Tutorials coming soon!');
                         } else if (heading.includes('Manual')) {
                             button.textContent = 'View';
-                            button.onclick = () => openPDFViewer('Drumadon_Essentials_Book.pdf', 'Drumadon Manual');
+                            button.onclick = () => openPDFViewer('Drumadon_Essentials_Book_22_06_2026.pdf', 'Drumadon Manual');
                         }
                     }
                     
@@ -902,7 +902,7 @@
                         const url = URL.createObjectURL(blobWithType);
                         const a = document.createElement('a');
                         a.href = url;
-                        a.download = 'Drumadon_Essentials_Book.pdf';
+                        a.download = 'Drumadon_Essentials_Book_22_06_2026.pdf';
                         a.style.display = 'none';
                         document.body.appendChild(a);
                         a.click();
@@ -985,6 +985,7 @@
             const viewer = document.getElementById('pdf-viewer');
             viewer.innerHTML = '';
             const viewerHeight = viewer.clientHeight - 40; // Account for padding
+            const dpr = window.devicePixelRatio || 1;
 
             for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
                 try {
@@ -995,13 +996,18 @@
                     const scale = viewerHeight / viewport.height;
                     const scaledViewport = page.getViewport({ scale });
 
+                    // Render at higher resolution for sharp printing/zooming
+                    const renderViewport = page.getViewport({ scale: scale * dpr });
+
                     const canvas = document.createElement('canvas');
-                    canvas.width = scaledViewport.width;
-                    canvas.height = scaledViewport.height;
+                    canvas.width = renderViewport.width;
+                    canvas.height = renderViewport.height;
+                    canvas.style.width = scaledViewport.width + 'px';
+                    canvas.style.height = scaledViewport.height + 'px';
                     canvas.className = 'pdf-canvas';
 
                     const context = canvas.getContext('2d');
-                    await page.render({ canvasContext: context, viewport: scaledViewport }).promise;
+                    await page.render({ canvasContext: context, viewport: renderViewport }).promise;
 
                     const container = document.createElement('div');
                     container.className = 'pdf-page-container';
