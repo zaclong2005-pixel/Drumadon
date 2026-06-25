@@ -288,7 +288,7 @@ export default function handler(req, res) {
 </body>
 </html>`;
 
-  res.setHeader('Content-Type', 'application/pdf; charset=utf-8');
-  res.setHeader('Content-Disposition', `attachment; filename="INV-${inv}.pdf"`);
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.setHeader('Content-Disposition', `inline; filename="INV-${inv}.html"`);
   return res.status(200).send(html);
 }
