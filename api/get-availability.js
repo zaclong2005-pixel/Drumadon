@@ -154,7 +154,7 @@ export default async function handler(req, res) {
     // Different restrictions for trial vs actual lessons
     const isTrialLesson = type === 'trial';
     const advanceBookingHours = isTrialLesson ? 48 : 24; // Trial requires 48 hours, actual lessons need 24 hours
-    const bookingWindowDays = isTrialLesson ? 9 : 30; // Trial is 9 days, actual lessons are 30 days (1 month)
+    const bookingWindowDays = isTrialLesson ? 9 : 60; // Trial is 9 days, actual lessons are 60 days
 
     if (date && !/^\d{4}-\d{2}-\d{2}$/.test(String(date))) {
       return res.status(400).json({
