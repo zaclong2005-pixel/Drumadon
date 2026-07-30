@@ -407,19 +407,18 @@ export default async function handler(req, res) {
           requestBody: {
             requests: [
               {
-                setDataValidation: {
-                  range: { sheetId: 0, startRowIndex: 1, startColumnIndex: 7, endColumnIndex: 8 },
-                  rule: {
-                    condition: {
-                      type: 'ONE_OF_LIST',
-                      values: [
-                        { userEnteredValue: 'Unpaid' },
-                        { userEnteredValue: 'Paid' },
-                        { userEnteredValue: 'Canceled' },
-                      ],
+                repeatCell: {
+                  range: {
+                    sheetId: 0,
+                    startRowIndex: 1,
+                    endRowIndex: 2,
+                    startColumnIndex: 7,
+                    endColumnIndex: 8,
+                  },
+                  cell: {
+                    userEnteredFormat: {
+                      verticalAlignment: 'MIDDLE',
                     },
-                    showCustomUi: true,
-                    strict: true,
                   },
                 },
               },

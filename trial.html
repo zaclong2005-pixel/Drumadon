@@ -899,7 +899,7 @@
                     </div>
                     <div class="form-group">
                         <label for="phone">Phone</label>
-                        <input type="tel" id="phone" name="phone" placeholder="Enter your phone" required>
+                        <input type="text" id="phone" name="phone" inputmode="tel" autocomplete="tel" placeholder="Enter your phone" required>
                         <div class="error-message">This field is required.</div>
                     </div>
                     <div class="form-group" id="childNameGroup" style="display: none;">
@@ -1442,8 +1442,11 @@
             document.getElementById('email').parentElement.classList.toggle('has-value', e.target.value.trim() !== '');
         });
         document.getElementById('phone').addEventListener('input', (e) => {
-            document.getElementById('phone').parentElement.classList.remove('error');
-            document.getElementById('phone').parentElement.classList.toggle('has-value', e.target.value.trim() !== '');
+            const phoneInput = document.getElementById('phone');
+            phoneInput.parentElement.classList.remove('error');
+            phoneInput.parentElement.classList.toggle('has-value', phoneInput.value.trim() !== '');
+            // Keep the phone number as plain text so leading zeroes are preserved.
+            phoneInput.value = phoneInput.value;
         });
         document.getElementById('age').addEventListener('input', (e) => {
             document.getElementById('ageGroup').classList.remove('error');
