@@ -364,18 +364,20 @@ export default async function handler(req, res) {
         const values = getRes.data.values || [];
         console.log('Sheet values in column A:', values.length, 'rows');
 
-        // Scan column A top-down and find the first empty row.
-        const invoiceStartRow = 50;
-        let targetRow = Math.max(values.length + 1, invoiceStartRow);
-        for (let i = invoiceStartRow - 1; i < values.length; i++) {
+        // Find the first empty row after all existing content in column A.
+        // The Sheets API trims trailing empty rows, so values.length is the last
+        // non-empty row; the next free row is values.length + 1. This skips over
+        // any unrelated content in earlier rows and always appends at the bottom.
+        let lastFilledRow = 0;
+        for (let i = 0; i < values.length; i++) {
           const cellValue = values[i] && values[i][0];
-          if (!cellValue || cellValue === '') {
-            targetRow = i + 1;
-            break;
+          if (cellValue && String(cellValue).trim() !== '') {
+            lastFilledRow = i + 1;
           }
         }
+        const targetRow = lastFilledRow + 1;
 
-        // Invoice number equals the target row number (e.g. row 50 -> INV-0050).
+        // Invoice number equals the target row number (e.g. row 46 -> INV-0046).
         const proposedInvoiceNum = String(targetRow).padStart(4, '0');
 
         // Fallback: if the proposed INV number already exists in column A, use a random 4-digit number.
@@ -386,11 +388,22 @@ export default async function handler(req, res) {
             .map((val) => val.replace(/^INV-/i, ''))
         );
 
-        if (existingInvoiceNumbers.has(proposedInvoiceNum)) {
-          invoiceNum = String(Math.floor(1000 + Math.random() * 9000));
-          console.warn('Proposed invoice number', proposedInvoiceNum, 'already exists in column A. Using random fallback:', invoiceNum);
-        } else {
+        if (!existingInvoiceNumbers.has(proposedInvoiceNum)) {
           invoiceNum = proposedInvoiceNum;
+        } else {
+          // Collision: try the next free row once.
+          const retryRow = targetRow + 1;
+          const retryInvoiceNum = String(retryRow).padStart(4, '0');
+          console.warn('Proposed invoice number', proposedInvoiceNum, 'already exists. Retrying next row:', retryInvoiceNum);
+
+          if (!existingInvoiceNumbers.has(retryInvoiceNum)) {
+            targetRow = retryRow;
+            invoiceNum = retryInvoiceNum;
+          } else {
+            // Retry also collided: use random 4-digit fallback.
+            invoiceNum = String(Math.floor(1000 + Math.random() * 9000));
+            console.warn('Retry invoice number', retryInvoiceNum, 'also exists. Using random fallback:', invoiceNum);
+          }
         }
 
         console.log('Target row for booking:', targetRow, 'Invoice number:', invoiceNum);
