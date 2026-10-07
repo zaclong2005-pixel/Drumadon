@@ -364,25 +364,35 @@ export default async function handler(req, res) {
         const values = getRes.data.values || [];
         console.log('Sheet values in column A:', values.length, 'rows');
 
-        // Start invoice rows at spreadsheet row 50.
-        // Row 50 maps to INV-0001, row 51 -> INV-0002, etc.
+        // Scan column A top-down and find the first empty row.
         const invoiceStartRow = 50;
-        let targetRow = invoiceStartRow;
-
+        let targetRow = Math.max(values.length + 1, invoiceStartRow);
         for (let i = invoiceStartRow - 1; i < values.length; i++) {
           const cellValue = values[i] && values[i][0];
           if (!cellValue || cellValue === '') {
             targetRow = i + 1;
             break;
           }
-          targetRow = i + 2;
         }
 
-        if (values.length < invoiceStartRow) {
-          targetRow = invoiceStartRow;
+        // Invoice number equals the target row number (e.g. row 50 -> INV-0050).
+        const proposedInvoiceNum = String(targetRow).padStart(4, '0');
+
+        // Fallback: if the proposed INV number already exists in column A, use a random 4-digit number.
+        const existingInvoiceNumbers = new Set(
+          values
+            .map((row) => (row && row[0] ? String(row[0]).trim() : ''))
+            .filter((val) => /^INV-\d+$/i.test(val))
+            .map((val) => val.replace(/^INV-/i, ''))
+        );
+
+        if (existingInvoiceNumbers.has(proposedInvoiceNum)) {
+          invoiceNum = String(Math.floor(1000 + Math.random() * 9000));
+          console.warn('Proposed invoice number', proposedInvoiceNum, 'already exists in column A. Using random fallback:', invoiceNum);
+        } else {
+          invoiceNum = proposedInvoiceNum;
         }
 
-        invoiceNum = String(targetRow - invoiceStartRow + 1).padStart(4, '0');
         console.log('Target row for booking:', targetRow, 'Invoice number:', invoiceNum);
 
         // Update the target row with booking details
@@ -433,7 +443,7 @@ export default async function handler(req, res) {
                   },
                   cell: {
                     userEnteredFormat: {
-                      backgroundColor: { red: 1, green: 0.95, blue: 0.86 },
+                      backgroundColor: { red: 1, green: 1, blue: 1 },
                       horizontalAlignment: 'LEFT',
                     },
                   },
