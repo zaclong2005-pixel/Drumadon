@@ -364,23 +364,44 @@ export default async function handler(req, res) {
         const values = getRes.data.values || [];
         console.log('Sheet values in column A:', values.length, 'rows');
 
-        // Find the first empty row after all existing content in column A.
-        // The Sheets API trims trailing empty rows, so values.length is the last
-        // non-empty row; the next free row is values.length + 1. This skips over
-        // any unrelated content in earlier rows and always appends at the bottom.
-        let lastFilledRow = 0;
-        for (let i = 0; i < values.length; i++) {
-          const cellValue = values[i] && values[i][0];
-          if (cellValue && String(cellValue).trim() !== '') {
-            lastFilledRow = i + 1;
+        // Helper: is a given row index (0-based) empty in column A?
+        const isEmpty = (idx) => {
+          const cellValue = values[idx] && values[idx][0];
+          return !cellValue || String(cellValue).trim() === '';
+        };
+
+        // Find where the invoice block starts: the first row containing an INV- entry.
+        let firstInvoiceIndex = values.findIndex(
+          (row) => row && row[0] && /^INV-\d+$/i.test(String(row[0]).trim())
+        );
+
+        // Find the first empty gap at or after the invoice block so gaps get filled.
+        // If there are no invoices yet, start scanning from the end of existing content.
+        let targetRow;
+        if (firstInvoiceIndex === -1) {
+          // No invoices yet — append after the last non-empty row.
+          let lastFilledRow = 0;
+          for (let i = 0; i < values.length; i++) {
+            if (!isEmpty(i)) lastFilledRow = i + 1;
           }
+          targetRow = lastFilledRow + 1;
+        } else {
+          // Scan from the first invoice row downward for the first empty cell (a gap).
+          let gapIndex = -1;
+          for (let i = firstInvoiceIndex; i < values.length; i++) {
+            if (isEmpty(i)) {
+              gapIndex = i;
+              break;
+            }
+          }
+          // No internal gap found -> append right after the last row of the invoice block.
+          targetRow = gapIndex === -1 ? values.length + 1 : gapIndex + 1;
         }
-        const targetRow = lastFilledRow + 1;
 
         // Invoice number equals the target row number (e.g. row 46 -> INV-0046).
-        const proposedInvoiceNum = String(targetRow).padStart(4, '0');
+        let proposedInvoiceNum = String(targetRow).padStart(4, '0');
 
-        // Fallback: if the proposed INV number already exists in column A, use a random 4-digit number.
+        // Set of existing invoice numbers (without the INV- prefix) for collision checks.
         const existingInvoiceNumbers = new Set(
           values
             .map((row) => (row && row[0] ? String(row[0]).trim() : ''))
@@ -391,7 +412,7 @@ export default async function handler(req, res) {
         if (!existingInvoiceNumbers.has(proposedInvoiceNum)) {
           invoiceNum = proposedInvoiceNum;
         } else {
-          // Collision: try the next free row once.
+          // Collision: try the next row once.
           const retryRow = targetRow + 1;
           const retryInvoiceNum = String(retryRow).padStart(4, '0');
           console.warn('Proposed invoice number', proposedInvoiceNum, 'already exists. Retrying next row:', retryInvoiceNum);
@@ -400,7 +421,7 @@ export default async function handler(req, res) {
             targetRow = retryRow;
             invoiceNum = retryInvoiceNum;
           } else {
-            // Retry also collided: use random 4-digit fallback.
+            // Retry also collided: use random 4-digit fallback (row stays put).
             invoiceNum = String(Math.floor(1000 + Math.random() * 9000));
             console.warn('Retry invoice number', retryInvoiceNum, 'also exists. Using random fallback:', invoiceNum);
           }
