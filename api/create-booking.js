@@ -446,6 +446,8 @@ export default async function handler(req, res) {
         });
 
         console.log('Successfully updated Google Sheet with booking at row', targetRow, 'invoice number:', invoiceNum);
+        // Cosmetic formatting only — must never affect the invoice number if it fails.
+        try {
         await sheets.spreadsheets.batchUpdate({
           spreadsheetId: process.env.GOOGLE_SHEET_ID,
           requestBody: {
@@ -464,6 +466,7 @@ export default async function handler(req, res) {
                       verticalAlignment: 'MIDDLE',
                     },
                   },
+                  fields: 'userEnteredFormat(verticalAlignment)',
                 },
               },
               {
@@ -487,6 +490,9 @@ export default async function handler(req, res) {
             ],
           },
         });
+        } catch (formatErr) {
+          console.error('Row formatting failed (non-fatal, invoice number preserved):', formatErr.message);
+        }
       } catch (sheetErr) {
         console.error('Sheet invoice numbering unavailable, using random fallback:', sheetErr.message);
         invoiceNum = String(Math.floor(1000 + Math.random() * 9000));
