@@ -357,7 +357,11 @@ async function printPage(doc, num, btn) {
     img.src = canvas.toDataURL('image/png');
     await img.decode();
     printArea.replaceChildren(img);
+    // The page title becomes the suggested file name when saving as PDF
+    const siteTitle = document.title;
+    document.title = `${pdfTitle} – Page ${num}`;
     window.print();
+    document.title = siteTitle;
   } finally {
     btn.disabled = false;
     btn.textContent = 'Print Page';

@@ -492,9 +492,11 @@ textarea { min-height: 100px; resize: vertical; }
 /* ---------- Printing a single manual page ---------- */
 #printArea { display: none; }
 @media print {
-  @page { margin: 10mm; }
-  body { background: #fff; }
+  /* Zero page margin leaves the browser no room for its date/title/URL header and footer;
+     the white space around the page comes from padding instead. */
+  @page { margin: 0; }
+  html, body { margin: 0; background: #fff; }
   body > *:not(#printArea) { display: none !important; }
-  #printArea { display: block; }
-  #printArea img { display: block; max-width: 100%; max-height: 100vh; margin: 0 auto; }
+  #printArea { display: block; padding: 10mm; }
+  #printArea img { display: block; max-width: 100%; max-height: calc(100vh - 20mm); margin: 0 auto; }
 }
