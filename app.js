@@ -190,7 +190,7 @@ $('#unlockForm').addEventListener('submit', async (e) => {
 
 /* ---------- Transcriptions library ----------
    Built from whatever PDFs are in /charts. Search matches song or artist, ignoring case,
-   accents and punctuation. Results are grouped under A–Z (or # for numbers) headings. */
+   accents and punctuation. Results are grouped under A-Z (or # for numbers) headings. */
 const normalise = (text) => text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 const sortKey = (text) => normalise(text).replace(/^the /, ''); // "The Beatles" files under B
 
@@ -246,7 +246,7 @@ function renderLibrary() {
     actions.className = 'chart-actions';
     const view = chartButton('View');
     view.type = 'button';
-    view.addEventListener('click', () => openPdf(chart.url, chart.artist ? `${chart.title} – ${chart.artist}` : chart.title));
+    view.addEventListener('click', () => openPdf(chart.url, chart.artist ? `${chart.title} - ${chart.artist}` : chart.title));
     const download = chartButton('Download', 'a');
     download.href = chart.url;
     download.download = '';
@@ -359,7 +359,7 @@ async function printPage(doc, num, btn) {
     printArea.replaceChildren(img);
     // The page title becomes the suggested file name when saving as PDF
     const siteTitle = document.title;
-    document.title = `${pdfTitle} – Page ${num}`;
+    document.title = `${pdfTitle} - Page ${num}`;
     window.print();
     document.title = siteTitle;
   } finally {

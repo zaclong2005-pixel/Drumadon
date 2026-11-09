@@ -363,7 +363,7 @@ textarea { min-height: 100px; resize: vertical; }
 .unlock input { flex: 1; }
 #manualActions { display: flex; flex-wrap: wrap; gap: 0.6rem; }
 
-/* Transcriptions library: full width, search + sort, A–Z groups, scrolls once it gets long */
+/* Transcriptions library: full width, search + sort, A-Z groups, scrolls once it gets long */
 .library-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
 .library-head .label { color: var(--muted); }
 #libraryTools { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; margin-bottom: 1rem; }
