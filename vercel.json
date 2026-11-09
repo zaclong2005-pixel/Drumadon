@@ -1,0 +1,25 @@
+{
+  "functions": {
+    "api/resources.js": { "includeFiles": "charts/**" }
+  },
+  "redirects": [
+    {
+      "source": "/trial.html",
+      "has": [{ "type": "query", "key": "type", "value": "(?<type>20|30|45|60)" }],
+      "destination": "/?type=:type",
+      "permanent": true
+    },
+    { "source": "/trial.html", "destination": "/#book", "permanent": true },
+    { "source": "/pricing.html", "destination": "/#lessons", "permanent": true },
+    { "source": "/resources.html", "destination": "/#resources", "permanent": true }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)\\.pdf",
+      "headers": [
+        { "key": "Content-Type", "value": "application/octet-stream" },
+        { "key": "Content-Disposition", "value": "attachment" }
+      ]
+    }
+  ]
+}

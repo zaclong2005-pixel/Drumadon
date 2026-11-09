@@ -1,0 +1,485 @@
+/* Drumadon: dark navy, warm type, electric blue glow. */
+:root {
+  /* Palette: every colour on the site comes from here.
+     Text: warm cream, plus a warm grey in the same family for secondary text. */
+  --text: #f2eee6;
+  --muted: #aca9a3;
+  --error: #ff4d6a;
+  /* One blue accent, plus a lighter step for text and hover */
+  --blue-rgb: 31 143 255;
+  --blue: rgb(var(--blue-rgb));
+  --blue-hi: #5cb2ff;
+  /* Navy ramp, all the same hue, darkest to lightest */
+  --bg-rgb: 6 10 19;
+  --bg: rgb(var(--bg-rgb));
+  --bg-1: #08101d;
+  --bg-2: #0a1424;
+  --panel: #0d182b;
+  --line: #1a2740;
+
+  /* Type rules (nothing outside these):
+     Fraunces 600  -> h1, h2, h3, FAQ questions, prices
+     DM Sans 400   -> paragraphs, inputs
+     DM Sans 600   -> buttons, menu links, date/time choices
+     DM Sans 600 UPPERCASE at --fs-label -> small captions and field labels
+     Colours: --text for main text, --muted for secondary text, --blue-hi for links/accents, --error for errors */
+  --head: 'Fraunces', Georgia, serif;
+  --body: 'DM Sans', system-ui, sans-serif;
+  --fs-1: clamp(2.6rem, 6vw, 4.6rem);
+  --fs-2: clamp(1.8rem, 4vw, 2.5rem);
+  --fs-3: 1.25rem;
+  --fs-body: 1.05rem;
+  --fs-label: 0.85rem;
+
+  /* Shape: two corner sizes */
+  --radius: 8px;
+  --radius-sm: 6px;
+
+  --glow: 0 0 10px rgb(var(--blue-rgb) / 0.18);
+  --glow-strong: 0 0 16px rgb(var(--blue-rgb) / 0.32);
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+
+body {
+  margin: 0;
+  font: 400 var(--fs-body) / 1.65 var(--body);
+  color: var(--text);
+  background: var(--bg);
+  overflow-x: hidden;
+}
+
+img { max-width: 100%; display: block; }
+::placeholder { color: var(--muted); opacity: 0.7; }
+a { color: var(--blue-hi); }
+p { margin: 0 0 1rem; }
+
+h1, h2, h3 { font-family: var(--head); font-weight: 600; line-height: 1.12; margin: 0 0 1rem; letter-spacing: -0.01em; color: var(--text); }
+h1 em, h2 em { font-style: italic; font-weight: 500; }
+h1 { font-size: var(--fs-1); }
+h2 { font-size: var(--fs-2); margin-bottom: 1.5rem; }
+h3 { font-size: var(--fs-3); }
+
+/* One "label" style for every small uppercase caption */
+.label, .chip small, .field label, .price-row span, .save, .page figcaption, .chart-list li span {
+  font-family: var(--body);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.wrap { width: min(1100px, 100% - 2.5rem); margin-inline: auto; }
+.muted { color: var(--muted); }
+.glow-text { color: var(--blue-hi); text-shadow: 0 0 10px rgb(var(--blue-rgb) / 0.35); }
+
+/* ---------- Sections ---------- */
+.section { position: relative; overflow: hidden; padding: 5.5rem 0; border-top: 1px solid var(--line); }
+/* Sections alternate between steps of the navy ramp */
+#lessons, #resources, #contact { background: var(--bg-2); }
+#book, #about { background: var(--bg-1); }
+#faq { background: var(--bg); }
+
+/* A short line along the top edge of each section that moves on a beat:
+   it jumps forward on every beat (120 bpm), brightens on the hit, then fades. */
+.section::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 140px;
+  height: 1px;
+  background: var(--blue);
+  box-shadow: 0 0 6px var(--blue);
+  animation: sweep 8s cubic-bezier(0.2, 0.9, 0.3, 1) infinite, beat 0.5s ease-out infinite;
+}
+/* Offsets are whole beats so every section stays in time */
+#lessons::before { animation-delay: -4s, 0s; }
+#book::before { animation-delay: -1.5s, 0s; }
+#resources::before { animation-delay: -6s, 0s; }
+#about::before { animation-delay: -2.5s, 0s; }
+#faq::before { animation-delay: -5s, 0s; }
+#contact::before { animation-delay: -7s, 0s; }
+
+/* Faint music details, one per section. Content sits above them. */
+.section > .wrap { position: relative; z-index: 1; }
+.section::after { content: ''; position: absolute; pointer-events: none; background-repeat: no-repeat; background-size: contain; }
+
+/* Pricing: a drum groove (hi-hat, snare, kick) written on a stave, drifting along the bottom */
+#lessons::after {
+  left: 0;
+  right: 0;
+  bottom: 1.5rem;
+  height: 56px;
+  background-repeat: repeat-x;
+  background-size: 320px 56px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='56'%3E%3Cg stroke='%231f8fff' stroke-opacity='.055' fill='none'%3E%3Cpath d='M0 20H320M0 28H320M0 36H320M0 44H320M0 52H320M318 20V52'/%3E%3C/g%3E%3Cg stroke='%231f8fff' stroke-opacity='.08' fill='none' stroke-width='1.4'%3E%3Cpath d='M16 12l8 8M24 12l-8 8M56 12l8 8M64 12l-8 8M96 12l8 8M104 12l-8 8M136 12l8 8M144 12l-8 8M176 12l8 8M184 12l-8 8M216 12l8 8M224 12l-8 8M256 12l8 8M264 12l-8 8M296 12l8 8M304 12l-8 8'/%3E%3Cpath d='M24 46V4M64 12V4M104 30V4M144 12V4M184 46V4M224 12V4M264 30V4M304 12V4'/%3E%3Cpath d='M24 4H144M184 4H304' stroke-width='2.4'/%3E%3C/g%3E%3Cg fill='%231f8fff' fill-opacity='.08'%3E%3Cellipse cx='20' cy='48' rx='5' ry='3.8' transform='rotate(-20 20 48)'/%3E%3Cellipse cx='180' cy='48' rx='5' ry='3.8' transform='rotate(-20 180 48)'/%3E%3Cellipse cx='100' cy='32' rx='5' ry='3.8' transform='rotate(-20 100 32)'/%3E%3Cellipse cx='260' cy='32' rx='5' ry='3.8' transform='rotate(-20 260 32)'/%3E%3C/g%3E%3C/svg%3E");
+  animation: groove 70s linear infinite;
+}
+
+/* Resources: a vinyl record centred on the line between Free Trial and Resources,
+   half off the right edge. Drawn by app.js: the disc turns once a minute while the
+   light reflections and tone arm stay still, as they would on a real turntable. */
+#resources { overflow: visible; overflow-x: clip; }
+.record {
+  position: absolute;
+  top: 0;
+  right: -230px;
+  width: 520px;
+  height: 520px;
+  margin-top: -260px;
+  pointer-events: none;
+}
+.record svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.record .disc { animation: spin 60s linear infinite; }
+/* Still light sheen on the vinyl: two soft highlights opposite each other, clipped to the disc
+   (outside the label). One of the few gradients on the site. */
+.record .sheen {
+  position: absolute;
+  inset: 0.5%;
+  border-radius: 50%;
+  background: conic-gradient(from -50deg,
+    transparent 0deg, rgb(242 238 230 / 0.05) 18deg, transparent 40deg,
+    transparent 180deg, rgb(242 238 230 / 0.04) 198deg, transparent 220deg);
+  /* closest-side makes 100% = the disc's edge; the sheen fades in softly from the label outwards */
+  -webkit-mask: radial-gradient(circle closest-side, transparent 34%, #000 62%, #000 97%, transparent 100%);
+  mask: radial-gradient(circle closest-side, transparent 34%, #000 62%, #000 97%, transparent 100%);
+}
+/* Solid vinyl base so section borders and the moving line don't show through the faded record */
+.record::before {
+  content: '';
+  position: absolute;
+  inset: 0.5%;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--bg) 60%, var(--bg-1));
+}
+.record svg, .record .sheen { opacity: 0.6; }
+
+/* Meet Isaac: an audio waveform drifting along the bottom */
+#about::after {
+  left: 0;
+  right: 0;
+  bottom: 0.4rem;
+  height: 60px;
+  background-repeat: repeat-x;
+  background-size: 402px 60px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='402' height='60'%3E%3Cpath stroke='%231f8fff' stroke-opacity='.12' stroke-width='2' stroke-linecap='round' d='M3 28V32M9 27V33M15 25V35M21 26V34M27 23V37M33 20V40M39 22V38M45 25V35M51 27V33M57 24V36M63 19V41M69 16V44M75 18V42M81 21V39M87 24V36M93 26V34M99 28V32M105 27V33M111 26V34M117 22V38M123 17V43M129 21V39M135 23V37M141 20V40M147 15V45M153 18V42M159 22V38M165 25V35M171 27V33M177 28V32M183 28V32M189 26V34M195 24V36M201 25V35M207 21V39M213 18V42M219 20V40M225 23V37M231 26V34M237 27V33M243 25V35M249 22V38M255 24V36M261 27V33M267 28V32M273 26V34M279 23V37M285 19V41M291 17V43M297 20V40M303 22V38M309 18V42M315 16V44M321 21V39M327 24V36M333 26V34M339 27V33M345 25V35M351 26V34M357 28V32M363 27V33M369 24V36M375 21V39M381 23V37M387 26V34M393 27V33M399 28V32'/%3E%3C/svg%3E");
+  animation: wave 60s linear infinite;
+}
+
+/* FAQ: a row of mixing-desk level meters along the bottom, bouncing on the beat (bars added by app.js) */
+.eq {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 32px;
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  padding: 0 1.25rem;
+  pointer-events: none;
+}
+.eq i {
+  flex: 1;
+  height: var(--h);
+  background: var(--blue);
+  opacity: 0.035;
+  border-radius: 2px 2px 0 0;
+  transform-origin: bottom;
+  animation: level var(--t) ease-in-out var(--d) infinite alternate;
+}
+
+/* Contact: rings like a struck drum head, pulsing on the beat behind the photo */
+#contact::after {
+  right: -60px;
+  top: 50%;
+  width: 560px;
+  height: 560px;
+  margin-top: -280px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200' fill='none' stroke='%231f8fff'%3E%3Ccircle cx='100' cy='100' r='98' stroke-opacity='.04'/%3E%3Ccircle cx='100' cy='100' r='78' stroke-opacity='.06'/%3E%3Ccircle cx='100' cy='100' r='58' stroke-opacity='.08'/%3E%3C/svg%3E");
+  animation: thump 2s ease-out infinite;
+}
+
+/* Content eases in as it scrolls into view (only once JS is running) */
+.js .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.8s ease, transform 0.8s ease; }
+.js .reveal.in { opacity: 1; transform: none; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-block;
+  padding: 0.8rem 1.4rem;
+  border: 1px solid var(--blue);
+  border-radius: var(--radius-sm);
+  background: var(--blue);
+  color: var(--bg);
+  font: 600 var(--fs-body) / 1.2 var(--body);
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: var(--glow);
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+.btn:hover, .btn:focus-visible { background: var(--blue-hi); box-shadow: var(--glow-strong); outline: none; }
+.btn:disabled { opacity: 0.6; cursor: wait; }
+.btn.outline { background: transparent; color: var(--blue-hi); box-shadow: none; }
+.btn.outline:hover, .btn.outline:focus-visible { background: rgb(var(--blue-rgb) / 0.12); box-shadow: var(--glow); }
+
+/* Text toggle (About "More"), styled like the FAQ questions: blue text, underline, + that turns to × */
+.more-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: none;
+  color: var(--blue-hi);
+  font: 600 var(--fs-body) / 1.2 var(--body);
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.more-toggle::after { content: '+'; font: 400 var(--fs-3) / 1 var(--body); transition: transform 0.3s; }
+.more-toggle[aria-expanded="true"]::after { transform: rotate(45deg); }
+.more-toggle:hover, .more-toggle:focus-visible { border-color: var(--blue); outline: none; }
+.btn.small { padding: 0.5rem 0.9rem; }
+
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.75rem; }
+
+/* ---------- Header ---------- */
+.site-header { position: fixed; inset: 0 0 auto; z-index: 50; background: rgb(var(--bg-rgb) / 0.92); border-bottom: 1px solid var(--line); }
+.site-header .wrap { display: flex; align-items: center; justify-content: space-between; height: 80px; }
+.site-header img { height: 32px; width: auto; }
+.nav { display: flex; align-items: center; gap: 0.5rem; }
+.nav a { padding: 0.7rem 1rem; font: 600 var(--fs-body) / 1.2 var(--body); }
+.nav a:not(.btn) { color: var(--text); text-decoration: none; border: 1px solid transparent; border-radius: var(--radius-sm); transition: border-color 0.2s, color 0.2s; }
+.nav a:not(.btn):hover { color: var(--blue-hi); border-color: var(--line); }
+.nav .btn { margin-left: 0.75rem; padding: 0.75rem 1.4rem; }
+.menu-btn { display: none; background: none; border: 1px solid var(--line); border-radius: var(--radius-sm); color: var(--text); font-size: 1.5rem; width: 48px; height: 44px; cursor: pointer; }
+
+/* ---------- Hero ---------- */
+.hero { position: relative; overflow: hidden; padding: 9rem 0 5.5rem; background-color: var(--bg); }
+/* Faint music staves with a few notes, drifting slowly sideways */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='480' height='180'%3E%3Cg stroke='%231f8fff' stroke-opacity='.09' fill='none'%3E%3Cpath d='M0 60H480M0 72H480M0 84H480M0 96H480M0 108H480'/%3E%3C/g%3E%3Cg fill='%231f8fff' fill-opacity='.12'%3E%3Cellipse cx='70' cy='90' rx='6' ry='4.5' transform='rotate(-20 70 90)'/%3E%3Cellipse cx='190' cy='72' rx='6' ry='4.5' transform='rotate(-20 190 72)'/%3E%3Cellipse cx='330' cy='102' rx='6' ry='4.5' transform='rotate(-20 330 102)'/%3E%3C/g%3E%3Cg stroke='%231f8fff' stroke-opacity='.12'%3E%3Cpath d='M75.5 88V58M195.5 70V40M335.5 100V70'/%3E%3C/g%3E%3C/svg%3E");
+  animation: staves 70s linear infinite;
+  pointer-events: none;
+}
+.hero .wrap { position: relative; display: grid; grid-template-columns: 1.2fr 1fr; gap: 3rem; align-items: center; }
+.hero h1 span, .hero h1 em { display: block; }
+.hero h1 { margin: 0; }
+
+/* Photo with an offset outline frame whose glow slowly breathes */
+.framed { position: relative; justify-self: center; width: min(400px, 100% - 16px); }
+.framed img { position: relative; z-index: 1; width: 100%; aspect-ratio: 3 / 4; object-fit: cover; border: 1px solid var(--line); border-radius: var(--radius); }
+.framed::before {
+  content: '';
+  position: absolute;
+  inset: 16px -16px -16px 16px;
+  border: 1px solid var(--blue);
+  border-radius: var(--radius);
+  animation: breathe 5s ease-in-out infinite alternate;
+}
+
+/* ---------- About ---------- */
+.about-grid { display: grid; grid-template-columns: 340px 1fr; gap: 3.5rem; align-items: start; }
+.about-grid .framed { width: 100%; }
+
+/* ---------- Lesson plans ---------- */
+.note { color: var(--muted); margin: 0; }
+.price-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin-top: 2.5rem; }
+.price-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.75rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.price-card h3 { margin: 0; }
+.price-card h3 small, .locked-label { font: 400 var(--fs-body) var(--body); color: var(--muted); }
+.price-row { display: flex; justify-content: space-between; align-items: baseline; border-top: 1px solid var(--line); padding-top: 0.9rem; }
+.price-row span { color: var(--muted); }
+.price-row strong { font: 600 var(--fs-3) var(--head); }
+.save { color: var(--blue-hi); }
+.price-card .admin-book { display: none; margin-top: auto; text-align: center; }
+body.admin-mode .price-card .admin-book { display: inline-block; }
+#lessonsHeading { cursor: default; user-select: none; }
+
+/* ---------- Booking ---------- */
+.booking { max-width: 760px; margin-top: 2rem; }
+.step + .step { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--line); }
+.chips { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.chip {
+  min-width: 96px;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+  font: 600 var(--fs-body) / 1.2 var(--body);
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.chip:hover { border-color: var(--blue); }
+.chip.selected { background: var(--blue); border-color: var(--blue); color: var(--bg); box-shadow: var(--glow); }
+.chip small { display: block; margin-bottom: 0.2rem; color: var(--muted); }
+.chip.selected small { color: var(--bg); }
+
+.field { margin-bottom: 1rem; }
+.field label { display: block; margin-bottom: 0.35rem; color: var(--muted); }
+.field label .req { color: var(--blue-hi); }
+input, textarea {
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+input:focus, textarea:focus { outline: none; border-color: var(--blue); box-shadow: var(--glow); }
+textarea { min-height: 100px; resize: vertical; }
+.field.error input { border-color: var(--error); }
+.field .err { display: none; color: var(--error); margin-top: 0.25rem; }
+.field.error .err { display: block; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.row-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.toggle { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; cursor: pointer; color: var(--muted); }
+.toggle input { width: 18px; height: 18px; accent-color: var(--blue); }
+.status { color: var(--muted); margin: 1rem 0 0; }
+.status.bad { color: var(--error); }
+
+/* ---------- Resources ---------- */
+.resource-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-top: 2rem; }
+.resource-grid .panel p { color: var(--muted); }
+.unlock { display: flex; gap: 0.6rem; max-width: 460px; }
+.unlock input { flex: 1; }
+.chart-list { list-style: none; margin: 0; padding: 0; }
+.chart-list li { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.75rem 0; border-top: 1px solid var(--line); }
+.chart-list li span { display: block; color: var(--muted); }
+
+/* Manual viewer */
+.viewer { width: min(960px, 100% - 1.5rem); height: min(92vh, 100%); padding: 0; border: 1px solid var(--blue); border-radius: var(--radius); background: var(--bg); color: var(--text); box-shadow: var(--glow-strong); }
+.viewer::backdrop { background: rgb(var(--bg-rgb) / 0.88); }
+.viewer-bar { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; gap: 0.75rem; padding: 0.9rem 1.25rem; background: var(--panel); border-bottom: 1px solid var(--line); }
+.viewer-bar h3 { margin: 0 auto 0 0; }
+.viewer-pages { padding: 1.5rem; display: grid; gap: 2rem; justify-items: center; }
+.page { margin: 0; width: 100%; max-width: 720px; }
+.page canvas { width: 100%; height: auto; background: #fff; border-radius: var(--radius-sm); }
+.page figcaption { display: flex; justify-content: space-between; align-items: center; padding-top: 0.6rem; color: var(--muted); }
+
+/* ---------- FAQ ---------- */
+.faq { border-top: 1px solid var(--line); }
+.faq details { border-bottom: 1px solid var(--line); }
+.faq summary { display: flex; justify-content: space-between; gap: 1rem; padding: 1.1rem 0; cursor: pointer; font: 600 var(--fs-3) / 1.3 var(--head); list-style: none; transition: color 0.2s; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary:hover { color: var(--blue-hi); }
+.faq summary::after { content: '+'; flex: none; font: 400 var(--fs-3) var(--body); line-height: 1.3; color: var(--blue-hi); transition: transform 0.3s; }
+.faq details[open] summary { color: var(--blue-hi); }
+.faq details[open] summary::after { transform: rotate(45deg); }
+.faq details p { color: var(--muted); margin: 0 0 1.1rem; }
+
+/* ---------- Contact ---------- */
+.contact-grid { display: grid; grid-template-columns: 1fr 320px; gap: 3.5rem; align-items: center; }
+.contact-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; }
+.contact-list li { display: flex; align-items: center; gap: 1.1rem; }
+.contact-list .icon { flex: none; display: grid; color: var(--blue-hi); filter: drop-shadow(0 0 4px rgb(var(--blue-rgb) / 0.3)); }
+.contact-list .icon svg { width: 28px; height: 28px; }
+.contact-list a { color: var(--text); text-decoration: none; font-size: var(--fs-3); transition: color 0.2s; }
+.contact-list a:hover { color: var(--blue-hi); }
+
+/* ---------- Footer ---------- */
+.site-footer { border-top: 1px solid var(--line); padding: 2rem 0; background: var(--bg); }
+.site-footer .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; }
+/* Turns the logo's white background dark so it blends into the footer */
+.site-footer .wwcc { height: 64px; width: auto; filter: invert(1) hue-rotate(180deg); mix-blend-mode: screen; }
+.site-footer p { margin: 0; color: var(--muted); }
+.socials { display: flex; gap: 1.1rem; }
+.socials a { color: var(--muted); transition: color 0.2s; }
+.socials a:hover { color: var(--blue-hi); }
+
+/* ---------- Motion ---------- */
+/* 16 beats across the screen; the eased timing makes each step land like a hit, then settle */
+@keyframes sweep {
+  0%     { transform: translateX(calc((100vw + 140px) * 0 - 140px)); }
+  6.25%  { transform: translateX(calc((100vw + 140px) * 0.0625 - 140px)); }
+  12.5%  { transform: translateX(calc((100vw + 140px) * 0.125 - 140px)); }
+  18.75% { transform: translateX(calc((100vw + 140px) * 0.1875 - 140px)); }
+  25%    { transform: translateX(calc((100vw + 140px) * 0.25 - 140px)); }
+  31.25% { transform: translateX(calc((100vw + 140px) * 0.3125 - 140px)); }
+  37.5%  { transform: translateX(calc((100vw + 140px) * 0.375 - 140px)); }
+  43.75% { transform: translateX(calc((100vw + 140px) * 0.4375 - 140px)); }
+  50%    { transform: translateX(calc((100vw + 140px) * 0.5 - 140px)); }
+  56.25% { transform: translateX(calc((100vw + 140px) * 0.5625 - 140px)); }
+  62.5%  { transform: translateX(calc((100vw + 140px) * 0.625 - 140px)); }
+  68.75% { transform: translateX(calc((100vw + 140px) * 0.6875 - 140px)); }
+  75%    { transform: translateX(calc((100vw + 140px) * 0.75 - 140px)); }
+  81.25% { transform: translateX(calc((100vw + 140px) * 0.8125 - 140px)); }
+  87.5%  { transform: translateX(calc((100vw + 140px) * 0.875 - 140px)); }
+  93.75% { transform: translateX(calc((100vw + 140px) * 0.9375 - 140px)); }
+  100%   { transform: translateX(100vw); }
+}
+@keyframes beat { from { opacity: 0.85; } to { opacity: 0.3; } }
+@keyframes groove { from { background-position: 0 0; } to { background-position: -320px 0; } }
+@keyframes wave { from { background-position: 0 0; } to { background-position: -402px 0; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes level { from { transform: scaleY(0.6); } to { transform: scaleY(1); } }
+@keyframes thump {
+  0% { transform: scale(1); opacity: 1; }
+  10% { transform: scale(1.025); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.6; }
+}
+@keyframes staves { from { background-position: 0 0; } to { background-position: -480px 0; } }
+@keyframes breathe {
+  from { box-shadow: 0 0 4px rgb(var(--blue-rgb) / 0.1); }
+  to { box-shadow: 0 0 14px rgb(var(--blue-rgb) / 0.3); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .js .reveal { opacity: 1; transform: none; }
+  html { scroll-behavior: auto; }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .hero .wrap, .about-grid, .contact-grid, .resource-grid { grid-template-columns: 1fr; }
+  .about-grid .framed, .contact-grid .framed { width: min(340px, 100% - 16px); }
+  .price-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 820px) {
+  .menu-btn { display: block; }
+  .nav { display: none; position: absolute; top: 80px; inset-inline: 0; flex-direction: column; align-items: stretch; gap: 0; padding: 0.5rem 1.25rem 1.25rem; background: var(--bg); border-bottom: 1px solid var(--line); }
+  .nav.open { display: flex; }
+  .nav a:not(.btn) { padding: 0.9rem 0; border: 0; border-bottom: 1px solid var(--line); }
+  .nav .btn { margin: 1rem 0 0; text-align: center; }
+}
+@media (max-width: 720px) {
+  .hero { padding-top: 7rem; }
+  .section { padding: 4rem 0; }
+  .row, .row-3 { grid-template-columns: 1fr; }
+  .record { width: 340px; height: 340px; margin-top: -170px; right: -150px; }
+  .eq { height: 24px; }
+}
+@media (max-width: 480px) {
+  .price-grid { grid-template-columns: 1fr; }
+  .unlock { flex-direction: column; }
+  .contact-list a { font-size: var(--fs-body); }
+}
+
+/* ---------- Printing a single manual page ---------- */
+#printArea { display: none; }
+@media print {
+  @page { margin: 10mm; }
+  body { background: #fff; }
+  body > *:not(#printArea) { display: none !important; }
+  #printArea { display: block; }
+  #printArea img { display: block; max-width: 100%; max-height: 100vh; margin: 0 auto; }
+}
