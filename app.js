@@ -17,7 +17,7 @@ $$('main section > .wrap').forEach((el) => {
 });
 
 /* ---------- FAQ level meters ----------
-   Each bar rises and falls slowly over 2–4 beats of 120 bpm, so the row moves loosely with the moving line. */
+   Each bar rises and falls slowly over 2â€“4 beats of 120 bpm, so the row moves loosely with the moving line. */
 const eq = document.createElement('div');
 eq.className = 'eq';
 eq.setAttribute('aria-hidden', 'true');
@@ -145,6 +145,8 @@ function setStatus(container, text, bad = false) {
 
 /* ---------- Student resources ---------- */
 let manualUrl = '';
+let charts = [];
+let chartSort = 'title';
 
 $('#unlockForm').addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -167,35 +169,15 @@ $('#unlockForm').addEventListener('submit', async (e) => {
 
     manualUrl = data.manual;
     $('#manualDownload').href = manualUrl;
-    $('#viewerDownload').href = manualUrl;
     $('#manualActions').hidden = false;
     $$('.locked-label').forEach((el) => el.remove());
 
-    const list = $('#chartList');
-    list.replaceChildren();
-    if (!data.charts.length) {
-      const li = document.createElement('li');
-      li.textContent = 'No transcriptions yet.';
-      list.appendChild(li);
-    }
-    data.charts.forEach((chart) => {
-      const li = document.createElement('li');
-      const label = document.createElement('div');
-      label.textContent = chart.title;
-      if (chart.artist) {
-        const artist = document.createElement('span');
-        artist.textContent = chart.artist;
-        label.appendChild(artist);
-      }
-      const link = document.createElement('a');
-      link.className = 'btn outline small';
-      link.href = chart.url;
-      link.download = '';
-      link.textContent = 'Download';
-      li.append(label, link);
-      list.appendChild(li);
-    });
-    list.hidden = false;
+    charts = data.charts;
+    $('#chartCount').textContent = `${charts.length} ${charts.length === 1 ? 'song' : 'songs'}`;
+    $('#chartCount').hidden = false;
+    $('#libraryTools').hidden = charts.length < 2; // search/sort only help once there's more than one song
+    $('#chartList').hidden = false;
+    renderLibrary();
 
     $('#unlockForm').hidden = true;
     status.textContent = '';
@@ -206,12 +188,93 @@ $('#unlockForm').addEventListener('submit', async (e) => {
   }
 });
 
-/* ---------- Manual viewer with single-page printing ---------- */
+/* ---------- Transcriptions library ----------
+   Built from whatever PDFs are in /charts. Search matches song or artist, ignoring case,
+   accents and punctuation. Results are grouped under A–Z (or # for numbers) headings. */
+const normalise = (text) => text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+const sortKey = (text) => normalise(text).replace(/^the /, ''); // "The Beatles" files under B
+
+function chartButton(text, tag = 'button') {
+  const btn = document.createElement(tag);
+  btn.className = 'btn outline small';
+  btn.textContent = text;
+  return btn;
+}
+
+function renderLibrary() {
+  const list = $('#chartList');
+  if (!charts.length) {
+    setStatus(list, 'No transcriptions yet.');
+    return;
+  }
+
+  const terms = normalise($('#chartSearch').value).split(' ').filter(Boolean);
+  const field = chartSort;
+  const other = field === 'title' ? 'artist' : 'title';
+  const matches = charts
+    .filter((c) => { const hay = normalise(`${c.title} ${c.artist}`); return terms.every((t) => hay.includes(t)); })
+    .sort((a, b) => sortKey(a[field] || '').localeCompare(sortKey(b[field] || '')) || sortKey(a[other] || '').localeCompare(sortKey(b[other] || '')));
+
+  if (!matches.length) {
+    setStatus(list, `No songs match "${$('#chartSearch').value.trim()}".`);
+    return;
+  }
+
+  const fragment = document.createDocumentFragment();
+  let currentLetter = '';
+  matches.forEach((chart) => {
+    const first = sortKey(chart[field] || '?').charAt(0).toUpperCase() || '?';
+    const letter = /[A-Z]/.test(first) ? first : '#';
+    if (letter !== currentLetter) {
+      currentLetter = letter;
+      const heading = document.createElement('p');
+      heading.className = 'label letter';
+      heading.textContent = letter;
+      fragment.appendChild(heading);
+    }
+
+    const row = document.createElement('div');
+    row.className = 'chart-row';
+    const text = document.createElement('div');
+    const title = document.createElement('strong');
+    title.textContent = field === 'title' ? chart.title : (chart.artist || 'Unknown artist');
+    const sub = document.createElement('span');
+    sub.textContent = field === 'title' ? chart.artist : chart.title;
+    text.append(title, sub);
+
+    const actions = document.createElement('div');
+    actions.className = 'chart-actions';
+    const view = chartButton('View');
+    view.type = 'button';
+    view.addEventListener('click', () => openPdf(chart.url, chart.artist ? `${chart.title} – ${chart.artist}` : chart.title));
+    const download = chartButton('Download', 'a');
+    download.href = chart.url;
+    download.download = '';
+    actions.append(view, download);
+
+    row.append(text, actions);
+    fragment.appendChild(row);
+  });
+  list.replaceChildren(fragment);
+}
+
+$('#chartSearch').addEventListener('input', renderLibrary);
+$('#chartSort').addEventListener('click', (e) => {
+  const chip = e.target.closest('.chip');
+  if (!chip) return;
+  selectChip($('#chartSort'), chip);
+  chartSort = chip.dataset.sort;
+  renderLibrary();
+});
+
+/* ---------- PDF viewer (manual and charts) with single-page printing ---------- */
 const PDFJS = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
 const viewer = $('#viewer');
 const viewerPages = $('#viewerPages');
 const printArea = $('#printArea');
 let pdfDoc = null;
+let pdfUrl = '';
+let pdfTitle = '';
 
 function loadPdfJs() {
   if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
@@ -227,10 +290,10 @@ function loadPdfJs() {
   });
 }
 
-async function renderPage(num, cssWidth) {
-  const page = await pdfDoc.getPage(num);
+async function renderPage(doc, num, pixelWidth) {
+  const page = await doc.getPage(num);
   const base = page.getViewport({ scale: 1 });
-  const viewport = page.getViewport({ scale: cssWidth / base.width });
+  const viewport = page.getViewport({ scale: pixelWidth / base.width });
   const canvas = document.createElement('canvas');
   canvas.width = Math.floor(viewport.width);
   canvas.height = Math.floor(viewport.height);
@@ -238,46 +301,59 @@ async function renderPage(num, cssWidth) {
   return canvas;
 }
 
-async function openManual() {
+async function openPdf(url, title) {
+  $('#viewerTitle').textContent = title;
+  $('#viewerDownload').href = url;
   viewer.showModal();
-  if (pdfDoc) return;
-  setStatus(viewerPages, 'Loading manual…');
+  if (url === pdfUrl && pdfDoc) return; // already showing this file
+
+  pdfUrl = url;
+  pdfTitle = title;
+  pdfDoc = null;
+  setStatus(viewerPages, 'Loading…');
   try {
     const pdfjsLib = await loadPdfJs();
-    pdfDoc = await pdfjsLib.getDocument(manualUrl).promise;
+    const doc = await pdfjsLib.getDocument(url).promise;
+    if (pdfUrl !== url) return; // another PDF was opened meanwhile
+    pdfDoc = doc;
     viewerPages.replaceChildren();
     const width = Math.min(720, viewerPages.clientWidth - 48) * (window.devicePixelRatio || 1);
 
-    for (let num = 1; num <= pdfDoc.numPages; num++) {
+    for (let num = 1; num <= doc.numPages; num++) {
+      const canvas = await renderPage(doc, num, width);
+      if (pdfUrl !== url) return;
       const figure = document.createElement('figure');
       figure.className = 'page';
-      figure.appendChild(await renderPage(num, width));
+      figure.appendChild(canvas);
       const caption = document.createElement('figcaption');
       caption.textContent = `Page ${num}`;
       const printBtn = document.createElement('button');
       printBtn.type = 'button';
       printBtn.className = 'btn outline small';
       printBtn.textContent = 'Print Page';
-      printBtn.addEventListener('click', () => printPage(num, printBtn));
+      printBtn.addEventListener('click', () => printPage(doc, num, printBtn));
       caption.appendChild(printBtn);
       figure.appendChild(caption);
       viewerPages.appendChild(figure);
     }
   } catch (err) {
-    console.error('Manual failed to load:', err);
-    pdfDoc = null;
-    setStatus(viewerPages, 'Could not load the manual. Use Download instead.', true);
+    console.error('PDF failed to load:', err);
+    if (pdfUrl === url) {
+      pdfDoc = null;
+      pdfUrl = '';
+      setStatus(viewerPages, 'Could not open this file. Use Download instead.', true);
+    }
   }
 }
 
 // Renders one page at print resolution into #printArea; print CSS hides everything else.
-async function printPage(num, btn) {
+async function printPage(doc, num, btn) {
   btn.disabled = true;
   btn.textContent = 'Preparing…';
   try {
-    const canvas = await renderPage(num, 2400);
+    const canvas = await renderPage(doc, num, 2400);
     const img = new Image();
-    img.alt = `Drumadon Manual page ${num}`;
+    img.alt = `${pdfTitle} page ${num}`;
     img.src = canvas.toDataURL('image/png');
     await img.decode();
     printArea.replaceChildren(img);
@@ -289,7 +365,7 @@ async function printPage(num, btn) {
 }
 addEventListener('afterprint', () => printArea.replaceChildren());
 
-$('#openManual').addEventListener('click', openManual);
+$('#openManual').addEventListener('click', () => openPdf(manualUrl, 'Drumadon Manual'));
 $('#viewerClose').addEventListener('click', () => viewer.close());
 viewer.addEventListener('click', (e) => { if (e.target === viewer) viewer.close(); });
 
@@ -369,7 +445,7 @@ async function pickDay(chip, dateStr) {
   $('#timeStep').hidden = false;
   $('#forStep').hidden = true;
   form.hidden = true;
-  setStatus(timeChips, 'Loading times…');
+  setStatus(timeChips, 'Loading timesâ€¦');
 
   let data = null;
   for (let attempt = 0; attempt < 3 && !data; attempt++) {
@@ -445,6 +521,8 @@ if (!isTrial) {
 
 form.addEventListener('input', (e) => e.target.closest('.field')?.classList.remove('error'));
 
+const MIN_AGE = 7;
+
 function validate() {
   const required = ['name', 'email', 'phone'];
   if ($('#bookingFor').value === 'child') required.push('childName', 'age');
@@ -452,7 +530,9 @@ function validate() {
   required.forEach((id) => {
     const input = $(`#${id}`);
     const value = input.value.trim();
-    const bad = !value || (id === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value));
+    const bad = !value
+      || (id === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
+      || (id === 'age' && !(Number.isInteger(Number(value)) && Number(value) >= MIN_AGE && Number(value) <= 18));
     input.closest('.field').classList.toggle('error', bad);
     if (bad) valid = false;
   });
@@ -474,7 +554,7 @@ form.addEventListener('submit', async (e) => {
   const btn = $('#submitBtn');
   const label = btn.textContent;
   btn.disabled = true;
-  btn.textContent = 'Booking…';
+  btn.textContent = 'Bookingâ€¦';
 
   try {
     const { ok, data } = await fetchJson('/api/create-booking', {

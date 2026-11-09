@@ -166,8 +166,8 @@
               </div>
               <div class="field">
                 <label for="age">Child's Age <span class="req">*</span></label>
-                <input id="age" name="age" type="number" min="4" max="18">
-                <div class="err">This field is required.</div>
+                <input id="age" name="age" type="number" min="7" max="18" inputmode="numeric">
+                <div class="err">Please enter an age of 7 or older.</div>
               </div>
             </div>
             <div class="field">
@@ -220,10 +220,20 @@
               <a class="btn outline" id="manualDownload" href="#" download>Download</a>
             </div>
           </div>
-          <div class="panel">
-            <h3>Transcriptions <span class="locked-label">(students only)</span></h3>
+          <div class="panel library">
+            <div class="library-head">
+              <h3>Transcriptions <span class="locked-label">(students only)</span></h3>
+              <span class="label" id="chartCount" hidden></span>
+            </div>
             <p>Download drum transcriptions for popular songs and solos.</p>
-            <ul class="chart-list" id="chartList" hidden></ul>
+            <div id="libraryTools" hidden>
+              <input type="search" id="chartSearch" placeholder="Search songs or artists" aria-label="Search transcriptions" autocomplete="off">
+              <div class="chips" id="chartSort" role="group" aria-label="Sort transcriptions">
+                <button type="button" class="chip selected" data-sort="title">Song A–Z</button>
+                <button type="button" class="chip" data-sort="artist">Artist A–Z</button>
+              </div>
+            </div>
+            <div class="chart-list" id="chartList" hidden></div>
           </div>
         </div>
       </div>
@@ -312,7 +322,7 @@
 
   <dialog class="viewer" id="viewer">
     <div class="viewer-bar">
-      <h3>Drumadon Manual</h3>
+      <h3 id="viewerTitle">Drumadon Manual</h3>
       <a class="btn outline small" id="viewerDownload" href="#" download>Download</a>
       <button type="button" class="btn small" id="viewerClose">Close</button>
     </div>

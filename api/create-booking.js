@@ -212,6 +212,9 @@ export default async function handler(req, res) {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return res.status(400).json({ error: 'Invalid email', message: 'Please enter a valid email address.' });
     }
+    if (bookingFor === 'child' && !(Number.isInteger(Number(age)) && Number(age) >= 7 && Number(age) <= 18)) {
+      return res.status(400).json({ error: 'Invalid age', message: 'Students must be 7 or older.' });
+    }
 
     let time;
     let bookingDate;

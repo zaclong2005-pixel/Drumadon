@@ -64,7 +64,7 @@ h2 { font-size: var(--fs-2); margin-bottom: 1.5rem; }
 h3 { font-size: var(--fs-3); }
 
 /* One "label" style for every small uppercase caption */
-.label, .chip small, .field label, .price-row span, .save, .page figcaption, .chart-list li span {
+.label, .chip small, .field label, .price-row span, .save, .page figcaption {
   font-family: var(--body);
   font-size: var(--fs-label);
   font-weight: 600;
@@ -357,13 +357,26 @@ textarea { min-height: 100px; resize: vertical; }
 .status.bad { color: var(--error); }
 
 /* ---------- Resources ---------- */
-.resource-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-top: 2rem; }
-.resource-grid .panel p { color: var(--muted); }
+.resource-grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; margin-top: 2rem; }
+.resource-grid .panel > p { color: var(--muted); }
 .unlock { display: flex; gap: 0.6rem; max-width: 460px; }
 .unlock input { flex: 1; }
-.chart-list { list-style: none; margin: 0; padding: 0; }
-.chart-list li { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.75rem 0; border-top: 1px solid var(--line); }
-.chart-list li span { display: block; color: var(--muted); }
+#manualActions { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+
+/* Transcriptions library: full width, search + sort, A–Z groups, scrolls once it gets long */
+.library-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+.library-head .label { color: var(--muted); }
+#libraryTools { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; margin-bottom: 1rem; }
+#chartSearch { flex: 1 1 260px; }
+.chart-list { max-height: 30rem; overflow-y: auto; padding-right: 0.75rem; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+.chart-list::-webkit-scrollbar { width: 8px; }
+.chart-list::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
+.chart-list .letter { margin: 1rem 0 0.25rem; color: var(--blue-hi); }
+.chart-list .letter:first-child { margin-top: 0; }
+.chart-row { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.7rem 0; border-top: 1px solid var(--line); }
+.chart-row strong { display: block; font-weight: 600; }
+.chart-row span { display: block; color: var(--muted); }
+.chart-actions { display: flex; gap: 0.5rem; flex: none; }
 
 /* Manual viewer */
 .viewer { width: min(960px, 100% - 1.5rem); height: min(92vh, 100%); padding: 0; border: 1px solid var(--blue); border-radius: var(--radius); background: var(--bg); color: var(--text); box-shadow: var(--glow-strong); }
@@ -471,6 +484,8 @@ textarea { min-height: 100px; resize: vertical; }
 @media (max-width: 480px) {
   .price-grid { grid-template-columns: 1fr; }
   .unlock { flex-direction: column; }
+  .chart-row { flex-direction: column; align-items: stretch; }
+  .chart-actions .btn { flex: 1; text-align: center; }
   .contact-list a { font-size: var(--fs-body); }
 }
 
